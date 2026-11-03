@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+source scripts/dev-env.sh
+pnpm exec lefthook run pre-commit

@@ -1,0 +1,103 @@
+{
+  "synthetic": true,
+  "licence": "CC0-1.0: original Study Lab synthetic evidence dedicated to the public domain.",
+  "sha256": "1b469cd7b4ba5139045cbf9b97fbc8aaec5be3f55dd3f3c9d13fc2d3bae7a7e8",
+  "frames": [
+    {
+      "frame": 1,
+      "utc": "2026-11-01T00:00:00+00:00",
+      "epoch": 1793491200.0,
+      "source": "192.0.2.10",
+      "destination": "198.51.100.20",
+      "payload": ""
+    },
+    {
+      "frame": 2,
+      "utc": "2026-11-01T00:00:00.010000+00:00",
+      "epoch": 1793491200.01,
+      "source": "198.51.100.20",
+      "destination": "192.0.2.10",
+      "payload": ""
+    },
+    {
+      "frame": 3,
+      "utc": "2026-11-01T00:00:00.020000+00:00",
+      "epoch": 1793491200.02,
+      "source": "192.0.2.10",
+      "destination": "198.51.100.20",
+      "payload": ""
+    },
+    {
+      "frame": 4,
+      "utc": "2026-11-01T00:00:01+00:00",
+      "epoch": 1793491201.0,
+      "source": "192.0.2.10",
+      "destination": "198.51.100.20",
+      "payload": "GET /checkin?host=lab-01 HTTP/1.1\r\nHost: telemetry.lab.test\r\nUser-Agent: StudyLab-Synthetic/1.0\r\n\r\n"
+    },
+    {
+      "frame": 5,
+      "utc": "2026-11-01T00:00:01.100000+00:00",
+      "epoch": 1793491201.1,
+      "source": "198.51.100.20",
+      "destination": "192.0.2.10",
+      "payload": "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 3\r\n\r\nok\n"
+    },
+    {
+      "frame": 6,
+      "utc": "2026-11-01T00:00:31+00:00",
+      "epoch": 1793491231.0,
+      "source": "192.0.2.10",
+      "destination": "198.51.100.20",
+      "payload": "GET /checkin?host=lab-01 HTTP/1.1\r\nHost: telemetry.lab.test\r\nUser-Agent: StudyLab-Synthetic/1.0\r\n\r\n"
+    },
+    {
+      "frame": 7,
+      "utc": "2026-11-01T00:00:31.100000+00:00",
+      "epoch": 1793491231.1,
+      "source": "198.51.100.20",
+      "destination": "192.0.2.10",
+      "payload": "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 3\r\n\r\nok\n"
+    },
+    {
+      "frame": 8,
+      "utc": "2026-11-01T00:01:01+00:00",
+      "epoch": 1793491261.0,
+      "source": "192.0.2.10",
+      "destination": "198.51.100.20",
+      "payload": "GET /checkin?host=lab-01 HTTP/1.1\r\nHost: telemetry.lab.test\r\nUser-Agent: StudyLab-Synthetic/1.0\r\n\r\n"
+    },
+    {
+      "frame": 9,
+      "utc": "2026-11-01T00:01:01.100000+00:00",
+      "epoch": 1793491261.1,
+      "source": "198.51.100.20",
+      "destination": "192.0.2.10",
+      "payload": "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 3\r\n\r\nok\n"
+    },
+    {
+      "frame": 10,
+      "utc": "2026-11-01T00:01:02+00:00",
+      "epoch": 1793491262.0,
+      "source": "192.0.2.10",
+      "destination": "198.51.100.20",
+      "payload": ""
+    },
+    {
+      "frame": 11,
+      "utc": "2026-11-01T00:01:02.100000+00:00",
+      "epoch": 1793491262.1,
+      "source": "198.51.100.20",
+      "destination": "192.0.2.10",
+      "payload": ""
+    },
+    {
+      "frame": 12,
+      "utc": "2026-11-01T00:01:02.200000+00:00",
+      "epoch": 1793491262.2,
+      "source": "192.0.2.10",
+      "destination": "198.51.100.20",
+      "payload": ""
+    }
+  ]
+}

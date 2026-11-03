@@ -1,0 +1,438 @@
+[
+  {
+    "id": "english-word-families",
+    "version": 1,
+    "course": "English",
+    "title": "Build words with -tion",
+    "summary": "Connect spelling, meaning and word families: action, connection, detection and protection. Text-based practice; no listening assessment.",
+    "difficulty": "Low",
+    "minutes": 25,
+    "order": 1,
+    "topics": ["spelling", "word families", "vocabulary", "syllables"],
+    "objectives": [
+      "Spell four useful -tion nouns without fuzzy matching.",
+      "Connect act, connect, detect and protect with their noun forms.",
+      "Use the nouns in a short, self-reviewed security note."
+    ],
+    "prerequisites": [
+      "Everyday spoken English; no assumption about your writing level."
+    ],
+    "teaching": [
+      {
+        "title": "1 · Notice the family (4 minutes)",
+        "body": "A word family links related words. In this small group, add ion to a verb ending in t: act → action; connect → connection; detect → detection; protect → protection. The noun names an act, process or result. Learn these four pairs; this is not a rule for every English verb. The BBC source explains why the sound alone does not tell you whether to write tion, sion or tian.",
+        "sourceIds": ["bbc"]
+      },
+      {
+        "title": "2 · Work through a spelling (4 minutes)",
+        "body": "Worked example: “The firewall helps with the ___ of the network.” The meaning is keeping something safe. Start with protect. Keep every letter: protect + ion = protection. Do not write “protecion”: the t belongs to the base. Compare detect + ion = detection. Do not add an extra t. Read the whole word, cover it, write it, then compare.",
+        "sourceIds": ["bbc"]
+      },
+      {
+        "title": "3 · Break it down, then use it (3 minutes)",
+        "body": "For writing, use meaningful chunks: connect + ion and protect + ion. These are spelling chunks, not pronunciation marks. A syllable is a spoken beat, which differs from a spelling chunk. Connection has three syllables in the Cambridge UK model; its final tion is one syllable. This guidance is for awareness, not a test of your Australian accent. No accent scoring or listening claim is made here. Context helps: a connection links devices; detection finds a problem; protection helps prevent harm; an action is something you do. Australian English uses these spellings too.",
+        "sourceIds": ["bbc", "cambridge"]
+      },
+      {
+        "title": "4 · Practise, apply, review (14 minutes)",
+        "body": "Spend about 8 minutes on the six practice items, 4 minutes on your own note, then 2 minutes on the review. Try before opening a hint. Hints build towards the answer; full solutions are a separate action. Completion requires every precise answer to be correct and your note to be explicitly self-reviewed. A solution-assisted finish is recorded and does not prove independent mastery.",
+        "sourceIds": ["bbc"]
+      }
+    ],
+    "tasks": [
+      {
+        "id": "action",
+        "kind": "exact",
+        "stage": "practice",
+        "prompt": "Build the noun: act + ion. Write the whole word.",
+        "answers": ["action"],
+        "normalise": "case-space",
+        "hints": [
+          "Look at the related base word and the sentence meaning.",
+          "Keep the base spelling and check the ending letter by letter."
+        ],
+        "explanation": "Act keeps its t: act + ion = action. “Acttion” doubles a letter that is already present.",
+        "example": "action",
+        "rubric": [],
+        "languageChecklist": [],
+        "sourceIds": ["bbc"],
+        "feedback": "Check whether you doubled the final t. The base word already ends in t; add only ion."
+      },
+      {
+        "id": "connection",
+        "kind": "exact",
+        "stage": "practice",
+        "prompt": "Build the noun from connect: “Check the network ___.”",
+        "answers": ["connection"],
+        "normalise": "case-space",
+        "hints": [
+          "Look at the related base word and the sentence meaning.",
+          "Keep the base spelling and check the ending letter by letter."
+        ],
+        "explanation": "Connect + ion = connection. Keep both n letters from connect; “conection” loses one.",
+        "example": "connection",
+        "rubric": [],
+        "languageChecklist": [],
+        "sourceIds": ["bbc"],
+        "feedback": "Check both n letters in the base word. A link between devices needs the noun form of connect."
+      },
+      {
+        "id": "detection",
+        "kind": "exact",
+        "stage": "practice",
+        "prompt": "Build the noun from detect: “Early ___ helps us find problems.”",
+        "answers": ["detection"],
+        "normalise": "case-space",
+        "hints": [
+          "Look at the related base word and the sentence meaning.",
+          "Keep the base spelling and check the ending letter by letter."
+        ],
+        "explanation": "Detect + ion = detection. The t remains before ion; “detecion” loses it.",
+        "example": "detection",
+        "rubric": [],
+        "languageChecklist": [],
+        "sourceIds": ["bbc"],
+        "feedback": "Keep the complete base detect, including its last t. Add ion without inserting another t."
+      },
+      {
+        "id": "protection",
+        "kind": "exact",
+        "stage": "practice",
+        "prompt": "Build the noun from protect: “A helmet provides ___.”",
+        "answers": ["protection"],
+        "normalise": "case-space",
+        "hints": [
+          "Look at the related base word and the sentence meaning.",
+          "Keep the base spelling and check the ending letter by letter."
+        ],
+        "explanation": "Protect + ion = protection. A helmet reduces harm: the context means keeping someone safe.",
+        "example": "protection",
+        "rubric": [],
+        "languageChecklist": [],
+        "sourceIds": ["bbc"],
+        "feedback": "Keep the final t from protect. The sentence describes keeping someone safe, so use the noun form."
+      },
+      {
+        "id": "choose-meaning",
+        "kind": "exact",
+        "stage": "practice",
+        "prompt": "Choose connection or detection: “The alert led to the ___ of unusual traffic.”",
+        "answers": ["detection"],
+        "normalise": "case-space",
+        "hints": [
+          "Look at the related base word and the sentence meaning.",
+          "Keep the base spelling and check the ending letter by letter."
+        ],
+        "explanation": "Detection means finding something. Connection means a link, which does not fit this sentence.",
+        "example": "detection",
+        "rubric": [],
+        "languageChecklist": [],
+        "sourceIds": ["bbc"],
+        "feedback": "An alert helps you find something. Choose the noun for finding a problem rather than linking devices."
+      },
+      {
+        "id": "repair-spelling",
+        "kind": "exact",
+        "stage": "practice",
+        "prompt": "Correct the spelling of one word: “The conection failed.” Write only the corrected word.",
+        "answers": ["connection"],
+        "normalise": "case-space",
+        "hints": [
+          "Look at the related base word and the sentence meaning.",
+          "Keep the base spelling and check the ending letter by letter."
+        ],
+        "explanation": "Connection keeps connect intact and adds ion. Check con + nect + ion rather than guessing from sound.",
+        "example": "connection",
+        "rubric": [],
+        "languageChecklist": [],
+        "sourceIds": ["bbc"],
+        "feedback": "The sentence already has the right meaning. Check for a missing n and keep the complete base connect."
+      },
+      {
+        "id": "own-note",
+        "kind": "written",
+        "stage": "independent",
+        "prompt": "Write 2–3 sentences about a lost network connection and a sensible next action. Use connection and action; use detection or protection if it fits. Then compare your note with the rubric.",
+        "answers": [],
+        "normalise": "case-space",
+        "hints": [
+          "Look at the related base word and the sentence meaning.",
+          "Keep the base spelling and check the ending letter by letter."
+        ],
+        "explanation": "There are many valid notes. A written answer is not automatically marked correct. Review meaning and spelling yourself.",
+        "example": "The connection stopped during the update. My next action is to check the cable. I will keep firewall protection enabled.",
+        "rubric": [
+          "Describe a connection problem clearly.",
+          "Name a sensible next action.",
+          "Use connection and action with the intended meaning.",
+          "Check each target word against its base + ion."
+        ],
+        "languageChecklist": [
+          "Use complete sentences with capitals and full stops.",
+          "Keep the sequence clear; avoid claiming certainty without evidence."
+        ],
+        "sourceIds": ["bbc"],
+        "feedback": "Use the rubric to review meaning and spelling. Your writing is self-assessed, not automatically marked correct."
+      },
+      {
+        "id": "review-family",
+        "kind": "exact",
+        "stage": "review",
+        "prompt": "Without looking back, build the noun from protect.",
+        "answers": ["protection"],
+        "normalise": "case-space",
+        "hints": [
+          "Look at the related base word and the sentence meaning.",
+          "Keep the base spelling and check the ending letter by letter."
+        ],
+        "explanation": "Review the family: protect → protection. Revisit the worked example if you omitted t.",
+        "example": "protection",
+        "rubric": [],
+        "languageChecklist": [],
+        "sourceIds": ["bbc"],
+        "feedback": "Recall the whole base word protect. Keep its last letter before adding ion."
+      }
+    ],
+    "sources": [
+      {
+        "id": "bbc",
+        "title": "BBC Learning English: Suffixes -tian, -sion, -tion",
+        "url": "https://downloads.bbc.co.uk/learningenglish/intermediate/unit24/b2_u24_6min_vocab_tian_sion_tion.pdf",
+        "accessed": "2026-11-03",
+        "supports": "Suffixes can change word form and meaning; several spellings share an ending sound. Supports attention to word families rather than guessing spelling from sound alone.",
+        "attribution": "Reference only; no text, images or audio reproduced. Exercises and explanations are original Study Lab material."
+      },
+      {
+        "id": "cambridge",
+        "title": "Cambridge Dictionary: English pronunciation of connection",
+        "url": "https://dictionary.cambridge.org/pronunciation/english/connection",
+        "accessed": "2026-11-03",
+        "supports": "UK pronunciation model supports three syllables in connection and a single final syllable. British dictionary reference, not an Australian accent standard.",
+        "attribution": "Reference only; no dictionary text or audio reproduced. Original explanation based on the pronunciation model."
+      }
+    ]
+  },
+  {
+    "id": "cyber-network-investigation",
+    "version": 1,
+    "course": "Cybersecurity",
+    "title": "Investigate a suspicious HTTP check-in",
+    "summary": "A 60-minute evidence investigation using a tiny synthetic PCAP. Inspect hosts, requests and timing, then write a careful incident summary.",
+    "difficulty": "Medium",
+    "minutes": 60,
+    "order": 1,
+    "topics": ["Wireshark", "HTTP", "evidence", "incident communication"],
+    "objectives": [
+      "Identify hosts and isolate HTTP requests with display filters.",
+      "Follow a TCP conversation and cite frames and timestamps.",
+      "Separate observed traffic from an unproven compromise claim."
+    ],
+    "prerequisites": [
+      "Basic TCP/IP, Linux and security knowledge.",
+      "Desktop: install Wireshark from wireshark.org. No live capture or elevated capture permissions are needed. Mobile: use the bundled evidence summary for review."
+    ],
+    "evidence": "/evidence/check-in.pcap",
+    "teaching": [
+      {
+        "title": "1 · Scope and setup (10 minutes)",
+        "body": "This is a harmless synthetic simulation, generated locally with documentation-only IP addresses and a .test hostname. It is not malware or a real incident. Download check-in.pcap and open it with File → Open in Wireshark. Do not browse to the captured host. Start with Statistics → Conversations → IPv4 and note the endpoints. Set View → Time Display Format → UTC Date and Time of Day to compare the evidence times. The supplied browser evidence table supports mobile review; full Wireshark practice is a desktop activity.",
+        "sourceIds": ["filters"]
+      },
+      {
+        "title": "2 · Guided filter example (10 minutes)",
+        "body": "First apply tcp, then http.request in the display filter bar. Filters change the view, not the capture. A worked comparison: ip.addr == 192.0.2.10 selects packets to or from the workstation; ip.src == 192.0.2.10 selects its outgoing packets only. Record how many requests remain under http.request. Inspect the source, destination, Host and Request URI fields. Use the frame number as an evidence reference.",
+        "sourceIds": ["filters"]
+      },
+      {
+        "title": "3 · Examine a stream (10 minutes)",
+        "body": "Select frame 4, then Analyze → Follow → TCP Stream. Read the request and response together. Close the window; the stream display filter may remain, so clear it before counting all requests. Record the method, URI, Host and response body. A successful HTTP status only tells you about that exchange; it does not prove a machine is healthy or infected. The short body is plain text, not executable content.",
+        "sourceIds": ["streams"]
+      },
+      {
+        "title": "4 · Test a hypothesis (15 minutes)",
+        "body": "Compare the request timestamps. Repeated check-ins can resemble automated polling, but regular timing is not proof of malware: legitimate monitoring also polls. These three requests all share one TCP connection. Use frame.time_epoch or UTC time for precise timing; do not confuse the connection handshake with the first request. Independently find the third request frame and calculate the gap between consecutive requests. Keep observations separate from hypotheses.",
+        "sourceIds": ["filters", "streams"]
+      },
+      {
+        "title": "5 · Communicate and review (15 minutes)",
+        "body": "Write a short incident summary for a colleague: scope, host pair, request pattern, frame/time evidence, uncertainty and next evidence to collect. Suggest checking process ownership and endpoint logs; this PCAP alone cannot establish the process or malware identity. Complete the technical self-review and language checklist explicitly. Finish by reviewing what the capture can and cannot prove. Precise tasks must be correct; the written report is self-assessed, never AI graded.",
+        "sourceIds": ["filters", "streams"]
+      }
+    ],
+    "tasks": [
+      {
+        "id": "source-host",
+        "kind": "exact",
+        "stage": "practice",
+        "prompt": "With http.request applied, what IPv4 address sends the requests?",
+        "answers": ["192.0.2.10"],
+        "normalise": "case-space",
+        "hints": [
+          "Inspect the Source column on an HTTP request.",
+          "Frame 4 is the first request; distinguish source from destination."
+        ],
+        "explanation": "Frames 4, 6 and 8 originate at 192.0.2.10. The responder is 198.51.100.20.",
+        "example": "192.0.2.10",
+        "rubric": [],
+        "languageChecklist": [],
+        "sourceIds": ["filters"],
+        "feedback": "Read Source on a request frame, not on a response. Enter an IPv4 address rather than a hostname."
+      },
+      {
+        "id": "destination-host",
+        "kind": "exact",
+        "stage": "practice",
+        "prompt": "What IPv4 address receives the HTTP requests?",
+        "answers": ["198.51.100.20"],
+        "normalise": "case-space",
+        "hints": [
+          "Inspect the Destination column rather than the Host header.",
+          "Use frame 4 and read the IPv4 destination."
+        ],
+        "explanation": "The requests target 198.51.100.20 on TCP port 80. This documentation address is not a live threat indicator.",
+        "example": "198.51.100.20",
+        "rubric": [],
+        "languageChecklist": [],
+        "sourceIds": ["filters"],
+        "feedback": "Read Destination on an HTTP request. The Host header is a name, not the destination IPv4 address."
+      },
+      {
+        "id": "request-count",
+        "kind": "exact",
+        "stage": "practice",
+        "prompt": "How many frames match http.request after you clear any stream filter? Write a number.",
+        "answers": ["3"],
+        "normalise": "case-space",
+        "hints": [
+          "Apply only http.request to the whole file.",
+          "Count requests, not HTTP responses or handshake packets."
+        ],
+        "explanation": "Frames 4, 6 and 8 contain the three complete HTTP requests.",
+        "example": "3",
+        "rubric": [],
+        "languageChecklist": [],
+        "sourceIds": ["filters"],
+        "feedback": "Clear the stream filter, apply only http.request and count displayed request frames. Do not count responses."
+      },
+      {
+        "id": "request-path",
+        "kind": "exact",
+        "stage": "practice",
+        "prompt": "In frame 4, what is the full request URI, including its query string?",
+        "answers": ["/checkin?host=lab-01"],
+        "normalise": "trim",
+        "hints": [
+          "Expand Hypertext Transfer Protocol in frame 4.",
+          "The URI starts with /checkin and includes ?host=… ."
+        ],
+        "explanation": "Frame 4 is GET /checkin?host=lab-01. Host is a separate header, not part of this URI field.",
+        "example": "/checkin?host=lab-01",
+        "rubric": [],
+        "languageChecklist": [],
+        "sourceIds": ["streams"],
+        "feedback": "Copy the complete Request URI, including the query after ?. Preserve its case and omit the Host header."
+      },
+      {
+        "id": "third-frame",
+        "kind": "exact",
+        "stage": "independent",
+        "prompt": "Independently locate the third HTTP request. What is its frame number?",
+        "answers": ["8"],
+        "normalise": "case-space",
+        "hints": [
+          "Clear the stream filter and apply http.request.",
+          "Read the No. column for the last displayed request."
+        ],
+        "explanation": "Frame 8 is the third request; frame 9 is its response.",
+        "example": "8",
+        "rubric": [],
+        "languageChecklist": [],
+        "sourceIds": ["filters"],
+        "feedback": "Apply http.request and read the No. column for the third request. Use the original frame number, not its position in the filtered list."
+      },
+      {
+        "id": "interval",
+        "kind": "exact",
+        "stage": "independent",
+        "prompt": "What is the interval in seconds between consecutive HTTP requests? Write only the number.",
+        "answers": ["30"],
+        "normalise": "case-space",
+        "hints": [
+          "Compare request times, excluding the handshake.",
+          "Subtract frame 4 time from frame 6 time; then verify frames 6 and 8."
+        ],
+        "explanation": "Request UTC times are 00:00:01, 00:00:31 and 00:01:01 on 1 November 2026. Each gap is 30 seconds.",
+        "example": "30",
+        "rubric": [],
+        "languageChecklist": [],
+        "sourceIds": ["filters"],
+        "feedback": "Compare request timestamps, not response times or the handshake. Subtract each request time from the next and enter seconds only."
+      },
+      {
+        "id": "incident-note",
+        "kind": "written",
+        "stage": "independent",
+        "prompt": "Write a 100–150 word incident summary. Include the hosts, frames, request URI, timing, a cautious inference and the next evidence you would seek. Then self-review it.",
+        "answers": [],
+        "normalise": "case-space",
+        "hints": [
+          "Look at the related base word and the sentence meaning.",
+          "Keep the base spelling and check the ending letter by letter."
+        ],
+        "explanation": "A sound report separates captured facts from the automated-polling hypothesis. Neither HTTP 200 nor regular timing establishes compromise.",
+        "example": "In this synthetic capture, 192.0.2.10 sends three HTTP GET requests to 198.51.100.20:80. Frames 4, 6 and 8 request /checkin?host=lab-01 with Host: telemetry.lab.test. They occur at 00:00:01, 00:00:31 and 00:01:01 UTC on 1 November 2026, a 30-second interval. The server replies with status 200 and a short plain-text response. The repeated pattern is consistent with automated polling. It does not establish malware infection, process identity or data theft. The capture is a short simulation, so conclusions are limited to these exchanges. I would check endpoint process ownership and relevant logs before escalating the event or deciding whether to contain the host.",
+        "rubric": [
+          "Name source 192.0.2.10 and destination 198.51.100.20:80.",
+          "Cite frames 4, 6, 8 and /checkin?host=lab-01.",
+          "State the 30-second interval with UTC times or equivalent evidence.",
+          "Label automated polling as an inference; do not assert proven malware.",
+          "Propose endpoint process/log checks and mention the synthetic, limited scope."
+        ],
+        "languageChecklist": [
+          "Use 100–150 words as a writing target, not an automatic technical pass.",
+          "Use clear past or present tense consistently.",
+          "Spell connection, detection and protection carefully if you use them.",
+          "Use evidence phrases such as “the capture shows” and “is consistent with”."
+        ],
+        "sourceIds": ["filters", "streams"],
+        "feedback": "Use the technical rubric and language checklist. Non-empty writing does not establish a correct investigation."
+      },
+      {
+        "id": "review-limit",
+        "kind": "exact",
+        "stage": "review",
+        "prompt": "Can this PCAP alone prove malware infection? Answer yes or no.",
+        "answers": ["no"],
+        "normalise": "case-space",
+        "hints": [
+          "Separate the captured behaviour from its possible cause.",
+          "Legitimate software can also poll a server."
+        ],
+        "explanation": "No. Regular HTTP check-ins are observable; malicious intent and process identity require more evidence.",
+        "example": "no",
+        "rubric": [],
+        "languageChecklist": [],
+        "sourceIds": ["filters", "streams"],
+        "feedback": "Consider what process and intent information is absent. Ordinary monitoring can also send regular requests."
+      }
+    ],
+    "sources": [
+      {
+        "id": "filters",
+        "title": "Wireshark User’s Guide: Building Display Filter Expressions",
+        "url": "https://www.wireshark.org/docs/wsug_html_chunked/ChWorkBuildDisplayFilterSection.html",
+        "accessed": "2026-11-03",
+        "supports": "Display filters select visible packets; http.request selects HTTP requests and ip.addr compares source or destination addresses.",
+        "attribution": "Reference only; no text, images or audio reproduced. Exercises and explanations are original Study Lab material."
+      },
+      {
+        "id": "streams",
+        "title": "Wireshark User’s Guide: Following Protocol Streams",
+        "url": "https://www.wireshark.org/docs/wsug_html_chunked/ChAdvFollowStreamSection.html",
+        "accessed": "2026-11-03",
+        "supports": "Select a TCP packet and use Analyze → Follow → TCP Stream to view application data and isolate the conversation.",
+        "attribution": "Reference only; no text, images or audio reproduced. Exercises and explanations are original Study Lab material."
+      }
+    ]
+  }
+]
