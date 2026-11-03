@@ -1,5 +1,5 @@
 # Build the client and server with the pinned Node and pnpm versions
-FROM node:24.22.2-bookworm-slim AS build
+FROM node:26.13.0-bookworm-slim AS build
 WORKDIR /app
 
 # Skip local Git hook installation in the build image
@@ -13,7 +13,7 @@ COPY . .
 RUN pnpm build && pnpm prune --prod
 
 # Keep only runtime dependencies and built assets in the smaller final image
-FROM node:24.22.2-alpine AS runtime
+FROM node:26.13.0-alpine AS runtime
 ENV NODE_ENV=production HOST=0.0.0.0 PORT=3000 DATABASE_PATH=/app/data/study.sqlite
 WORKDIR /app
 COPY --from=build --chown=node:node /app/node_modules ./node_modules
