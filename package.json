@@ -1,0 +1,59 @@
+{
+  "name": "study-lab",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "24.22.2"
+  },
+  "packageManager": "pnpm@10.32.1",
+  "scripts": {
+    "dev": "tsx watch src/server/main.ts",
+    "build": "vite build && tsc -p tsconfig.server.json",
+    "start": "node dist/server/src/server/main.js",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.server.json --noEmit",
+    "content:validate": "tsx scripts/validate-content.ts && python3 scripts/verify-capture.py",
+    "test:backend": "vitest run tests/domain.test.ts tests/server.test.ts tests/commit.test.ts",
+    "test:frontend": "vitest run tests/ui.test.tsx",
+    "test:browser": "playwright test",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm content:validate && pnpm test:backend && pnpm test:frontend",
+    "hooks:install": "bash scripts/install-hooks.sh",
+    "docker:smoke": "bash scripts/docker-smoke.sh",
+    "security:audit": "pnpm audit --audit-level=high",
+    "security:secrets": "bash scripts/scan-secrets.sh",
+    "security:container": "bash scripts/scan-container.sh",
+    "dev:client": "vite --host 127.0.0.1"
+  },
+  "dependencies": {
+    "@fastify/static": "10.1.8",
+    "fastify": "5.12.8",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@eslint/js": "10.0.1",
+    "@playwright/test": "1.64.1",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.3",
+    "@testing-library/user-event": "14.6.8",
+    "@types/node": "^24.19.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.2.1",
+    "eslint": "10.14.0",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "jsdom": "30.1.3",
+    "lefthook": "2.2.2",
+    "prettier": "3.9.10",
+    "tsx": "4.23.15",
+    "typescript": "6.0.2",
+    "typescript-eslint": "8.72.1",
+    "vite": "8.3.5",
+    "vitest": "5.1.0"
+  }
+}
