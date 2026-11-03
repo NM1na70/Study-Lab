@@ -1,13 +1,18 @@
+# Run the app with localhost access unless the owner explicitly chooses a LAN bind
 services:
   app:
     build: .
     image: study-lab:local
     ports:
       - '${BIND_ADDRESS:-127.0.0.1}:${APP_PORT:-3000}:3000'
+
+    # Keep learner progress in a named volume that survives container recreation
     volumes:
       - study-data:/app/data
     init: true
     restart: unless-stopped
+
+    # Restrict writes to the data volume and small temporary filesystem while dropping extra privileges
     read_only: true
     tmpfs:
       - /tmp:size=16m,noexec,nosuid
@@ -15,5 +20,7 @@ services:
       - ALL
     security_opt:
       - no-new-privileges:true
+
+# Let Compose keep each project's learner volume separate from isolated smoke-test projects
 volumes:
   study-data:

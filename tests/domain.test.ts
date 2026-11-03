@@ -1,3 +1,4 @@
+// Import the real lesson pack, assessment rules, and validation contract for domain scenarios
 import { describe, it, expect } from 'vitest';
 import { lessons } from '../src/shared/lessons.js';
 import {
@@ -7,7 +8,11 @@ import {
   satisfied,
 } from '../src/shared/domain.js';
 import { mutationSchema } from '../src/shared/schema.js';
+
+// Use the real lesson pack so assessment tests exercise its declared answer-normalisation policies
 const lesson = lessons[0];
+
+// Exercise precise marking, assistance records, completion, and conflicts without a database
 describe('assessment and completion', () => {
   it('normalises case/outer space but rejects spelling errors and unassessed writing', () => {
     expect(mark(lesson.tasks[0], ' ACTION ')).toBe(true);
@@ -21,6 +26,8 @@ describe('assessment and completion', () => {
     const path = lessons[1].tasks.find((t) => t.id === 'request-path')!;
     expect(mark(path, '/CHECKIN?host=lab-01')).toBe(false);
   });
+
+  // Keep the original wrong attempt and recorded assistance after a later successful retry
   it('tracks attempts, mistakes, hints and explicit solution use', () => {
     let p = emptyProgress(lesson);
     for (const m of [
@@ -43,6 +50,8 @@ describe('assessment and completion', () => {
       correct: true,
     });
   });
+
+  // Complete the actual required activities and show that editing assessed work reopens completion
   it('requires all precise answers and self-review; editing reopens completion', () => {
     let p = emptyProgress(lesson);
     expect(() =>
@@ -73,6 +82,8 @@ describe('assessment and completion', () => {
     expect(p.completedAt).toBeNull();
     expect(p.tasks.action.correct).toBe(false);
   });
+
+  // Reject invalid task references and stale work instead of changing the learner snapshot
   it('rejects unknown tasks, steps, stale revisions, changed content and malformed input', () => {
     const p = emptyProgress(lesson);
     expect(() =>

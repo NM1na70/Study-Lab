@@ -1,5 +1,6 @@
 version: 2
 updates:
+  # Group weekly application and development package updates into manageable PRs
   - package-ecosystem: npm
     directory: /
     schedule:
@@ -10,6 +11,8 @@ updates:
         dependency-type: production
       development:
         dependency-type: development
+
+  # Review pinned GitHub Actions updates separately from application dependencies
   - package-ecosystem: github-actions
     directory: /
     schedule:
@@ -17,6 +20,8 @@ updates:
     groups:
       actions:
         patterns: ['*']
+
+  # Keep the Docker build and runtime base images on a reviewed weekly update schedule
   - package-ecosystem: docker
     directory: /
     schedule:

@@ -1,6 +1,9 @@
+// Import the isolated browser fixture, accessibility checks, and real lesson content
 import { test, expect } from './fixtures';
 import AxeBuilder from '@axe-core/playwright';
 import { lessons } from '../../src/shared/lessons.js';
+
+// Exercise both real lessons while blocking external services and checking saved work across browser contexts
 test('external-network-free study, resume, mistakes and complete both lessons', async ({
   page,
   context,
@@ -16,6 +19,8 @@ test('external-network-free study, resume, mistakes and complete both lessons', 
     }
     return route.continue();
   });
+
+  // Check keyboard access and dashboard accessibility before starting the lesson flows
   await page.goto('/');
   await page.keyboard.press('Tab');
   await page.keyboard.press('Enter');
@@ -28,6 +33,8 @@ test('external-network-free study, resume, mistakes and complete both lessons', 
     path: 'test-results/dashboard-' + test.info().project.name + '.png',
     fullPage: true,
   });
+
+  // Make and correct a mistake, resume saved work, and satisfy every required activity in each course
   for (const lesson of lessons) {
     await page.goto(`/#/lesson/${lesson.id}`);
     await expect(
@@ -84,6 +91,8 @@ test('external-network-free study, resume, mistakes and complete both lessons', 
     ).toBe(true);
     expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   }
+
+  // Retry a recorded mistake and confirm completion remains visible in a fresh browser context
   await page.getByRole('link', { name: 'Mistake review' }).click();
   await expect(
     page.getByRole('heading', { name: 'Mistake review', exact: true }),
@@ -102,6 +111,7 @@ test('external-network-free study, resume, mistakes and complete both lessons', 
   await reopened.close();
 });
 
+// Preserve the newest draft during navigation and keep text available after an API save failure
 test('quick edits flush on navigation and save errors retain text for retry', async ({
   page,
 }) => {
@@ -121,6 +131,8 @@ test('quick edits flush on navigation and save errors retain text for retry', as
   ).toBeVisible();
   await page.goto('/#/lesson/' + lessons[0].id);
   await expect(page.getByLabel('Your answer')).toHaveValue('connection');
+
+  // Fail only progress writes, then restore the route to test an explicit recovery
   await page.route('**/api/progress/**', (r) =>
     r.fulfill({
       status: 503,

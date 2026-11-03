@@ -1,3 +1,4 @@
+// Import the HTTP server, static serving, lesson validation, and SQLite storage
 import Fastify from 'fastify';
 import { isIP } from 'node:net';
 import serveStatic from '@fastify/static';
@@ -7,15 +8,20 @@ import { lessons } from '../shared/lessons.js';
 import { mutationSchema } from '../shared/schema.js';
 import { DomainError } from '../shared/domain.js';
 import { Store } from './store.js';
+
+// Create the local API and optionally serve the built UI from the same origin
 export async function createApp(
   path = process.env.DATABASE_PATH ?? 'data/study.sqlite',
   staticRoot = resolve('dist/client'),
 ) {
+  // Limit incoming bodies and close the SQLite connection when the server shuts down
   const app = Fastify({ logger: false, bodyLimit: 32_768 });
   const store = new Store(path);
   app.addHook('onClose', async () => {
     store.close();
   });
+
+  // Apply browser security headers and restrict requests to localhost or an IP address
   app.addHook('onRequest', async (request, reply) => {
     reply
       .header('X-Content-Type-Options', 'nosniff')
@@ -25,6 +31,8 @@ export async function createApp(
       'Content-Security-Policy',
       "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'",
     );
+
+    // Reject arbitrary domain hosts to reduce DNS rebinding access to this unauthenticated app
     const host = new URL(`http://${request.headers.host}`).hostname.replace(
       /^\[|\]$/g,
       '',
@@ -33,9 +41,12 @@ export async function createApp(
       return reply
         .code(403)
         .send({ error: 'Use localhost or the host IP address.' });
+
+    // Prevent browsers from caching responses that include learner progress
     if (request.url.startsWith('/api/'))
       reply.header('Cache-Control', 'no-store');
-    // Local unauthenticated learner: reject cross-origin writes (including DNS rebinding origins).
+
+    // Reject browser writes whose origin does not match this local instance
     if (!['GET', 'HEAD', 'OPTIONS'].includes(request.method)) {
       const origin = request.headers.origin;
       if (
@@ -49,6 +60,8 @@ export async function createApp(
           .send({ error: 'Cross-origin writes are not allowed.' });
     }
   });
+
+  // Return useful client errors without exposing internal failure details
   app.setErrorHandler((error, _request, reply) => {
     const status =
       error instanceof DomainError
@@ -66,6 +79,8 @@ export async function createApp(
           : 'Could not save or load progress. Try again.',
     });
   });
+
+  // Check SQLite readiness and load the bundled lessons with the one shared learner profile
   app.get('/api/health', () => {
     store.db.prepare('SELECT 1').get();
     return { status: 'ok' };
@@ -74,6 +89,8 @@ export async function createApp(
     lessons,
     progress: lessons.map((l) => store.get(l)),
   }));
+
+  // Validate mutation input before applying lesson rules inside the storage transaction
   app.post<{ Params: { id: string } }>(
     '/api/progress/:id',
     async (request, reply) => {
@@ -85,6 +102,8 @@ export async function createApp(
       return store.update(lesson, parsed.data);
     },
   );
+
+  // Serve only built local assets and keep missing API routes distinct from missing pages
   if (existsSync(staticRoot)) {
     await app.register(serveStatic, { root: staticRoot });
     app.setNotFoundHandler((request, reply) =>

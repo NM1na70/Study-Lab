@@ -1,3 +1,4 @@
+# Keep Git metadata, local state, credentials, and verification output out of the build context
 .git
 node_modules
 dist

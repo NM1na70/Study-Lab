@@ -1,14 +1,23 @@
+// Import strict assertions for checking the isolated smoke server through HTTP
 import assert from 'node:assert/strict';
+
+// Use the isolated smoke server URL and select whether to populate or verify its learner state
 const [base, mode] = process.argv.slice(2);
+
+// Fail on HTTP errors before reading the server's lessons and persisted progress
 async function snapshot() {
   const r = await fetch(base + '/api/lessons');
   assert(r.ok);
   return r.json();
 }
+
+// Complete every activity through the real API and record position and assistance for persistence checks
 if (mode === 'write') {
   const { lessons, progress } = await snapshot();
   for (const lesson of lessons) {
     let state = progress.find((p) => p.lessonId === lesson.id);
+
+    // Carry each confirmed revision into the next write so the smoke flow follows normal concurrency rules
     async function update(mutation) {
       const r = await fetch(base + '/api/progress/' + lesson.id, {
         method: 'POST',
@@ -31,6 +40,7 @@ if (mode === 'write') {
     await update({ action: 'complete' });
   }
 } else if (mode === 'read') {
+  // Recheck answers, completion, position, content versions, and assistance after recreation or restore
   const { lessons, progress } = await snapshot();
   for (const lesson of lessons) {
     const p = progress.find((p) => p.lessonId === lesson.id);

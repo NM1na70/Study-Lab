@@ -1,4 +1,7 @@
+// Import the shared configuration helper for the existing browser scenarios
 import { defineConfig } from '@playwright/test';
+
+// Keep browser scenarios sequential and retain traces only when a test fails
 export default defineConfig({
   testDir: 'tests/browser',
   fullyParallel: false,
@@ -8,6 +11,8 @@ export default defineConfig({
     actionTimeout: 15000,
     trace: 'retain-on-failure',
   },
+
+  // Exercise the same study flows at desktop and phone-sized viewports
   projects: [
     { name: 'desktop', use: { viewport: { width: 1280, height: 900 } } },
     {

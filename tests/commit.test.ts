@@ -1,6 +1,8 @@
 import { it, expect } from 'vitest';
 // @ts-expect-error This executable hook intentionally uses plain JS for Git/Node.
 import { validSubject } from '../scripts/check-commit-msg.mjs';
+
+// Cover accepted breaking-change subjects and reject malformed, multiline, or oversized subjects
 it('validates the complete Conventional Commit subject including breaking changes', () => {
   for (const s of [
     'feat: x',

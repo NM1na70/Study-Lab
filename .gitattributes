@@ -1,3 +1,4 @@
+# Use LF endings for project text and leave evidence or image bytes unchanged
 * text=auto eol=lf
 *.sh text eol=lf
 *.pcap binary

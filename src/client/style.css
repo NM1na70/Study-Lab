@@ -1,3 +1,4 @@
+/* Set the shared local font, colours, and base reading size */
 :root {
   font-family:
     system-ui,
@@ -17,6 +18,8 @@
 body {
   margin: 0;
 }
+
+/* Keep links recognisable with consistent colours and underline spacing */
 a {
   color: #155f50;
   text-underline-offset: 4px;
@@ -24,6 +27,8 @@ a {
 a:hover {
   color: #0b4036;
 }
+
+/* Share primary actions, secondary actions, and disabled button treatment */
 button,
 .button {
   display: inline-block;
@@ -60,6 +65,8 @@ button.next {
   display: block;
   margin-top: 2rem;
 }
+
+/* Keep answer fields, selectors, and review checkboxes readable and usable */
 input,
 textarea,
 select {
@@ -85,6 +92,8 @@ input[type='checkbox'] {
   height: 1.2rem;
   flex-shrink: 0;
 }
+
+/* Set the heading hierarchy and wrap long study text within its container */
 h1,
 h2,
 h3,
@@ -109,6 +118,8 @@ h3 {
 p {
   margin: 0.8rem 0 1.3rem;
 }
+
+/* Arrange the brand, main navigation, and local-workspace indicator */
 header {
   max-width: 1320px;
   margin: auto;
@@ -153,6 +164,8 @@ nav a[aria-current='page'] {
   color: #4c6658;
   font-size: 0.8rem;
 }
+
+/* Constrain the page width and present the dashboard introduction and real progress totals */
 main {
   max-width: 1200px;
   padding: 3.6rem 3rem 5rem;
@@ -204,6 +217,8 @@ main {
   border-radius: 4px;
   padding: 0.4rem 0.7rem;
 }
+
+/* Lay out the available lessons and their course metadata */
 .course-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -253,6 +268,8 @@ main {
   border: 1px solid #e2e6dc;
   border-radius: 4px;
 }
+
+/* Use consistent progress bars and supporting text across course cards */
 progress {
   accent-color: #33725d;
   width: 100%;
@@ -267,6 +284,8 @@ progress {
   color: #596d63;
   font-size: 0.85rem;
 }
+
+/* Separate the shared-profile explanation and page footer from the study content */
 .local-note {
   margin-top: 2rem;
   background: #eaf0e5;
@@ -288,6 +307,8 @@ footer {
   display: flex;
   justify-content: space-between;
 }
+
+/* Keep lesson identity, save feedback, and activity progress visible together */
 .lesson-heading {
   display: flex;
   gap: 2rem;
@@ -319,6 +340,8 @@ footer {
 .progress-line span {
   font-size: 0.8rem;
 }
+
+/* Arrange the lesson route beside teaching content and highlight the current activity */
 .study-layout {
   display: grid;
   grid-template-columns: 220px minmax(0, 1fr);
@@ -348,6 +371,8 @@ footer {
   width: 100%;
   margin-top: 0.6rem;
 }
+
+/* Separate teaching blocks and task controls without changing their reading order */
 .teaching {
   padding-bottom: 1rem;
   border-bottom: 1px solid #dde4d9;
@@ -369,6 +394,8 @@ footer {
   gap: 0.5rem;
   margin-top: 1.5rem;
 }
+
+/* Distinguish hints, revealed solutions, assessment feedback, and writing self-review */
 .hint,
 .solution,
 .feedback {
@@ -402,6 +429,8 @@ footer {
   padding-left: 1.3rem;
   font-size: 0.9rem;
 }
+
+/* Separate completion controls and expandable evidence or source details */
 .finish {
   margin: 2rem 0;
   padding: 1rem 0;
@@ -418,6 +447,8 @@ summary {
   cursor: pointer;
   font-weight: 600;
 }
+
+/* Keep evidence tables scrollable and long payloads readable within the page */
 .table-scroll {
   overflow: auto;
 }
@@ -443,6 +474,8 @@ pre {
   word-break: break-all;
   font-size: 0.75rem;
 }
+
+/* Explain an empty mistake list and expose keyboard navigation with visible focus */
 .empty {
   padding: 3rem;
   background: #fff;
@@ -464,6 +497,8 @@ pre {
   outline: 3px solid #b16e24;
   outline-offset: 4px;
 }
+
+/* Stack courses and study content on small screens while keeping primary controls accessible */
 @media (max-width: 720px) {
   header {
     padding: 1.2rem;
@@ -553,6 +588,7 @@ pre {
   }
 }
 
+/* Allow activity controls to be disabled together without adding a visible fieldset border */
 .activity-fieldset {
   border: 0;
   margin: 0;

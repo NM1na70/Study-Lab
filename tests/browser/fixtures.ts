@@ -1,9 +1,11 @@
+// Import browser fixtures and server or filesystem helpers for isolated learner profiles
 import { test as base, expect } from '@playwright/test';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createApp } from '../../src/server/app.js';
-// Each test has a real HTTP server and its own SQLite profile; browser contexts share it.
+
+// Give each test a real HTTP server and isolated SQLite profile shared only by its browser contexts
 export const test = base.extend({
   baseURL: async ({ browserName }, provide) => {
     const directory = mkdtempSync(

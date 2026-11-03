@@ -1,6 +1,9 @@
+// Import the JavaScript, TypeScript, and React hook lint presets
 import js from '@eslint/js';
 import ts from 'typescript-eslint';
 import hooks from 'eslint-plugin-react-hooks';
+
+// Apply JavaScript, TypeScript, and React hook checks while excluding generated output
 export default ts.config(
   {
     ignores: [
@@ -19,6 +22,7 @@ export default ts.config(
     rules: { ...hooks.configs.recommended.rules },
   },
   {
+    // Declare the Node globals used by executable first-party JavaScript helpers
     files: ['**/*.{js,mjs}'],
     languageOptions: {
       globals: { process: 'readonly', console: 'readonly', fetch: 'readonly' },
