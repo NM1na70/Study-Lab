@@ -10,7 +10,8 @@ cleanup() { rm -f "$backup_file"; "${compose[@]}" down --volumes --remove-orphan
 trap cleanup EXIT
 "${compose[@]}" up --build -d --wait --wait-timeout 120
 base="http://127.0.0.1:$APP_PORT"
-curl --fail --silent "$base/" | rg -q 'Study Lab'
+# Consume the full response so pipefail preserves curl failures as well as missing text.
+curl --fail --silent "$base/" | grep -F 'Study Lab' > /dev/null
 node scripts/smoke-progress.mjs "$base" write
 "${compose[@]}" up -d --force-recreate --wait --wait-timeout 120
 node scripts/smoke-progress.mjs "$base" read
