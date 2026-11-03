@@ -1,9 +1,12 @@
+// Import page hooks, lesson contracts, progress rules, and shared study components
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Lesson, Progress } from '../shared/schema.js';
 import { satisfied } from '../shared/domain.js';
 import { load, type Snapshot } from './api';
 import { useProgress } from './use-progress';
 import { TaskCard } from './TaskCard';
+
+// Describe the bundled decoded evidence used by the browser review table
 interface Evidence {
   sha256: string;
   frames: {
@@ -14,9 +17,13 @@ interface Evidence {
     payload: string;
   }[];
 }
+
+// Load and display the local evidence summary behind an explicit spoiler disclosure
 function EvidenceSummary() {
   const [data, setData] = useState<Evidence>();
   const [error, setError] = useState('');
+
+  // Ignore late fetch results after the evidence panel has unmounted
   useEffect(() => {
     let active = true;
     fetch('/evidence/summary.json')
@@ -34,6 +41,8 @@ function EvidenceSummary() {
       active = false;
     };
   }, []);
+
+  // Show loading or error feedback before rendering the decoded packet table
   return (
     <details>
       <summary>
@@ -82,6 +91,8 @@ function EvidenceSummary() {
     </details>
   );
 }
+
+// Coordinate lesson navigation, saved progress, and completion around the current activity
 function LessonView({
   lesson,
   progress,
@@ -91,6 +102,7 @@ function LessonView({
   progress: Progress;
   onChange: (p: Progress) => void;
 }) {
+  // Share one saving queue and retain the current card's save callback during navigation
   const { enqueue, status, error, retry } = useProgress(progress, onChange);
   const [finishing, setFinishing] = useState(false);
   const [navigating, setNavigating] = useState(false);
@@ -98,8 +110,12 @@ function LessonView({
   const registerFlush = useCallback((f: (() => Promise<boolean>) | null) => {
     flush.current = f;
   }, []);
+
+  // Reserve step zero for teaching and map numbered activity steps onto the task list
   const step = progress.step;
   const task = lesson.tasks[step - 1];
+
+  // Save the current draft before changing the activity and release the busy state on every exit
   async function changeStep(value: number) {
     setNavigating(true);
     try {
@@ -110,6 +126,8 @@ function LessonView({
       setNavigating(false);
     }
   }
+
+  // Save pending edits before asking the server to enforce the completion requirements
   async function complete() {
     setFinishing(true);
     try {
@@ -119,6 +137,8 @@ function LessonView({
       setFinishing(false);
     }
   }
+
+  // Display confirmed progress, the lesson route, and either teaching or the current task
   return (
     <>
       <div className="lesson-heading">
@@ -160,6 +180,8 @@ function LessonView({
           ? 'Solutions used — assisted completion.'
           : ''}
       </p>
+
+      {/* Keep all activities accessible while showing the current position and saved work */}
       <div className="study-layout">
         <aside className="study-map">
           <h2>Lesson route</h2>
@@ -242,6 +264,8 @@ function LessonView({
             </fieldset>
           ) : null}
           {lesson.evidence && <EvidenceSummary />}
+
+          {/* Keep completion requirements and source attribution available from every activity */}
           <section className="finish">
             <h2>Finish this lesson</h2>
             <p>
@@ -283,8 +307,12 @@ function LessonView({
     </>
   );
 }
+
+// Derive course progress and the next study destination from persisted learner state
 function Dashboard({ data }: { data: Snapshot }) {
   const completed = data.progress.filter((p) => p.completedAt).length;
+
+  // Resume the most recently updated unfinished lesson, then fall back to the first unfinished one
   const recent = [...data.progress]
     .filter((p) => p.updatedAt && !p.completedAt)
     .sort((a, b) => (b.updatedAt ?? '').localeCompare(a.updatedAt ?? ''))[0];
@@ -293,6 +321,8 @@ function Dashboard({ data }: { data: Snapshot }) {
     data.lessons.find(
       (l) => !data.progress.find((p) => p.lessonId === l.id)?.completedAt,
     )?.id;
+
+  // Render the two available lessons with actual counts and the shared-profile explanation
   return (
     <>
       <span className="eyebrow">Your local learning workspace</span>
@@ -379,6 +409,8 @@ function Dashboard({ data }: { data: Snapshot }) {
     </>
   );
 }
+
+// List previously missed precise activities and save before switching the selected retry
 function Review({
   data,
   onChange,
@@ -386,6 +418,7 @@ function Review({
   data: Snapshot;
   onChange: (p: Progress) => void;
 }) {
+  // Keep one active task card so review activities do not compete through separate save queues
   const [selected, setSelected] = useState(0);
   const flush = useRef<(() => Promise<boolean>) | null>(null);
   const registerFlush = useCallback(
@@ -397,6 +430,8 @@ function Review({
   async function changeReview(index: number) {
     if (!flush.current || (await flush.current())) setSelected(index);
   }
+
+  // Retain corrected items in review whenever their saved mistake count is greater than zero
   const mistakes = data.lessons.flatMap((l) =>
     l.tasks
       .filter(
@@ -407,6 +442,8 @@ function Review({
       )
       .map((t) => ({ lesson: l, task: t })),
   );
+
+  // Show the empty state or the selected retry with its lesson's latest progress
   return (
     <>
       <span className="eyebrow">Learn from your attempts</span>
@@ -448,6 +485,8 @@ function Review({
     </>
   );
 }
+
+// Reuse the normal assessment controls and display the last recorded incorrect answer
 function ReviewItem({
   lesson,
   taskId,
@@ -492,10 +531,15 @@ function ReviewItem({
     </article>
   );
 }
+
+// Load the local learner snapshot and select the dashboard, lesson, or mistake-review page
 export function App() {
+  // Keep loading feedback and the hash route independent from saved lesson data
   const [data, setData] = useState<Snapshot>();
   const [error, setError] = useState('');
   const [route, setRoute] = useState(location.hash);
+
+  // Load once, follow browser hash navigation, and ignore late results after the app unmounts
   useEffect(() => {
     let active = true;
     load()
@@ -512,6 +556,8 @@ export function App() {
       window.removeEventListener('hashchange', navigate);
     };
   }, []);
+
+  // Replace only the lesson whose confirmed progress changed
   const update = useCallback(
     (progress: Progress) =>
       setData((d) =>
@@ -526,6 +572,8 @@ export function App() {
       ),
     [],
   );
+
+  // Resolve lesson routes and render navigation, accessible content, and loading or error states
   const lesson = data?.lessons.find((l) => route === `#/lesson/${l.id}`);
   return (
     <>

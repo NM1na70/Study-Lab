@@ -1,4 +1,6 @@
 import { z } from 'zod';
+
+// Require enough source metadata to explain provenance and permitted reuse
 export const sourceSchema = z.object({
   id: z.string().min(1),
   title: z.string().min(1),
@@ -7,6 +9,8 @@ export const sourceSchema = z.object({
   supports: z.string().min(20),
   attribution: z.string().min(10),
 });
+
+// Validate activity content, feedback, progressive hints, and marking or self-review support
 export const taskSchema = z
   .object({
     id: z.string().regex(/^[a-z][a-z0-9-]+$/),
@@ -24,11 +28,14 @@ export const taskSchema = z
     sourceIds: z.array(z.string()).min(1),
   })
   .superRefine((t, c) => {
+    // Precise activities need answer keys, while writing needs an explicit self-review rubric
     if (t.kind === 'exact' && !t.answers.length)
       c.addIssue({ code: 'custom', message: 'Exact task needs answers' });
     if (t.kind === 'written' && !t.rubric.length)
       c.addIssue({ code: 'custom', message: 'Written task needs a rubric' });
   });
+
+// Define the versioned lesson pack separately from its rendering and saved progress
 export const lessonSchema = z.object({
   id: z.string().regex(/^[a-z][a-z0-9-]+$/),
   version: z.number().int().positive(),
@@ -54,6 +61,8 @@ export const lessonSchema = z.object({
   sources: z.array(sourceSchema).min(1),
   evidence: z.string().optional(),
 });
+
+// Share parsed content types and the persisted attempt and lesson progress contracts
 export type Lesson = z.infer<typeof lessonSchema>;
 export type Task = z.infer<typeof taskSchema>;
 export interface TaskProgress {
@@ -75,6 +84,8 @@ export interface Progress {
   completedAt: string | null;
   updatedAt: string | null;
 }
+
+// Bound incoming answers and reject unknown fields before domain rules inspect the action
 export const mutationSchema = z
   .object({
     revision: z.number().int().nonnegative(),

@@ -70,3 +70,33 @@ git push -u origin codex/your-change
 Push/open/merge commands are owner actions, not performed by the initial build. CI runs on every branch push, PRs into main and manual dispatch. Squash merge after passing checks; the PR title becomes the conventional commit subject. For a solo maintainer, configure main's ruleset to require PRs and checks but zero other-person approvals. Add the actual check names after Actions has run: Lint & Typecheck, Backend Unit Tests, Frontend Tests, Integration / Browser Tests, Build & Docker Smoke Test, Dependency Security Scan, Secret Detection, Container Security Scan, Code Analysis, and Conventional PR Title for PRs. Consider avoiding duplicate required contexts from push/PR events when selecting checks. No remote protection has been configured here.
 
 PR title is passed through an environment variable, never interpolated into shell code. Workflows use pull_request, not pull_request_target. Hosted CI remains unverified until pushed and completed. See security.md for scanner failure thresholds.
+
+## Code comments during development
+
+Check the root AGENTS.md “Code comment style” section whenever creating or changing code. Explain the purpose of each main logical block in simple English, using one comment for a related group. Start with a capital letter, use normal sentence case, preserve correct names/acronyms (including React, TypeScript, GitHub, API, SQLite, AFP and CommBank), and omit the final full stop. Put one blank line before a new main block's comment except at file start or where syntax requires otherwise, keep it directly above the code, and keep consecutive lines for the same explanation together.
+
+Use TaskCard.tsx as the grouping reference. For example, a single comment can cover all related imports:
+
+```tsx
+// Import React hooks, task types, and default task progress
+```
+
+Likewise, group related state and refs under one purpose comment:
+
+```tsx
+// Track the answer, unsaved edits, review confirmation, pending actions, and autosave references
+```
+
+A short internal comment should explain a non-obvious safeguard when the main block description is insufficient:
+
+```tsx
+// Clear unsaved status only if this card is mounted and the saved answer is still current
+```
+
+Describe what the current code actually does and why a safeguard exists. Avoid vague headings and per-line narration. Improve existing useful comments instead of duplicating them, and update nearby comments whenever behaviour changes. Inside JSX use `{/* Explanatory comment */}`; in CSS use block comments, and use the native comment syntax for scripts and operational configuration. Do not force a comment into every tiny file or obvious statement.
+
+Preserve shebangs, licence notices, directives, tool annotations, URLs and other machine-sensitive text. Do not comment strict JSON, lockfiles, generated files, dependencies, build output, reports or binary/evidence data. Existing Python docstrings are strings, so keep them intact during a comments-only change. No comment-count checker or new tool is required.
+
+For non-commentable configuration, package.json holds scripts, dependency versions and Node/pnpm requirements; tsconfig.json and tsconfig.server.json control strict client/test and server compilation; .prettierrc.json controls formatting; .node-version supplies the exact Node release; and pnpm-lock.yaml freezes dependency resolution. Explain important choices here rather than inserting invalid comments into those files.
+
+For a comments-only review, preserve strings, identifiers, exports, execution order, JSX text/whitespace, CSS values and shell continuations. Review the full diff for executable changes, run pnpm check and the production build, and validate changed shell/configuration files with existing checks. Use the isolated Docker smoke when operational comments warrant verification. Record actual results and any unavailable checks in the handover; leave unrelated functional findings for a separate change.

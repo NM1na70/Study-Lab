@@ -1,15 +1,22 @@
 name: Study Lab CI
+
+# Check every pushed branch, PR targeting main, and manually requested run
 on:
   push:
   pull_request:
     branches: [main]
   workflow_dispatch:
+
+# Start with read-only repository access and add permissions only within the job that requests them
 permissions:
   contents: read
+
+# Cancel outdated runs of this workflow for the same Git reference
 concurrency:
   group: study-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
+  # Check formatting, lint, types, and lesson validity independently of the test jobs
   quality:
     name: Lint & Typecheck
     runs-on: ubuntu-24.04
@@ -25,6 +32,8 @@ jobs:
       - run: npm install --global pnpm@10.32.1
       - run: pnpm install --frozen-lockfile
       - run: pnpm format:check && pnpm lint && pnpm typecheck && pnpm content:validate
+
+  # Exercise marking, completion, validation, SQLite persistence, and commit-subject rules
   backend:
     name: Backend Unit Tests
     runs-on: ubuntu-24.04
@@ -40,6 +49,8 @@ jobs:
       - run: npm install --global pnpm@10.32.1
       - run: pnpm install --frozen-lockfile
       - run: pnpm test:backend
+
+  # Exercise task feedback, explicit self-review, and saving or error states in the UI
   frontend:
     name: Frontend Tests
     runs-on: ubuntu-24.04
@@ -55,6 +66,8 @@ jobs:
       - run: npm install --global pnpm@10.32.1
       - run: pnpm install --frozen-lockfile
       - run: pnpm test:frontend
+
+  # Run both courses and save-recovery scenarios at desktop and mobile viewport sizes
   browser:
     name: Integration / Browser Tests
     runs-on: ubuntu-24.04
@@ -79,6 +92,8 @@ jobs:
           path: playwright-report/
           if-no-files-found: warn
           retention-days: 7
+
+  # Build the real image and verify persistence and backup restoration with isolated Compose resources
   docker:
     name: Build & Docker Smoke Test
     runs-on: ubuntu-24.04
@@ -94,6 +109,8 @@ jobs:
       - run: npm install --global pnpm@10.32.1
       - run: pnpm install --frozen-lockfile
       - run: pnpm build && pnpm docker:smoke
+
+  # Fail on HIGH or CRITICAL package advisories and propagate registry or scanner failures
   audit:
     name: Dependency Security Scan
     runs-on: ubuntu-24.04
@@ -109,6 +126,8 @@ jobs:
       - run: npm install --global pnpm@10.32.1
       - run: pnpm install --frozen-lockfile
       - run: pnpm security:audit
+
+  # Scan source for secrets and retain redacted results even when detection fails the job
   secrets:
     name: Secret Detection
     runs-on: ubuntu-24.04
@@ -131,6 +150,8 @@ jobs:
           path: reports/*.json
           if-no-files-found: warn
           retention-days: 7
+
+  # Scan the built runtime image and retain its vulnerability report for review
   container:
     name: Container Security Scan
     runs-on: ubuntu-24.04
@@ -154,6 +175,8 @@ jobs:
           path: reports/*.json
           if-no-files-found: warn
           retention-days: 7
+
+  # Analyse TypeScript and JavaScript and enforce warning or error findings from the SARIF output
   codeql:
     name: Code Analysis
     runs-on: ubuntu-24.04
@@ -182,6 +205,8 @@ jobs:
           name: codeql-reports
           path: reports/codeql
           retention-days: 7
+
+  # Validate the squash-merge subject without interpolating untrusted PR text into shell code
   pr-title:
     name: Conventional PR Title
     if: github.event_name == 'pull_request'

@@ -1,3 +1,4 @@
+// Import SQLite verification and filesystem operations for the stopped-app restore command
 import { DatabaseSync } from 'node:sqlite';
 import {
   copyFileSync,
@@ -6,10 +7,16 @@ import {
   rmSync,
   writeFileSync,
 } from 'node:fs';
+
+// Choose the existing learner database and a temporary file for the incoming backup
 const target = process.env.DATABASE_PATH ?? 'data/study.sqlite';
 const input = '/tmp/study-restore.sqlite';
-// CLI only. The caller MUST stop the app first; no website route can invoke this.
+
+// Read backup bytes from standard input after the caller has stopped the app
+// This is a CLI operation with no website route
 writeFileSync(input, readFileSync(0));
+
+// Verify database integrity, schema version, and the progress table before replacing any work
 const db = new DatabaseSync(input, { readOnly: true });
 try {
   if (db.prepare('PRAGMA integrity_check').get().integrity_check !== 'ok')
@@ -20,7 +27,8 @@ try {
 } finally {
   db.close();
 }
-// Stage on the destination filesystem before replacing current progress.
+
+// Stage on the destination filesystem and remove stale SQLite sidecars before the final rename
 copyFileSync(input, target + '.restore');
 for (const suffix of ['-wal', '-shm']) rmSync(target + suffix, { force: true });
 renameSync(target + '.restore', target);

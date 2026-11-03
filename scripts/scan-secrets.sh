@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 mkdir -p reports
-# Native scanner in CI; Docker fallback for WSL. Full working tree, including new files.
+
+# Scan the working tree, including new files, using native Gitleaks or the versioned Docker fallback
+# Redact findings in the report without suppressing the scanner's failure status
 if command -v gitleaks >/dev/null; then
   gitleaks dir . --redact --report-format json --report-path reports/gitleaks.json
 else

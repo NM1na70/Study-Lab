@@ -1,7 +1,10 @@
+# Run repository quality checks before accepting a local commit
 pre-commit:
   commands:
     quality:
       run: pnpm check
+
+# Enforce the same complete Conventional Commit subject checked for PR titles in CI
 commit-msg:
   commands:
     conventional:

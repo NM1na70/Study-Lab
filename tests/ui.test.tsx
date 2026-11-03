@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+// Import the UI test tools, study components, and real lesson defaults
 import { afterEach, expect, it, vi } from 'vitest';
 import {
   cleanup,
@@ -13,11 +14,15 @@ import { TaskCard } from '../src/client/TaskCard';
 import { App } from '../src/client/App';
 import { lessons } from '../src/shared/lessons.js';
 import { emptyProgress, emptyTask } from '../src/shared/domain.js';
+
+// Reset the DOM, mocked globals, and route so one UI scenario cannot affect the next
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
   location.hash = '';
 });
+
+// Check draft-before-action ordering and reveal feedback only through the matching saved state
 it('answers, saves before checking and provides progressive hints and explicit solutions', async () => {
   const user = userEvent.setup();
   const enqueue = vi.fn().mockResolvedValue(true);
@@ -57,6 +62,8 @@ it('answers, saves before checking and provides progressive hints and explicit s
   expect(screen.getByText(/Hint 1/)).toBeVisible();
   expect(screen.getByText('Full solution', { exact: true })).toBeVisible();
 });
+
+// Keep written review explicit and retain the draft when saving fails before the action
 it('requires explicit written self-review and preserves unsaved state on failed save', async () => {
   const user = userEvent.setup();
   const enqueue = vi.fn().mockResolvedValue(false);
@@ -76,6 +83,8 @@ it('requires explicit written self-review and preserves unsaved state on failed 
     expect.objectContaining({ action: 'selfReview' }),
   );
 });
+
+// Delay initial loading and reject later writes to inspect loading, real counts, and retained error-state text
 it('shows actual progress, loading and save error states', async () => {
   const p = emptyProgress(lessons[0]);
   p.tasks.action = { ...emptyTask(), answer: 'action', correct: true };
@@ -115,6 +124,7 @@ it('shows actual progress, loading and save error states', async () => {
   expect(screen.getByLabelText('Your answer')).toHaveValue('acttion');
 });
 
+// Hold the first response to prove a newer edit waits and uses the confirmed next revision
 it('serialises delayed saves so a quick newer edit cannot be overwritten', async () => {
   const { renderHook, act } = await import('@testing-library/react');
   const { useProgress } = await import('../src/client/use-progress');
@@ -129,6 +139,8 @@ it('serialises delayed saves so a quick newer edit cannot be overwritten', async
     revision: 2,
     tasks: { action: { ...emptyTask(), answer: 'action' } },
   };
+
+  // Release the first response manually so the queue ordering is observed rather than assumed
   let release: (response: Response) => void = () => {};
   const fetchMock = vi
     .fn()

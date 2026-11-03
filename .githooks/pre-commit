@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
+
+# Run the versioned hook with Linux tools even when Git starts with a minimal WSL PATH
 cd "$(git rev-parse --show-toplevel)"
 source scripts/dev-env.sh
 pnpm exec lefthook run pre-commit

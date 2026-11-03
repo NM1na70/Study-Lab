@@ -1,3 +1,4 @@
+# Keep installed dependencies, build output, secrets, and learner data out of Git
 node_modules/
 dist/
 .env
@@ -8,6 +9,8 @@ dist/
 data/
 backups/
 exports/
+
+# Exclude generated verification output and local development tools
 playwright-report/
 test-results/
 coverage/

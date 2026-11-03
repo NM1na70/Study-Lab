@@ -1,41 +1,159 @@
-# Architecture
+# **Architecture**
 
-Study Lab is one local learner per installation: a React 19 UI built with Vite 8, a Fastify 5 HTTP server, strict TypeScript 6, Zod 4 boundary validation and Node 24's built-in SQLite. Exact versions are in package.json/pnpm-lock.yaml; Node 24.22.2 and pnpm 10.32.1 match local setup, Docker and CI. TypeScript 6 stays within typescript-eslint's supported range. ESLint 10 is current; accessibility is checked with axe in Chromium rather than an incompatible ESLint plugin.
+Study Lab has one server on your computer and one shared learner profile — a browser displays the lessons, while the server saves progress in SQLite
 
-The default runtime is one non-root container, one HTTP port and one named volume. No separate database service, accounts, AI integration, analytics, CDN or runtime content download. Small synchronous SQLite operations are proportionate to one learner. Node's SQLite API is a built-in dependency; do not enable SQLite extensions.
+[Back to the README](../README.md#how-it-works)
 
-## Codebase map
+## **The Main Parts**
 
-| Path                       | Responsibility                                                      |
-| -------------------------- | ------------------------------------------------------------------- |
-| src/client/App.tsx         | Dashboard, lesson route, review list and mobile evidence view       |
-| src/client/TaskCard.tsx    | Inputs, hints, solution disclosure and explicit writing self-review |
-| src/client/use-progress.ts | Serialised saves, confirmed persistence and error recovery          |
-| src/client/api.ts          | HTTP transport                                                      |
-| src/client/style.css       | Local responsive styles and focus treatment                         |
-| src/shared/schema.ts       | Lesson, progress and mutation contracts                             |
-| src/shared/domain.ts       | Pure marking, completion and mutation rules                         |
-| src/shared/lessons.ts      | Parse bundled lesson pack                                           |
-| src/server/app.ts          | Validated API, security headers and static serving                  |
-| src/server/store.ts        | SQLite schema and transactional persistence                         |
-| content/lessons.json       | Two original, versioned lessons and source metadata                 |
-| public/evidence/           | Real synthetic PCAP, decoded summary and attribution                |
-| scripts/                   | Content/capture validation, hooks, backup and smoke/security checks |
-| tests/                     | Domain, HTTP integration, UI and full browser flows                 |
-| .github/workflows/ci.yml   | Independent required checks                                         |
+```mermaid
+flowchart LR
+  subgraph browser["Browser"]
+    ui["React study pages"]
+  end
 
-## Persistence and assessment
+  subgraph computer["Computer running Docker"]
+    subgraph container["One Study Lab container"]
+      server["Fastify server"]
+      files["Built UI, lessons and evidence"]
+      sqlite["SQLite library in Node"]
+    end
+    data[("study-data volume")]
+  end
 
-SQLite schema v1 has a progress table keyed by stable lesson ID. Each JSON state records content version, revision, task answers, checked attempt counts, wrong-attempt counts, hint/solution use, current activity, explicit self-review, completion timestamp and update timestamp. Draft keystrokes are not counted as assessed attempts. Each checked precise answer is also retained with its result and timestamp; mistake review displays the last incorrect answer. Draft keystrokes are not an assessment history.
+  ui <-->|"HTTP on host port 3000"| server
+  server -->|"Read local files"| files
+  server -->|"Validate and save work"| sqlite
+  sqlite -->|"Read and write progress"| data
+```
 
-Writes run inside BEGIN IMMEDIATE. The server compares the submitted revision before mutation; stale writes receive 409. The client serialises writes and only displays saved after a successful response. A 350 ms debounce reduces typing writes; checking and normal navigation flush the current answer first. Errors stop the queue and preserve the visible input. Retry is explicit. Other windows/devices must reload after a revision conflict. This prevents an older response from overwriting newer work.
+The React code runs in the browser — the built JavaScript and CSS files are stored in the image and served by Fastify, with no separate frontend server in normal study use
 
-Exact questions accept only declared answers with declared normalisation. Spelling accepts case/outer-space differences, never fuzzy spelling. The URI question preserves case. Writing is never classified as technically correct by the server: the learner compares the rubric/checklist and records self-review. A minimal non-empty-content guard prevents accidental blank reviews; it is not grading. All exact tasks plus written self-reviews are required before explicit completion. Editing assessed work reopens completion. Hints and explicit solution use persist; assisted completion does not imply independent mastery.
+The SQLite library runs in the same Node process as Fastify — the named volume holds its database file and is not a separate database service
 
-All activities are unlocked; order is recommended only. Browser evidence disclosure is labelled as a spoiler. The raw capture is intentionally public learning material.
+The default address is [http://localhost:3000](http://localhost:3000) — Compose publishes the computer's `127.0.0.1:3000` port to port `3000` inside the container
 
-## Versions and future changes
+For a phone, the owner must explicitly enable [trusted LAN access](operations.md#explicit-lan-option) and use the computer's local address — the computer and server must remain running
 
-Do not rename task IDs in place. Before editing content, decide whether answer keys/meaning changed and bump its version. In Milestone 1, mismatched content versions preserve old state and reject edits with 409. An explicit migration/review policy must accompany future packs; do not silently discard or transfer correctness to changed questions. SQLite schema changes need numbered migrations and backup/restore testing. Schema v1 is the only schema currently implemented.
+| Term         | Meaning here                                                                |
+| ------------ | --------------------------------------------------------------------------- |
+| Frontend     | The study pages and interaction code that run in the browser                |
+| Backend      | The one Fastify server that sends files and handles study requests          |
+| API          | The server addresses the browser uses to load or save data                  |
+| Container    | The packaged server, runtime and built files that Docker starts             |
+| Named volume | A data location managed by Docker that remains when a container is replaced |
 
-Future AI can sit behind a small server-side provider interface (disabled/no-AI, separately funded user API, later local provider). No provider interface or credentials are installed now. Deterministic assessment remains in domain code. See roadmap.md.
+## **Lessons and Evidence**
+
+[content/lessons.json](../content/lessons.json) contains the two lessons, stable IDs, content versions, objectives, tasks, answer keys, hints, feedback, writing rubrics and source metadata
+
+The build includes this lesson data in the server output — the server parses it with the shared validation schema when it starts
+
+[public/evidence/](../public/evidence/) contains the original synthetic PCAP, decoded summary and attribution — Vite copies these local files into `dist/client/evidence` during the build
+
+The server supplies lesson JSON through the API and evidence files through local download addresses — no lesson download, AI service, font CDN or cloud database is required during study
+
+The browser evidence table supports review on a phone — it does not replace full investigation in desktop Wireshark
+
+See [content and sources](content-and-sources.md) for provenance and evidence checks
+
+## **Requests and Saving**
+
+The browser uses hash routes such as `#/review` to select a page — Fastify serves the built app and handles these API addresses
+
+| Request                  | Purpose                                               |
+| ------------------------ | ----------------------------------------------------- |
+| `GET /api/health`        | Check that the server can query SQLite                |
+| `GET /api/lessons`       | Load lessons and the shared learner's progress        |
+| `POST /api/progress/:id` | Save one validated action for the lesson with that ID |
+
+A learner's typing stays in the current page until a save succeeds — the card requests an autosave after 350 ms without another edit, and ordinary in-app navigation saves the latest draft before leaving
+
+The saving hook sends one request at a time — each request uses the revision number confirmed by the previous response, and the UI reports **Saved** only after that response succeeds
+
+A revision is a number that changes after each successful write — if another window or phone has already saved a newer revision, the server returns a conflict instead of overwriting it
+
+After a save error, queued actions stop and the visible draft remains — the learner can copy it before retrying or reloading, using [the study help](../README.md#using-study-lab)
+
+The server validates request sizes and fields, checks the lesson and task, then applies the domain rules inside a SQLite write transaction — a transaction saves the change together or rolls it back if it fails
+
+## **Where Progress Lives**
+
+| Item                             | Location                                                               |
+| -------------------------------- | ---------------------------------------------------------------------- |
+| Database inside Docker           | `/app/data/study.sqlite`                                               |
+| Persistent mount                 | Compose volume `study-data` mounted at `/app/data`                     |
+| Usual Docker volume name         | Project name followed by `_study-data`, such as `study-lab_study-data` |
+| Database during host development | `data/study.sqlite`, unless `DATABASE_PATH` selects another location   |
+
+SQLite schema version 1 uses a `progress` table keyed by lesson ID — each record stores its content version, revision, answer text, checked attempts and their results/timestamps, mistake counts, current activity, hints, solution use, self-review and completion time
+
+Older records may have no attempt history — the app keeps a fallback message for those records instead of inventing an incorrect answer
+
+Normal stop/start and container recreation keep the named volume — changing the Compose project name or copying only the source files can select a different database
+
+Do not treat a Git copy as a progress backup — use [the tested SQLite backup and restore commands](operations.md#backup-and-restoration), and read [verification](verification.md) for their recorded results and limits
+
+There is no sign-in — everyone allowed to access this installation reads and changes the same learner profile, and there are no separate private browser or phone accounts
+
+## **Assessment Rules**
+
+- Precise tasks use declared answers and task-specific case or whitespace handling — there is no fuzzy spelling match
+- The HTTP URI activity preserves case
+- Writing requires an explicit learner self-review against a rubric and language checklist — text length alone is not a technical grade
+- Completion requires every precise answer and the written self-review, followed by an explicit completion action
+- Editing an assessed answer reopens the lesson
+- Hints and revealed solutions are recorded separately from correctness — assisted completion does not prove independent mastery
+- All lessons and activities are unlocked, with order recommended rather than enforced
+
+These rules live in [src/shared/domain.ts](../src/shared/domain.ts), separate from HTTP handlers and React rendering
+
+## **Local Runtime**
+
+| Part           | Current choice                                          |
+| -------------- | ------------------------------------------------------- |
+| Browser UI     | React 19, TypeScript 6 and local CSS, built with Vite 8 |
+| Server         | Fastify 5 on Node 24                                    |
+| Validation     | Zod 4                                                   |
+| Storage        | Node's built-in SQLite library                          |
+| Docker build   | `node:24.22.2-bookworm-slim` with pnpm `10.32.1`        |
+| Docker runtime | `node:24.22.2-alpine`, running as non-root user `node`  |
+
+Exact package versions are in [package.json](../package.json) and [pnpm-lock.yaml](../pnpm-lock.yaml) — [.node-version](../.node-version) pins Node `24.22.2` for development
+
+The [Dockerfile](../Dockerfile) builds the client and server, removes development dependencies and copies built files into the runtime image — the final image removes package-manager tools and contains no learner database
+
+[compose.yaml](../compose.yaml) gives the app a read-only image, the writable data volume, a small temporary filesystem and reduced container privileges — its health check queries the local API and SQLite
+
+Both pinned base images list `linux/amd64` and `linux/arm64` — there is no forced `platform` setting, but Mac and native Linux installations remain untested and other processor types are not covered by the setup guide
+
+Request-origin and host checks reduce unwanted browser access, but do not provide authentication — see [security boundaries](security.md)
+
+## **Code Map**
+
+| File or folder                                              | Purpose                                                                       |
+| ----------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| [src/client/App.tsx](../src/client/App.tsx)                 | Dashboard, lesson page, mistake review and evidence table                     |
+| [src/client/TaskCard.tsx](../src/client/TaskCard.tsx)       | Answers, hints, solutions and explicit writing self-review                    |
+| [src/client/use-progress.ts](../src/client/use-progress.ts) | Ordered saves, confirmed status and retry state                               |
+| [src/client/api.ts](../src/client/api.ts)                   | Browser requests to the backend                                               |
+| [src/client/style.css](../src/client/style.css)             | Local styles and responsive layout                                            |
+| [src/server/main.ts](../src/server/main.ts)                 | Server start and normal shutdown                                              |
+| [src/server/app.ts](../src/server/app.ts)                   | API routes, security headers and static files                                 |
+| [src/server/store.ts](../src/server/store.ts)               | SQLite schema, reads and transactional writes                                 |
+| [src/shared/schema.ts](../src/shared/schema.ts)             | Lesson, progress and request contracts                                        |
+| [src/shared/domain.ts](../src/shared/domain.ts)             | Marking, completion and revision rules                                        |
+| [src/shared/lessons.ts](../src/shared/lessons.ts)           | Parse bundled lessons on startup                                              |
+| [scripts/](../scripts/)                                     | Content/evidence validation, backup, restore, hooks and smoke/security checks |
+| [tests/](../tests/)                                         | Domain, HTTP, UI and complete browser scenarios                               |
+| [.github/workflows/ci.yml](../.github/workflows/ci.yml)     | Quality, test, Docker and security jobs                                       |
+
+## **Future Changes**
+
+Task IDs stay stable — changed task meaning or answer keys need a deliberate content-version decision before release
+
+At present, a content-version mismatch preserves old work and rejects edits with a conflict — future lesson packs need an explicit migration policy rather than silently reusing correctness from changed questions
+
+SQLite schema changes also need a migration and backup/restore checks — only schema version 1 is implemented now
+
+AI, placement assessments, spaced repetition and more lessons are planned, with no provider or AI credentials required by the current app — see the [roadmap](roadmap.md)

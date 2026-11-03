@@ -1,3 +1,4 @@
+# Leave dependencies, generated output, lockfiles, and binary evidence outside formatting
 node_modules
 dist
 pnpm-lock.yaml
@@ -7,4 +8,5 @@ reports
 coverage
 *.pcap
 
+# Preserve the owner's original README formatting
 README.md

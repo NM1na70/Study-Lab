@@ -1,3 +1,4 @@
+# Allow install scripts only for the build tool and the versioned Git hook runner
 onlyBuiltDependencies:
   - esbuild
   - lefthook

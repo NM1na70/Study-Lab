@@ -1,6 +1,9 @@
+// Import React hooks, task types, and default task progress
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Mutation, Task, TaskProgress } from '../shared/schema.js';
 import { emptyTask } from '../shared/domain.js';
+
+// Define the task data and callbacks received from the parent component
 interface Props {
   task: Task;
   state?: TaskProgress;
@@ -8,6 +11,8 @@ interface Props {
   onNext?: () => Promise<void>;
   registerFlush?: (flush: (() => Promise<boolean>) | null) => void;
 }
+
+// Manage and display one study activity
 export function TaskCard({
   task,
   state = emptyTask(),
@@ -15,6 +20,7 @@ export function TaskCard({
   onNext,
   registerFlush,
 }: Props) {
+  // Track the answer, unsaved edits, review confirmation, pending actions, and autosave references
   const [answer, setAnswer] = useState(state.answer);
   const [dirty, setDirty] = useState(false);
   const [reviewed, setReviewed] = useState(false);
@@ -22,12 +28,15 @@ export function TaskCard({
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const pendingAnswer = useRef(answer);
   const mounted = useRef(true);
+
+  // Track whether the card is mounted and request a browser warning when edits are unsaved
   useEffect(() => {
     mounted.current = true;
     return () => {
       mounted.current = false;
-      // Let a pending debounce finish after browser Back/Forward unmounts this card.
-      // Ordinary in-app navigation explicitly flushes before leaving.
+
+      // Keep the pending autosave timer running after this card unmounts
+      // Ordinary in-app navigation explicitly saves before leaving
     };
   }, []);
   useEffect(() => {
@@ -40,6 +49,8 @@ export function TaskCard({
     window.addEventListener('beforeunload', warn);
     return () => window.removeEventListener('beforeunload', warn);
   }, [dirty]);
+
+  // Save draft answers and save before navigating through ordinary in-app links
   const persist = useCallback(
     async (text: string) => {
       const ok = await enqueue({
@@ -47,6 +58,8 @@ export function TaskCard({
         taskId: task.id,
         answer: text,
       });
+
+      // Clear unsaved status only if this card is mounted and the saved answer is still current
       if (ok && mounted.current && text === pendingAnswer.current)
         setDirty(false);
       return ok;
@@ -67,6 +80,8 @@ export function TaskCard({
         event.target instanceof Element
           ? event.target.closest('a[href^="#/"]')
           : null;
+
+      // Leave modified clicks to the browser so opening a new tab keeps its normal meaning
       if (
         !anchor ||
         event.ctrlKey ||
@@ -83,6 +98,8 @@ export function TaskCard({
     document.addEventListener('click', navigate, true);
     return () => document.removeEventListener('click', navigate, true);
   }, [flush]);
+
+  // Update the answer, reset review confirmation, and autosave after 350 ms without another edit
   function edit(text: string) {
     setAnswer(text);
     pendingAnswer.current = text;
@@ -93,6 +110,8 @@ export function TaskCard({
       void persist(text);
     }, 350);
   }
+
+  // Save the latest answer before performing an action or opening the next activity
   async function act(action: Mutation['action']) {
     clearTimeout(timer.current);
     setBusy(true);
@@ -112,6 +131,8 @@ export function TaskCard({
       setBusy(false);
     }
   }
+
+  // Display the question, answer box, save status, and checking or self-review controls
   return (
     <section className="task-card" aria-labelledby={`task-${task.id}`}>
       <span className="eyebrow">
@@ -193,6 +214,8 @@ export function TaskCard({
           </p>
         </div>
       )}
+
+      {/* Provide hints, a revealed solution, and navigation to the next activity */}
       <div className="actions">
         <button
           className="secondary"

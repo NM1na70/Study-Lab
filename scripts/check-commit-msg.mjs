@@ -1,6 +1,8 @@
+// Import message-file and module-path helpers used by the Git hook and PR title check
 import { readFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
-// Validate the entire single-line subject; allow Conventional Commits' breaking marker.
+
+// Validate the complete subject and allow Conventional Commits' optional breaking-change marker
 export function validSubject(subject) {
   return (
     /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9][a-z0-9/-]*\))?!?: [^\s](?:.{0,98}[^\s])?$/.test(
@@ -8,6 +10,8 @@ export function validSubject(subject) {
     ) && !/[\r\n]/.test(subject)
   );
 }
+
+// Read the PR title or first commit-message line only when the hook runs directly
 if (
   process.argv[1] &&
   import.meta.url === pathToFileURL(process.argv[1]).href

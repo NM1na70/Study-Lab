@@ -1,3 +1,4 @@
+// Import the HTTP app and temporary-file helpers for isolated persistence scenarios
 import { it, expect } from 'vitest';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -5,6 +6,8 @@ import { join } from 'node:path';
 import { createApp } from '../src/server/app.js';
 import { lessons } from '../src/shared/lessons.js';
 import type { Progress } from '../src/shared/schema.js';
+
+// Use an isolated SQLite file to check input boundaries, competing writes, and server recreation
 it('validates requests, rejects cross-origin writes and preserves answers after server recreation', async () => {
   const dir = mkdtempSync(join(tmpdir(), 'study-test-'));
   const path = join(dir, 'test.sqlite');
@@ -50,6 +53,8 @@ it('validates requests, rejects cross-origin writes and preserves answers after 
       },
     });
     expect(first.statusCode).toBe(200);
+
+    // Submit the same revision twice so exactly one write must win and the other must conflict
     const results = await Promise.all([
       app.inject({
         method: 'POST',
@@ -68,6 +73,8 @@ it('validates requests, rejects cross-origin writes and preserves answers after 
       }),
     ]);
     expect(results.map((r) => r.statusCode).sort()).toEqual([200, 409]);
+
+    // Reopen the same file to distinguish backend persistence from an in-memory response
     await app.close();
     app = await createApp(path, '/nonexistent');
     const result = (await app.inject('/api/lessons')).json<{

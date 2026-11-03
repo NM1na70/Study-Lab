@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
+
+# Keep scanner output separate from source and allow an explicit image name
 mkdir -p reports
 image="${1:-study-lab:local}"
-# No Docker socket mount: give the scanner an exported image archive.
+
+# Export the image without exposing the Docker socket and remove the archive on exit
 docker save -o reports/study-image.tar "$image"
 trap 'rm -f reports/study-image.tar' EXIT
+
+# Use the installed scanner or a versioned Docker fallback and fail on HIGH or CRITICAL findings
 if command -v trivy >/dev/null; then
   trivy image --input reports/study-image.tar --quiet --scanners vuln --severity HIGH,CRITICAL --exit-code 1 --format json --output reports/trivy.json
 else
