@@ -68,5 +68,7 @@ export function useProgress(
     setError('');
     setStatus('Unsaved — retry your answer or action');
   };
-  return { enqueue, status, error, retry };
+
+  // Let navigation decisions inspect confirmed work immediately after a successful draft flush
+  return { enqueue, status, error, retry, confirmed: () => current.current };
 }

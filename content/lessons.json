@@ -1,7 +1,7 @@
 [
   {
     "id": "english-word-families",
-    "version": 1,
+    "version": 2,
     "course": "English",
     "title": "Build words with -tion",
     "summary": "Connect spelling, meaning and word families: action, connection, detection and protection. Text-based practice; no listening assessment.",
@@ -44,19 +44,22 @@
         "id": "action",
         "kind": "exact",
         "stage": "practice",
-        "prompt": "Build the noun: act + ion. Write the whole word.",
+        "prompt": "Build the noun: act + ion. Write the whole word",
         "answers": ["action"],
         "normalise": "case-space",
         "hints": [
           "Look at the related base word and the sentence meaning.",
           "Keep the base spelling and check the ending letter by letter."
         ],
-        "explanation": "Act keeps its t: act + ion = action. “Acttion” doubles a letter that is already present.",
+        "explanation": "Act keeps its t: act + ion = action. “Acttion” doubles a letter that is already present",
         "example": "action",
         "rubric": [],
         "languageChecklist": [],
         "sourceIds": ["bbc"],
-        "feedback": "Check whether you doubled the final t. The base word already ends in t; add only ion."
+        "feedback": "Check whether you doubled the final t. The base word already ends in t; add only ion",
+        "options": [],
+        "fields": [],
+        "emphasis": ["action"]
       },
       {
         "id": "connection",
@@ -69,12 +72,15 @@
           "Look at the related base word and the sentence meaning.",
           "Keep the base spelling and check the ending letter by letter."
         ],
-        "explanation": "Connect + ion = connection. Keep both n letters from connect; “conection” loses one.",
+        "explanation": "Connect + ion = connection. Keep both n letters from connect; “conection” loses one",
         "example": "connection",
         "rubric": [],
         "languageChecklist": [],
         "sourceIds": ["bbc"],
-        "feedback": "Check both n letters in the base word. A link between devices needs the noun form of connect."
+        "feedback": "Check both n letters in the base word. A link between devices needs the noun form of connect",
+        "options": [],
+        "fields": [],
+        "emphasis": ["connection"]
       },
       {
         "id": "detection",
@@ -87,12 +93,15 @@
           "Look at the related base word and the sentence meaning.",
           "Keep the base spelling and check the ending letter by letter."
         ],
-        "explanation": "Detect + ion = detection. The t remains before ion; “detecion” loses it.",
+        "explanation": "Detect + ion = detection. The t remains before ion; “detecion” loses it",
         "example": "detection",
         "rubric": [],
         "languageChecklist": [],
         "sourceIds": ["bbc"],
-        "feedback": "Keep the complete base detect, including its last t. Add ion without inserting another t."
+        "feedback": "Keep the complete base detect, including its last t. Add ion without inserting another t",
+        "options": [],
+        "fields": [],
+        "emphasis": ["detection"]
       },
       {
         "id": "protection",
@@ -105,16 +114,19 @@
           "Look at the related base word and the sentence meaning.",
           "Keep the base spelling and check the ending letter by letter."
         ],
-        "explanation": "Protect + ion = protection. A helmet reduces harm: the context means keeping someone safe.",
+        "explanation": "Protect + ion = protection. A helmet reduces harm: the context means keeping someone safe",
         "example": "protection",
         "rubric": [],
         "languageChecklist": [],
         "sourceIds": ["bbc"],
-        "feedback": "Keep the final t from protect. The sentence describes keeping someone safe, so use the noun form."
+        "feedback": "Keep the final t from protect. The sentence describes keeping someone safe, so use the noun form",
+        "options": [],
+        "fields": [],
+        "emphasis": ["protection"]
       },
       {
         "id": "choose-meaning",
-        "kind": "exact",
+        "kind": "select",
         "stage": "practice",
         "prompt": "Choose connection or detection: “The alert led to the ___ of unusual traffic.”",
         "answers": ["detection"],
@@ -123,43 +135,58 @@
           "Look at the related base word and the sentence meaning.",
           "Keep the base spelling and check the ending letter by letter."
         ],
-        "explanation": "Detection means finding something. Connection means a link, which does not fit this sentence.",
+        "explanation": "Detection means finding something. Connection means a link, which does not fit this sentence",
         "example": "detection",
         "rubric": [],
         "languageChecklist": [],
         "sourceIds": ["bbc"],
-        "feedback": "An alert helps you find something. Choose the noun for finding a problem rather than linking devices."
+        "feedback": "An alert helps you find something. Choose the noun for finding a problem rather than linking devices",
+        "options": [
+          {
+            "id": "connection",
+            "label": "Connection"
+          },
+          {
+            "id": "detection",
+            "label": "Detection"
+          }
+        ],
+        "fields": [],
+        "emphasis": ["Detection"]
       },
       {
         "id": "repair-spelling",
         "kind": "exact",
         "stage": "practice",
-        "prompt": "Correct the spelling of one word: “The conection failed.” Write only the corrected word.",
+        "prompt": "Correct the spelling of one word: “The conection failed.” Write only the corrected word",
         "answers": ["connection"],
         "normalise": "case-space",
         "hints": [
           "Look at the related base word and the sentence meaning.",
           "Keep the base spelling and check the ending letter by letter."
         ],
-        "explanation": "Connection keeps connect intact and adds ion. Check con + nect + ion rather than guessing from sound.",
+        "explanation": "Connection keeps connect intact and adds ion. Check con + nect + ion rather than guessing from sound",
         "example": "connection",
         "rubric": [],
         "languageChecklist": [],
         "sourceIds": ["bbc"],
-        "feedback": "The sentence already has the right meaning. Check for a missing n and keep the complete base connect."
+        "feedback": "The sentence already has the right meaning. Check for a missing n and keep the complete base connect",
+        "options": [],
+        "fields": [],
+        "emphasis": ["Connection"]
       },
       {
         "id": "own-note",
         "kind": "written",
         "stage": "independent",
-        "prompt": "Write 2–3 sentences about a lost network connection and a sensible next action. Use connection and action; use detection or protection if it fits. Then compare your note with the rubric.",
+        "prompt": "Write 2–3 sentences about a lost network connection and a sensible next action. Use connection and action; use detection or protection if it fits. Then compare your note with the rubric",
         "answers": [],
         "normalise": "case-space",
         "hints": [
           "Look at the related base word and the sentence meaning.",
           "Keep the base spelling and check the ending letter by letter."
         ],
-        "explanation": "There are many valid notes. A written answer is not automatically marked correct. Review meaning and spelling yourself.",
+        "explanation": "There are many valid notes. A written answer is not automatically marked correct. Review meaning and spelling yourself",
         "example": "The connection stopped during the update. My next action is to check the cable. I will keep firewall protection enabled.",
         "rubric": [
           "Describe a connection problem clearly.",
@@ -172,25 +199,31 @@
           "Keep the sequence clear; avoid claiming certainty without evidence."
         ],
         "sourceIds": ["bbc"],
-        "feedback": "Use the rubric to review meaning and spelling. Your writing is self-assessed, not automatically marked correct."
+        "feedback": "Use the rubric to review meaning and spelling. Your writing is self-assessed, not automatically marked correct",
+        "options": [],
+        "fields": [],
+        "emphasis": []
       },
       {
         "id": "review-family",
         "kind": "exact",
         "stage": "review",
-        "prompt": "Without looking back, build the noun from protect.",
+        "prompt": "Without looking back, build the noun from protect",
         "answers": ["protection"],
         "normalise": "case-space",
         "hints": [
           "Look at the related base word and the sentence meaning.",
           "Keep the base spelling and check the ending letter by letter."
         ],
-        "explanation": "Review the family: protect → protection. Revisit the worked example if you omitted t.",
+        "explanation": "Review the family: protect → protection. Revisit the worked example if you omitted t",
         "example": "protection",
         "rubric": [],
         "languageChecklist": [],
         "sourceIds": ["bbc"],
-        "feedback": "Recall the whole base word protect. Keep its last letter before adding ion."
+        "feedback": "Recall the whole base word protect. Keep its last letter before adding ion",
+        "options": [],
+        "fields": [],
+        "emphasis": ["protection"]
       }
     ],
     "sources": [
@@ -214,10 +247,10 @@
   },
   {
     "id": "cyber-network-investigation",
-    "version": 1,
+    "version": 3,
     "course": "Cybersecurity",
     "title": "Investigate a suspicious HTTP check-in",
-    "summary": "A 60-minute evidence investigation using a tiny synthetic PCAP. Inspect hosts, requests and timing, then write a careful incident summary.",
+    "summary": "A 60-minute evidence investigation using a tiny synthetic PCAP — inspect hosts, requests and timing, then complete a short guided report",
     "difficulty": "Medium",
     "minutes": 60,
     "order": 1,
@@ -225,7 +258,7 @@
     "objectives": [
       "Identify hosts and isolate HTTP requests with display filters.",
       "Follow a TCP conversation and cite frames and timestamps.",
-      "Separate observed traffic from an unproven compromise claim."
+      "Complete a short, self-reviewed report that separates observed traffic from unproven claims"
     ],
     "prerequisites": [
       "Basic TCP/IP, Linux and security knowledge.",
@@ -255,8 +288,8 @@
       },
       {
         "title": "5 · Communicate and review (15 minutes)",
-        "body": "Write a short incident summary for a colleague: scope, host pair, request pattern, frame/time evidence, uncertainty and next evidence to collect. Suggest checking process ownership and endpoint logs; this PCAP alone cannot establish the process or malware identity. Complete the technical self-review and language checklist explicitly. Finish by reviewing what the capture can and cannot prove. Precise tasks must be correct; the written report is self-assessed, never AI graded.",
-        "sourceIds": ["filters", "streams"]
+        "body": "Complete the short guided report: record factual fields, distinguish observation from inference, state what remains unknown and choose the next evidence to collect. This is a simplified learning template informed by Australian Government guidance, not an official government reporting form. Use the factual check and explicit reasoning self-review to finish. No severity, business impact, containment or confirmed compromise can be established from this synthetic capture alone.",
+        "sourceIds": ["filters", "streams", "asd-report"]
       }
     ],
     "tasks": [
@@ -271,12 +304,15 @@
           "Inspect the Source column on an HTTP request.",
           "Frame 4 is the first request; distinguish source from destination."
         ],
-        "explanation": "Frames 4, 6 and 8 originate at 192.0.2.10. The responder is 198.51.100.20.",
+        "explanation": "Frames 4, 6 and 8 originate at 192.0.2.10. The responder is 198.51.100.20",
         "example": "192.0.2.10",
         "rubric": [],
         "languageChecklist": [],
         "sourceIds": ["filters"],
-        "feedback": "Read Source on a request frame, not on a response. Enter an IPv4 address rather than a hostname."
+        "feedback": "Read Source on a request frame, not on a response. Enter an IPv4 address rather than a hostname",
+        "options": [],
+        "fields": [],
+        "emphasis": ["192.0.2.10"]
       },
       {
         "id": "destination-host",
@@ -289,30 +325,57 @@
           "Inspect the Destination column rather than the Host header.",
           "Use frame 4 and read the IPv4 destination."
         ],
-        "explanation": "The requests target 198.51.100.20 on TCP port 80. This documentation address is not a live threat indicator.",
+        "explanation": "The requests target 198.51.100.20 on TCP port 80. This documentation address is not a live threat indicator",
         "example": "198.51.100.20",
         "rubric": [],
         "languageChecklist": [],
         "sourceIds": ["filters"],
-        "feedback": "Read Destination on an HTTP request. The Host header is a name, not the destination IPv4 address."
+        "feedback": "Read Destination on an HTTP request. The Host header is a name, not the destination IPv4 address",
+        "options": [],
+        "fields": [],
+        "emphasis": ["198.51.100.20"]
       },
       {
         "id": "request-count",
-        "kind": "exact",
+        "kind": "multiple",
         "stage": "practice",
-        "prompt": "How many frames match http.request after you clear any stream filter? Write a number.",
-        "answers": ["3"],
+        "prompt": "Select every frame that contains an HTTP request",
+        "answers": ["frame-4", "frame-6", "frame-8"],
         "normalise": "case-space",
         "hints": [
           "Apply only http.request to the whole file.",
           "Count requests, not HTTP responses or handshake packets."
         ],
-        "explanation": "Frames 4, 6 and 8 contain the three complete HTTP requests.",
-        "example": "3",
+        "explanation": "Frames 4, 6 and 8 contain HTTP requests — frames 5 and 9 are responses",
+        "example": "Frames 4, 6 and 8",
         "rubric": [],
         "languageChecklist": [],
         "sourceIds": ["filters"],
-        "feedback": "Clear the stream filter, apply only http.request and count displayed request frames. Do not count responses."
+        "feedback": "Apply http.request to the whole capture and select every matching frame, without selecting responses",
+        "options": [
+          {
+            "id": "frame-4",
+            "label": "Frame 4"
+          },
+          {
+            "id": "frame-5",
+            "label": "Frame 5"
+          },
+          {
+            "id": "frame-6",
+            "label": "Frame 6"
+          },
+          {
+            "id": "frame-8",
+            "label": "Frame 8"
+          },
+          {
+            "id": "frame-9",
+            "label": "Frame 9"
+          }
+        ],
+        "fields": [],
+        "emphasis": ["Frames 4, 6 and 8"]
       },
       {
         "id": "request-path",
@@ -325,12 +388,20 @@
           "Expand Hypertext Transfer Protocol in frame 4.",
           "The URI starts with /checkin and includes ?host=… ."
         ],
-        "explanation": "Frame 4 is GET /checkin?host=lab-01. Host is a separate header, not part of this URI field.",
+        "explanation": "Frame 4 is GET /checkin?host=lab-01 — GET is the method, /checkin?host=lab-01 is the request URI, and Host: telemetry.lab.test is a separate header",
         "example": "/checkin?host=lab-01",
         "rubric": [],
         "languageChecklist": [],
         "sourceIds": ["streams"],
-        "feedback": "Copy the complete Request URI, including the query after ?. Preserve its case and omit the Host header."
+        "feedback": "Copy the complete Request URI, including the query after ?. Preserve its case and omit the Host header",
+        "options": [],
+        "fields": [],
+        "emphasis": [
+          "GET /checkin?host=lab-01",
+          "Host: telemetry.lab.test",
+          "/checkin?host=lab-01",
+          "GET"
+        ]
       },
       {
         "id": "third-frame",
@@ -343,77 +414,437 @@
           "Clear the stream filter and apply http.request.",
           "Read the No. column for the last displayed request."
         ],
-        "explanation": "Frame 8 is the third request; frame 9 is its response.",
+        "explanation": "Frame 8 is the third request; frame 9 is its response",
         "example": "8",
         "rubric": [],
         "languageChecklist": [],
         "sourceIds": ["filters"],
-        "feedback": "Apply http.request and read the No. column for the third request. Use the original frame number, not its position in the filtered list."
+        "feedback": "Apply http.request and read the No. column for the third request. Use the original frame number, not its position in the filtered list",
+        "options": [],
+        "fields": [],
+        "emphasis": ["8"]
       },
       {
         "id": "interval",
         "kind": "exact",
         "stage": "independent",
-        "prompt": "What is the interval in seconds between consecutive HTTP requests? Write only the number.",
+        "prompt": "What is the interval in seconds between consecutive HTTP requests? Write only the number",
         "answers": ["30"],
         "normalise": "case-space",
         "hints": [
           "Compare request times, excluding the handshake.",
           "Subtract frame 4 time from frame 6 time; then verify frames 6 and 8."
         ],
-        "explanation": "Request UTC times are 00:00:01, 00:00:31 and 00:01:01 on 1 November 2026. Each gap is 30 seconds.",
+        "explanation": "Request UTC times are 00:00:01, 00:00:31 and 00:01:01 on 1 November 2026. Each gap is 30 seconds",
         "example": "30",
         "rubric": [],
         "languageChecklist": [],
         "sourceIds": ["filters"],
-        "feedback": "Compare request timestamps, not response times or the handshake. Subtract each request time from the next and enter seconds only."
+        "feedback": "Compare request timestamps, not response times or the handshake. Subtract each request time from the next and enter seconds only",
+        "options": [],
+        "fields": [],
+        "emphasis": ["30"]
       },
       {
         "id": "incident-note",
-        "kind": "written",
+        "kind": "report",
         "stage": "independent",
-        "prompt": "Write a 100–150 word incident summary. Include the hosts, frames, request URI, timing, a cautious inference and the next evidence you would seek. Then self-review it.",
+        "prompt": "Build your investigation report from the synthetic capture",
         "answers": [],
         "normalise": "case-space",
         "hints": [
-          "Look at the related base word and the sentence meaning.",
-          "Keep the base spelling and check the ending letter by letter."
+          "Assemble your own saved findings, then compare the selected request frames and their timing",
+          "Regular requests to the same URI support automated polling — process logs can help resolve its purpose"
         ],
-        "explanation": "A sound report separates captured facts from the automated-polling hypothesis. Neither HTTP 200 nor regular timing establishes compromise.",
-        "example": "In this synthetic capture, 192.0.2.10 sends three HTTP GET requests to 198.51.100.20:80. Frames 4, 6 and 8 request /checkin?host=lab-01 with Host: telemetry.lab.test. They occur at 00:00:01, 00:00:31 and 00:01:01 UTC on 1 November 2026, a 30-second interval. The server replies with status 200 and a short plain-text response. The repeated pattern is consistent with automated polling. It does not establish malware infection, process identity or data theft. The capture is a short simulation, so conclusions are limited to these exchanges. I would check endpoint process ownership and relevant logs before escalating the event or deciding whether to contain the host.",
+        "explanation": "Objective facts and the selected evidence relationship are checked — reasoning still requires your explicit self-review",
+        "example": "Use the labelled example report to compare the evidence and your reasoning",
         "rubric": [
-          "Name source 192.0.2.10 and destination 198.51.100.20:80.",
-          "Cite frames 4, 6, 8 and /checkin?host=lab-01.",
-          "State the 30-second interval with UTC times or equivalent evidence.",
-          "Label automated polling as an inference; do not assert proven malware.",
-          "Propose endpoint process/log checks and mention the synthetic, limited scope."
+          "Check the objective facts and structured evidence relationships against the synthetic capture",
+          "Explain how the selected evidence supports your assessment, without treating suspicion or benign intent as proven",
+          "Recognise unknown malware status, process identity, data theft, compromise and attribution",
+          "Explain how your recommended next check would help — do not claim it has already happened"
         ],
         "languageChecklist": [
-          "Use 100–150 words as a writing target, not an automatic technical pass.",
-          "Use clear past or present tense consistently.",
-          "Spell connection, detection and protection carefully if you use them.",
-          "Use evidence phrases such as “the capture shows” and “is consistent with”."
+          "Use one or two clear sentences for each reasoning prompt",
+          "Use cautious wording for inferences and distinguish them from direct observations",
+          "Keep the request method, URI and Host header separate"
         ],
-        "sourceIds": ["filters", "streams"],
-        "feedback": "Use the technical rubric and language checklist. Non-empty writing does not establish a correct investigation."
+        "sourceIds": [
+          "filters",
+          "streams",
+          "asd-report",
+          "asd-report-pdf",
+          "asd-reuse"
+        ],
+        "feedback": "Check each factual field against the synthetic capture, then explicitly self-review the reasoning fields",
+        "options": [],
+        "fields": [
+          {
+            "id": "source",
+            "label": "Source Host",
+            "kind": "short",
+            "answers": ["192.0.2.10"],
+            "example": "192.0.2.10",
+            "hint": "Compare the relevant request field in frames 4, 6 and 8",
+            "options": [],
+            "normalise": "case-space",
+            "feedback": "Check the relevant request frames and preserve the evidence value"
+          },
+          {
+            "id": "destination",
+            "label": "Destination Host",
+            "kind": "short",
+            "answers": ["198.51.100.20"],
+            "example": "198.51.100.20",
+            "hint": "Compare the relevant request field in frames 4, 6 and 8",
+            "options": [],
+            "normalise": "case-space",
+            "feedback": "Check the relevant request frames and preserve the evidence value"
+          },
+          {
+            "id": "observed-at",
+            "label": "First Request Date And Time",
+            "kind": "short",
+            "answers": [
+              "2026-11-01 00:00:01",
+              "01/11/2026 00:00:01",
+              "2026-11-01T00:00:01Z"
+            ],
+            "example": "2026-11-01 00:00:01",
+            "hint": "Use frame 4 in UTC and enter YYYY-MM-DD HH:MM:SS",
+            "options": [],
+            "normalise": "case-space",
+            "feedback": "Check the relevant request frames and preserve the evidence value"
+          },
+          {
+            "id": "time-zone",
+            "label": "Time Zone",
+            "kind": "select",
+            "answers": ["utc"],
+            "example": "utc",
+            "hint": "Match the UTC display setting used in the investigation",
+            "options": [
+              {
+                "id": "utc",
+                "label": "UTC"
+              },
+              {
+                "id": "aest",
+                "label": "AEST"
+              }
+            ],
+            "normalise": "case-space",
+            "feedback": "Check the relevant request frames and preserve the evidence value"
+          },
+          {
+            "id": "frames",
+            "label": "Request Frame Numbers",
+            "kind": "multiple",
+            "answers": ["frame-4", "frame-6", "frame-8"],
+            "example": ["frame-4", "frame-6", "frame-8"],
+            "hint": "Select the frames that carry the requests supporting your report",
+            "options": [
+              {
+                "id": "frame-4",
+                "label": "Frame 4"
+              },
+              {
+                "id": "frame-5",
+                "label": "Frame 5"
+              },
+              {
+                "id": "frame-6",
+                "label": "Frame 6"
+              },
+              {
+                "id": "frame-8",
+                "label": "Frame 8"
+              },
+              {
+                "id": "frame-9",
+                "label": "Frame 9"
+              }
+            ],
+            "normalise": "case-space",
+            "feedback": "Select the request frames, rather than a response or an unrelated existing frame"
+          },
+          {
+            "id": "method",
+            "label": "Request Method",
+            "kind": "select",
+            "answers": ["get"],
+            "example": "get",
+            "hint": "The method is the first word of the HTTP request line",
+            "options": [
+              {
+                "id": "get",
+                "label": "GET"
+              },
+              {
+                "id": "post",
+                "label": "POST"
+              }
+            ],
+            "normalise": "case-space",
+            "feedback": "Check the relevant request frames and preserve the evidence value"
+          },
+          {
+            "id": "uri",
+            "label": "Request URI",
+            "kind": "short",
+            "answers": ["/checkin?host=lab-01"],
+            "example": "/checkin?host=lab-01",
+            "hint": "Keep the path and query string — omit the method and Host header",
+            "options": [],
+            "normalise": "trim",
+            "feedback": "Check the relevant request frames and preserve the evidence value"
+          },
+          {
+            "id": "interval",
+            "label": "Request Interval In Seconds",
+            "kind": "short",
+            "answers": ["30"],
+            "example": "30",
+            "hint": "Compare consecutive request times, not handshake or response times",
+            "options": [],
+            "normalise": "case-space",
+            "feedback": "Check the relevant request frames and preserve the evidence value"
+          },
+          {
+            "id": "assessment",
+            "label": "Assessment",
+            "kind": "select",
+            "options": [
+              {
+                "id": "automated-polling",
+                "label": "Automated polling"
+              },
+              {
+                "id": "benign-possible",
+                "label": "Possibly benign automated polling"
+              },
+              {
+                "id": "suspicious-possible",
+                "label": "Potentially suspicious automated polling"
+              },
+              {
+                "id": "inconclusive",
+                "label": "Inconclusive — purpose not established"
+              }
+            ],
+            "answers": [
+              "automated-polling",
+              "benign-possible",
+              "suspicious-possible",
+              "inconclusive"
+            ],
+            "example": "automated-polling",
+            "hint": "Choose a cautious interpretation — packets alone do not establish intent",
+            "feedback": "Choose an interpretation supported by the selected evidence, without claiming proven intent",
+            "normalise": "trim"
+          },
+          {
+            "id": "evidence",
+            "label": "Supporting Evidence",
+            "kind": "select",
+            "options": [
+              {
+                "id": "repeated-uri-timing",
+                "label": "Repeated URI and regular request timing"
+              },
+              {
+                "id": "capture-only",
+                "label": "Packet traffic without endpoint process context"
+              },
+              {
+                "id": "response-only",
+                "label": "One successful response"
+              },
+              {
+                "id": "handshake-only",
+                "label": "Only a TCP handshake"
+              }
+            ],
+            "answers": ["repeated-uri-timing", "capture-only"],
+            "example": "repeated-uri-timing",
+            "hint": "Relate your evidence to your chosen assessment",
+            "feedback": "Match the evidence to your assessment and cite the relevant request frames",
+            "normalise": "trim"
+          },
+          {
+            "id": "assessment-reason",
+            "label": "Why This Evidence Supports Your Assessment",
+            "kind": "reasoning",
+            "options": [],
+            "answers": [],
+            "example": "The repeated URI and regular gaps support an automated pattern, but they do not establish its purpose",
+            "hint": "Explain the connection in one or two clear sentences",
+            "feedback": "Explicitly self-review how your evidence supports your interpretation",
+            "normalise": "trim"
+          },
+          {
+            "id": "limitations",
+            "label": "Not Established By This Capture",
+            "kind": "multiple",
+            "options": [
+              {
+                "id": "malware",
+                "label": "Malware infection"
+              },
+              {
+                "id": "process",
+                "label": "Process identity"
+              },
+              {
+                "id": "theft",
+                "label": "Data theft"
+              },
+              {
+                "id": "compromise",
+                "label": "Confirmed compromise"
+              },
+              {
+                "id": "attribution",
+                "label": "Attribution"
+              },
+              {
+                "id": "hosts",
+                "label": "The source and destination IPs"
+              }
+            ],
+            "answers": [
+              "malware",
+              "process",
+              "theft",
+              "compromise",
+              "attribution"
+            ],
+            "example": [
+              "malware",
+              "process",
+              "theft",
+              "compromise",
+              "attribution"
+            ],
+            "hint": "Select what the packet evidence cannot establish",
+            "feedback": "Separate the visible host addresses from conclusions this capture cannot establish",
+            "normalise": "trim"
+          },
+          {
+            "id": "next-step",
+            "label": "Recommended Next Step",
+            "kind": "select",
+            "options": [
+              {
+                "id": "endpoint-logs",
+                "label": "Check endpoint process and network-connection logs"
+              },
+              {
+                "id": "process-owner",
+                "label": "Identify the process owning these connections"
+              },
+              {
+                "id": "wipe-host",
+                "label": "Wipe the host immediately"
+              },
+              {
+                "id": "declare-theft",
+                "label": "Report confirmed data theft"
+              }
+            ],
+            "answers": ["endpoint-logs", "process-owner"],
+            "example": "endpoint-logs",
+            "hint": "Recommend a check — do not imply that it has already been performed",
+            "feedback": "Choose a useful next check that resolves missing process context",
+            "normalise": "trim"
+          },
+          {
+            "id": "next-reason",
+            "label": "Why This Next Step Would Help",
+            "kind": "reasoning",
+            "options": [],
+            "answers": [],
+            "example": "These logs can link the requests to a process and help assess its purpose",
+            "hint": "Explain what this proposed check could establish in one or two sentences",
+            "feedback": "Self-review the value of your proposed check without inventing an outcome",
+            "normalise": "trim"
+          }
+        ],
+        "emphasis": [],
+        "reportRules": [
+          {
+            "assessmentId": "automated-polling",
+            "evidenceIds": ["repeated-uri-timing"],
+            "frameIds": ["frame-4", "frame-6", "frame-8"]
+          },
+          {
+            "assessmentId": "benign-possible",
+            "evidenceIds": ["repeated-uri-timing"],
+            "frameIds": ["frame-4", "frame-6", "frame-8"]
+          },
+          {
+            "assessmentId": "suspicious-possible",
+            "evidenceIds": ["repeated-uri-timing"],
+            "frameIds": ["frame-4", "frame-6", "frame-8"]
+          },
+          {
+            "assessmentId": "inconclusive",
+            "evidenceIds": ["repeated-uri-timing", "capture-only"],
+            "frameIds": ["frame-4", "frame-6", "frame-8"]
+          }
+        ],
+        "findingMappings": [
+          {
+            "taskId": "source-host",
+            "fieldId": "source"
+          },
+          {
+            "taskId": "destination-host",
+            "fieldId": "destination"
+          },
+          {
+            "taskId": "request-count",
+            "fieldId": "frames"
+          },
+          {
+            "taskId": "request-path",
+            "fieldId": "uri"
+          },
+          {
+            "taskId": "interval",
+            "fieldId": "interval"
+          }
+        ]
       },
       {
         "id": "review-limit",
-        "kind": "exact",
+        "kind": "choice",
         "stage": "review",
-        "prompt": "Can this PCAP alone prove malware infection? Answer yes or no.",
+        "prompt": "Can this PCAP alone prove malware infection?",
         "answers": ["no"],
         "normalise": "case-space",
         "hints": [
           "Separate the captured behaviour from its possible cause.",
           "Legitimate software can also poll a server."
         ],
-        "explanation": "No. Regular HTTP check-ins are observable; malicious intent and process identity require more evidence.",
+        "explanation": "No. Regular HTTP check-ins are observable; malicious intent and process identity require more evidence",
         "example": "no",
         "rubric": [],
         "languageChecklist": [],
         "sourceIds": ["filters", "streams"],
-        "feedback": "Consider what process and intent information is absent. Ordinary monitoring can also send regular requests."
+        "feedback": "Consider what process and intent information is absent. Ordinary monitoring can also send regular requests",
+        "options": [
+          {
+            "id": "yes",
+            "label": "Yes"
+          },
+          {
+            "id": "no",
+            "label": "No"
+          }
+        ],
+        "fields": [],
+        "emphasis": ["No"]
       }
     ],
     "sources": [
@@ -432,6 +863,30 @@
         "accessed": "2026-11-03",
         "supports": "Select a TCP packet and use Analyze → Follow → TCP Stream to view application data and isolate the conversation.",
         "attribution": "Reference only; no text, images or audio reproduced. Exercises and explanations are original Study Lab material."
+      },
+      {
+        "id": "asd-report",
+        "title": "ASD cyber.gov.au — Cyber security incident response planning: Practitioner guidance",
+        "url": "https://www.cyber.gov.au/publication/cyber-security-incident-response-planning-practitioner-guidance",
+        "accessed": "2026-11-05",
+        "supports": "Documentation and evidence-preservation guidance, Appendix D situation report and Appendix H incident summary informed the simplified report structure; capture-specific fields and answers are original",
+        "attribution": "Australian Signals Directorate, © Commonwealth of Australia 2026, CC BY 4.0 (https://www.cyber.gov.au/copyright). Original simplified learning adaptation; no endorsement, logos or official form reproduced"
+      },
+      {
+        "id": "asd-report-pdf",
+        "title": "Australian Signals Directorate: Practitioner Guidance (December 2024 PDF)",
+        "url": "https://www.cyber.gov.au/sites/default/files/2026-10/Cyber%20security%20incident%20response%20planning%20%E2%80%93%20Practitioner%20guidance%20%28December%202024%29.pdf",
+        "accessed": "2026-11-05",
+        "supports": "Documentation and evidence handling on printed pages 20–21, situation report template on page 32 and incident summary on pages 38–39 inform the original learning structure",
+        "attribution": "Australian Signals Directorate, © Commonwealth of Australia 2024, CC BY 4.0; original simplified adaptation, with no logos, official form or endorsement"
+      },
+      {
+        "id": "asd-reuse",
+        "title": "Australian Signals Directorate: Copyright",
+        "url": "https://www.cyber.gov.au/copyright",
+        "accessed": "2026-11-05",
+        "supports": "Website reuse conditions and attribution; Creative Commons Attribution 4.0 International with exceptions for protected symbols, third-party and separately identified material",
+        "attribution": "Australian Signals Directorate, © Commonwealth of Australia 2026; licence details linked for reference, no protected branding reproduced"
       }
     ]
   }

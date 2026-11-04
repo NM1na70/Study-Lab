@@ -210,3 +210,56 @@ For phone access, use that chosen port in both the URL and any app-specific fire
 - Wait for **Answer saved**, refresh and check the same answer and position — open **Mistake review** to retry the missed item
 - Open Cybersecurity, download the synthetic PCAP and expand the labelled evidence summary — full Wireshark work needs a computer and takes about an hour
 - Visit the writing activity and read its rubric and language checklist — completion requires correct precise answers and explicit self-review, and solution use is recorded
+
+## Learning UX Update And Progress Migration
+
+Before adopting this version on your normal installation, create a consistent backup using the commands above — implementation and verification used disposable databases only
+
+Schema 2 retains schema 1 progress and stores each migrated lesson's original JSON in `progress_migrations` — content version 1 → 2 conversion happens on first lesson load and is idempotent
+
+English's existing completion remains saved — Cybersecurity's earlier completion is retained as history, while the new request-frame selection and report require fresh assessment
+
+Previous free-text summaries remain visible inside the report's Saved Work disclosure — their hints, solution use and self-review remain recorded, but they do not automatically reveal or complete the new report
+
+Use Check Answer for report facts and Record Self-Review for its open reasoning — Unknown or Not Established is acceptable when the evidence does not support a conclusion
+
+Back To Dashboard opens the completion choice for an unfinished lesson — Mark It As Completed saves and validates every requirement, while Not Completed Yet saves without completing
+
+Escape cancels the dialog and restores focus — unmet requirements offer Return To Activity actions, and a save failure keeps the learner on the page with Enable Retry
+
+Mistake Review starts with English and Cybersecurity course buttons — Remove hides an active item, Undo restores it, and a new incorrect checked attempt makes it active again without deleting earlier history
+
+Backups made after this update require an app that supports schema 2 — to roll back to older code, restore a separate pre-update schema 1 backup with the app stopped, preserving the newer backup for later recovery
+
+### Disposable Manual Preview
+
+Run a separate port and temporary database from the feature worktree to review without changing normal study progress
+
+```bash
+source scripts/dev-env.sh
+pnpm build
+study_preview_dir="$(mktemp -d /tmp/study-ux-preview.XXXXXX)"
+DATABASE_PATH="$study_preview_dir/study.sqlite" PORT=3011 pnpm start
+```
+
+Open http://localhost:3011 and stop the preview with Ctrl+C — port 3000 and the normal Docker volume are not used by this preview
+
+Review both courses, check the URI feedback, complete a report with an Unknown reasoning field, try both dialog choices, then remove/undo a mistake and refresh — browser screenshots and automated limits are in verification.md
+
+## Connected Report Update — 5 November 2026
+
+Use the clickable Lesson Route to move between sections — the app saves automatically before navigating, so there is no activity selector or instruction to wait manually
+
+A failed save leaves the activity and draft open — select Enable Retry and try the route again, copying unsaved work before reloading if another browser has caused a revision conflict
+
+The final activity has no Next Activity button — Finish This Lesson remains the place to complete or return to the dashboard, with pending final answers saved first
+
+The Cybersecurity report now uses four connected sections, two short reasoning prompts, Check Report and a separate live Preview Report — the preview marks missing fields and does not check, complete or supply answers
+
+My Investigation Notes is collapsed initially and shows your own saved work — Use My Finding copies even an incorrect answer, asks before replacing a different entry and records where it came from without checking it
+
+Content version 2 → 3 retains equivalent factual report drafts and archives the full earlier report — older reasoning and free-text summaries remain readable, and new evidence relationships and reasoning need fresh checks/review
+
+Hints and examples remain recorded as assistance — copying your own saved notes or opening your own preview does not erase earlier assistance or prove independent mastery
+
+Storage remains SQLite schema 2 — back up before adopting the feature on normal study data, and keep a pre-update backup if you intend to roll back to code that does not support content version 3

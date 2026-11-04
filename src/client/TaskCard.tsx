@@ -1,22 +1,57 @@
 // Import React hooks, task types, and default task progress
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { Mutation, Task, TaskProgress } from '../shared/schema.js';
-import { emptyTask } from '../shared/domain.js';
+import type {
+  Answer,
+  Mutation,
+  Task,
+  TaskProgress,
+  Lesson,
+  Progress,
+} from '../shared/schema.js';
+import { ReportBuilder, ReportText } from './ReportBuilder';
+import { AnswerControls, EvidenceText } from './AnswerControls';
+import {
+  displayAnswer,
+  exampleAnswer,
+  emptyTask,
+  validateAnswer,
+  isRecord,
+  displayField,
+} from '../shared/domain.js';
 
 // Define the task data and callbacks received from the parent component
 interface Props {
   task: Task;
   state?: TaskProgress;
   enqueue: (m: Omit<Mutation, 'revision'>) => Promise<boolean>;
+  lesson?: Lesson;
+  progress?: Progress;
+  confirmed?: () => Progress;
+  onRetry?: () => void;
   onNext?: () => Promise<void>;
   registerFlush?: (flush: (() => Promise<boolean>) | null) => void;
+}
+
+// Treat structured empty drafts as unanswered rather than claiming they are saved work
+function hasContent(answer: Answer) {
+  return typeof answer === 'string'
+    ? !!answer.trim()
+    : Array.isArray(answer)
+      ? answer.length > 0
+      : Object.values(answer).some((value) =>
+          Array.isArray(value) ? value.length : value.trim(),
+        );
 }
 
 // Manage and display one study activity
 export function TaskCard({
   task,
-  state = emptyTask(),
+  state = emptyTask(task),
   enqueue,
+  lesson,
+  progress,
+  confirmed,
+  onRetry,
   onNext,
   registerFlush,
 }: Props) {
@@ -25,9 +60,31 @@ export function TaskCard({
   const [dirty, setDirty] = useState(false);
   const [reviewed, setReviewed] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [reportError, setReportError] = useState('');
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const pendingAnswer = useRef(answer);
   const mounted = useRef(true);
+  const checkRef = useRef<HTMLButtonElement>(null);
+  const heldEnter = useRef(false);
+  const composing = useRef(false);
+  const actionPending = useRef(false);
+  const copyPending = useRef<Promise<boolean> | null>(null);
+
+  // Require an Enter release before the focused button can accept another deliberate press
+  useEffect(() => {
+    const release = (event: KeyboardEvent) => {
+      if (event.key === 'Enter') heldEnter.current = false;
+    };
+    window.addEventListener('keyup', release);
+    const blur = () => {
+      heldEnter.current = false;
+    };
+    window.addEventListener('blur', blur);
+    return () => {
+      window.removeEventListener('keyup', release);
+      window.removeEventListener('blur', blur);
+    };
+  }, []);
 
   // Track whether the card is mounted and request a browser warning when edits are unsaved
   useEffect(() => {
@@ -52,7 +109,7 @@ export function TaskCard({
 
   // Save draft answers and save before navigating through ordinary in-app links
   const persist = useCallback(
-    async (text: string) => {
+    async (text: Answer) => {
       const ok = await enqueue({
         action: 'draft',
         taskId: task.id,
@@ -66,8 +123,9 @@ export function TaskCard({
     },
     [enqueue, task.id],
   );
-  const flush = useCallback(() => {
+  const flush = useCallback(async () => {
     clearTimeout(timer.current);
+    if (copyPending.current && !(await copyPending.current)) return false;
     return persist(pendingAnswer.current);
   }, [persist]);
   useEffect(() => {
@@ -100,7 +158,7 @@ export function TaskCard({
   }, [flush]);
 
   // Update the answer, reset review confirmation, and autosave after 350 ms without another edit
-  function edit(text: string) {
+  function edit(text: Answer) {
     setAnswer(text);
     pendingAnswer.current = text;
     setDirty(true);
@@ -113,59 +171,232 @@ export function TaskCard({
 
   // Save the latest answer before performing an action or opening the next activity
   async function act(action: Mutation['action']) {
+    if (actionPending.current) return;
+    actionPending.current = true;
+    setReportError('');
     clearTimeout(timer.current);
     setBusy(true);
     try {
-      if (await persist(pendingAnswer.current))
-        await enqueue({ action, taskId: task.id });
+      const saved = await persist(pendingAnswer.current);
+      const ok = saved && (await enqueue({ action, taskId: task.id }));
+      if (!ok && task.kind === 'report' && action === 'check')
+        setReportError(
+          'The report could not be saved or checked — your draft is still here',
+        );
     } finally {
+      actionPending.current = false;
       setBusy(false);
     }
   }
   async function next() {
+    if (actionPending.current) return;
+    actionPending.current = true;
     clearTimeout(timer.current);
     setBusy(true);
     try {
       if (await persist(pendingAnswer.current)) await onNext?.();
     } finally {
+      actionPending.current = false;
       setBusy(false);
     }
   }
 
+  // Copy only server-confirmed saved findings and preserve their assessment provenance separately
+  async function performCopy(sourceTaskId: string) {
+    if (actionPending.current || !confirmed) return false;
+    actionPending.current = true;
+    setBusy(true);
+    try {
+      clearTimeout(timer.current);
+      if (!(await persist(pendingAnswer.current))) return false;
+      if (
+        !(await enqueue({
+          action: 'useFinding',
+          taskId: task.id,
+          sourceTaskId,
+        }))
+      )
+        return false;
+      const answer = confirmed().tasks[task.id].answer;
+      setAnswer(answer);
+      pendingAnswer.current = answer;
+      setDirty(false);
+      setReviewed(false);
+      return true;
+    } finally {
+      actionPending.current = false;
+      setBusy(false);
+    }
+  }
+
+  function copyFinding(sourceTaskId: string) {
+    const job = performCopy(sourceTaskId);
+    copyPending.current = job;
+    void job.finally(() => {
+      if (copyPending.current === job) copyPending.current = null;
+    });
+    return job;
+  }
+
   // Display the question, answer box, save status, and checking or self-review controls
   return (
-    <section className="task-card" aria-labelledby={`task-${task.id}`}>
+    <section
+      className="task-card"
+      aria-labelledby={`task-${task.id}`}
+      onCompositionStart={() => {
+        composing.current = true;
+      }}
+      onCompositionEnd={() => {
+        composing.current = false;
+      }}
+    >
       <span className="eyebrow">
         {task.stage} ·{' '}
-        {task.kind === 'written' ? 'Self-assessed writing' : 'Precise answer'}
+        {
+          {
+            exact: 'Short Answer',
+            written: 'Self-Assessed Writing',
+            choice: 'Multiple Choice',
+            multiple: 'Select All That Apply',
+            select: 'Drop-Down',
+            report: 'Guided Report',
+          }[task.kind]
+        }
       </span>
-      <h2 id={`task-${task.id}`}>{task.prompt}</h2>
-      <label htmlFor={`answer-${task.id}`}>Your answer</label>
-      <textarea
-        id={`answer-${task.id}`}
-        rows={task.kind === 'written' ? 7 : 2}
-        value={answer}
-        maxLength={10000}
-        onChange={(e) => edit(e.target.value)}
-        spellCheck={task.kind === 'written'}
-        autoComplete="off"
-      />
+      <h2 tabIndex={-1} id={`task-${task.id}`}>
+        {task.prompt}
+      </h2>
+      {task.kind === 'report' && (
+        <p>
+          Simplified learning template informed by Australian Signals
+          Directorate guidance — not an official government reporting form
+          <br />
+          Use the synthetic capture for facts, and Unknown or Not Established
+          where the evidence cannot support a conclusion
+        </p>
+      )}
+      {task.kind === 'report' && isRecord(answer) ? (
+        <fieldset className="activity-fieldset" disabled={busy}>
+          <ReportBuilder
+            task={task}
+            values={answer}
+            edit={edit}
+            lesson={lesson}
+            progress={progress}
+            state={state}
+            onCopy={copyFinding}
+            busy={busy}
+          />
+        </fieldset>
+      ) : (
+        <AnswerControls
+          task={task}
+          answer={answer}
+          edit={edit}
+          onShortEnter={(event) => {
+            if (
+              event.key !== 'Enter' ||
+              composing.current ||
+              event.nativeEvent.isComposing ||
+              event.nativeEvent.keyCode === 229
+            )
+              return;
+            event.preventDefault();
+            if (event.repeat) return;
+            heldEnter.current = true;
+            checkRef.current?.focus();
+          }}
+        />
+      )}
       <p className="muted" role="status">
         {dirty
           ? 'Unsaved edits'
-          : state.answer
+          : hasContent(state.answer)
             ? 'Answer saved'
             : 'No answer yet'}{' '}
         · {state.attempts} checked attempts
       </p>
-      {task.kind === 'exact' ? (
+      {task.kind !== 'written' && (
         <button
-          disabled={busy || !answer.trim()}
+          ref={checkRef}
+          onKeyDown={(event) => {
+            if (
+              event.key === 'Enter' &&
+              (heldEnter.current ||
+                event.repeat ||
+                composing.current ||
+                event.nativeEvent.keyCode === 229 ||
+                event.nativeEvent.isComposing)
+            )
+              event.preventDefault();
+          }}
+          disabled={
+            busy || !validateAnswer(task, answer) || !hasContent(answer)
+          }
           onClick={() => void act('check')}
         >
-          Check answer
+          {task.kind === 'report' ? 'Check Report' : 'Check Answer'}
         </button>
-      ) : (
+      )}
+      {reportError && (
+        <p role="alert" className="feedback retry">
+          {reportError}
+          {onRetry && (
+            <button
+              disabled={busy}
+              onClick={() => {
+                onRetry();
+                void act('check');
+              }}
+            >
+              Retry Report Check
+            </button>
+          )}
+        </p>
+      )}
+      {state.attempts > 0 && !dirty && task.kind !== 'written' && (
+        <div
+          className={`feedback ${state.correct ? 'good' : 'retry'}`}
+          role="status"
+        >
+          <strong>
+            {state.correct
+              ? task.kind === 'report'
+                ? 'Objective Report Checks Met'
+                : 'Correct'
+              : 'Not Correct Yet — Try Again'}
+          </strong>
+          <p>
+            <EvidenceText
+              text={
+                state.correct || state.solution
+                  ? task.explanation
+                  : task.feedback
+              }
+              emphasis={task.emphasis}
+            />
+          </p>
+          {task.kind === 'report' &&
+            task.fields
+              .filter((field) => field.kind !== 'reasoning')
+              .map((field) => (
+                <p key={field.id}>
+                  {field.label}:{' '}
+                  {state.fieldResults?.[field.id] ? (
+                    <strong>
+                      {isRecord(answer)
+                        ? displayField(field, answer[field.id])
+                        : ''}
+                      — Correct
+                    </strong>
+                  ) : (
+                    field.feedback
+                  )}
+                </p>
+              ))}
+        </div>
+      )}
+      {(task.kind === 'written' || task.kind === 'report') && (
         <div className="rubric">
           <h3>Self-review · no automatic technical grade</h3>
           <ul>
@@ -188,10 +419,23 @@ export function TaskCard({
             I compared my response with every rubric item and corrected it.
           </label>
           <button
-            disabled={busy || !reviewed || answer.trim().length < 20}
+            disabled={
+              busy ||
+              !reviewed ||
+              (task.kind === 'written'
+                ? String(answer).trim().length < 20
+                : !state.correct ||
+                  dirty ||
+                  !isRecord(answer) ||
+                  task.fields.some(
+                    (field) =>
+                      field.kind === 'reasoning' &&
+                      !String(answer[field.id] ?? '').trim(),
+                  ))
+            }
             onClick={() => void act('selfReview')}
           >
-            Record self-review
+            Record Self-Review
           </button>
         </div>
       )}
@@ -201,20 +445,6 @@ export function TaskCard({
           technical grade.
         </p>
       )}
-      {state.attempts > 0 && !dirty && task.kind === 'exact' && (
-        <div
-          className={`feedback ${state.correct ? 'good' : 'retry'}`}
-          role="status"
-        >
-          <strong>
-            {state.correct ? 'Correct.' : 'Not correct yet. Try again.'}
-          </strong>
-          <p>
-            {state.correct || state.solution ? task.explanation : task.feedback}
-          </p>
-        </div>
-      )}
-
       {/* Provide hints, a revealed solution, and navigation to the next activity */}
       <div className="actions">
         <button
@@ -222,16 +452,16 @@ export function TaskCard({
           disabled={busy || state.hints >= task.hints.length}
           onClick={() => void act('hint')}
         >
-          Next hint ({state.hints}/{task.hints.length})
+          Next Hint ({state.hints}/{task.hints.length})
         </button>
         <button
           className="text-button"
           disabled={busy || state.solution}
           onClick={() => void act('solution')}
         >
-          {task.kind === 'written'
-            ? 'Reveal example answer'
-            : 'Reveal full solution'}
+          {['written', 'report'].includes(task.kind)
+            ? 'Reveal Example Answer'
+            : 'Reveal Full Solution'}
         </button>
       </div>
       {task.hints.slice(0, state.hints).map((h, i) => (
@@ -242,9 +472,24 @@ export function TaskCard({
       {state.solution && (
         <aside className="solution">
           <h3>
-            {task.kind === 'written' ? 'Example answer' : 'Full solution'}
+            {task.kind === 'report'
+              ? 'Example Report'
+              : task.kind === 'written'
+                ? 'Example answer'
+                : 'Full solution'}
           </h3>
-          <p>{task.example}</p>
+          {task.kind === 'report' && isRecord(exampleAnswer(task)) ? (
+            <ReportText
+              task={task}
+              values={
+                exampleAnswer(
+                  task,
+                ) as import('../shared/schema.js').ReportAnswer
+              }
+            />
+          ) : (
+            <pre>{displayAnswer(task, exampleAnswer(task))}</pre>
+          )}
           <p>{task.explanation}</p>
           <small>
             Solution use is recorded. Finishing with assistance does not
@@ -252,9 +497,22 @@ export function TaskCard({
           </small>
         </aside>
       )}
+      {state.previousWork?.map((work, index) => (
+        <details key={index}>
+          <summary>
+            Saved Work From Content Version {work.contentVersion}
+          </summary>
+          <pre>
+            {typeof work.answer === 'string'
+              ? work.answer
+              : JSON.stringify(work.answer, null, 2)}
+          </pre>
+          <p>Earlier checks and assistance remain in your history</p>
+        </details>
+      ))}
       {onNext && (
         <button className="next" disabled={busy} onClick={() => void next()}>
-          Save and next activity →
+          Save And Next Activity →
         </button>
       )}
     </section>

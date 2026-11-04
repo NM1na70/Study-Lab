@@ -11,6 +11,17 @@ async function snapshot() {
   return r.json();
 }
 
+// Build the content-defined example using stable option and report field identities
+function example(task) {
+  if (task.kind === 'report')
+    return Object.fromEntries(
+      task.fields.map((field) => [field.id, field.example]),
+    );
+  if (task.kind === 'multiple') return task.answers;
+  if (['choice', 'select'].includes(task.kind)) return task.answers[0];
+  return task.example;
+}
+
 // Complete every activity through the real API and record position and assistance for persistence checks
 if (mode === 'write') {
   const { lessons, progress } = await snapshot();
@@ -28,11 +39,13 @@ if (mode === 'write') {
       state = await r.json();
     }
     for (const task of lesson.tasks) {
-      await update({ action: 'draft', taskId: task.id, answer: task.example });
+      await update({ action: 'draft', taskId: task.id, answer: example(task) });
       await update({
         action: task.kind === 'written' ? 'selfReview' : 'check',
         taskId: task.id,
       });
+      if (task.kind === 'report')
+        await update({ action: 'selfReview', taskId: task.id });
     }
     await update({ action: 'hint', taskId: lesson.tasks[0].id });
     await update({ action: 'solution', taskId: lesson.tasks[0].id });
@@ -50,9 +63,9 @@ if (mode === 'write') {
     assert.equal(p.tasks[lesson.tasks[0].id].hints, 1);
     assert(p.tasks[lesson.tasks[0].id].solution);
     for (const task of lesson.tasks) {
-      assert.equal(p.tasks[task.id].answer, task.example);
+      assert.deepEqual(p.tasks[task.id].answer, example(task));
       assert(
-        task.kind === 'written'
+        ['written', 'report'].includes(task.kind)
           ? p.tasks[task.id].reviewed
           : p.tasks[task.id].correct,
       );

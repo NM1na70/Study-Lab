@@ -21,7 +21,7 @@ const db = new DatabaseSync(input, { readOnly: true });
 try {
   if (db.prepare('PRAGMA integrity_check').get().integrity_check !== 'ok')
     throw new Error('Backup failed integrity check.');
-  if (db.prepare('PRAGMA user_version').get().user_version !== 1)
+  if (![1, 2].includes(db.prepare('PRAGMA user_version').get().user_version))
     throw new Error('Unsupported backup schema.');
   db.prepare('SELECT lesson_id, state FROM progress LIMIT 1').get();
 } finally {

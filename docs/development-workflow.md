@@ -127,3 +127,13 @@ Preserve shebangs, licence notices, directives, tool annotations, URLs and other
 For non-commentable configuration, package.json holds scripts, dependency versions and Node/pnpm requirements; tsconfig.json and tsconfig.server.json control strict client/test and server compilation; .prettierrc.json controls formatting; .node-version supplies the exact Node release; and pnpm-lock.yaml freezes dependency resolution. Explain important choices here rather than inserting invalid comments into those files.
 
 For a comments-only review, preserve strings, identifiers, exports, execution order, JSX text/whitespace, CSS values and shell continuations. Review the full diff for executable changes, run pnpm check and the production build, and validate changed shell/configuration files with existing checks. Use the isolated Docker smoke when operational comments warrant verification. Record actual results and any unavailable checks in the handover; leave unrelated functional findings for a separate change.
+
+## Testing Changes To Learning Controls
+
+Use the temporary SQLite fixtures for migrations and browser tests — never point a test or preview at normal learner data
+
+Answer shapes are shared across content, domain validation, API drafts, autosave and review — changing a task's objective or grading requires a content version and deliberate migration, including old assistance and completion history
+
+For short-answer keyboard changes, test keydown, keyup, held repeats and composition events as well as clicks — use real browser tests for native button activation, dialog focus trapping and Escape
+
+After changing question types, update the real API smoke helper and independent PCAP assertions as well as unit tests — restore must accept all supported backup schemas without bypassing integrity checks
