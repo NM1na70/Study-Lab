@@ -546,7 +546,7 @@ test('report notes, overwrite confirmation, live preview and final activity cont
     'color',
     'rgb(0, 0, 0)',
   );
-  await expect(page.locator('footer')).toHaveText('2026 Study Lab');
+  await expect(page.locator('footer')).toHaveText('2026 | Study Lab');
   await route.getByRole('button', { name: /^1\. / }).click();
   await page.getByLabel('Your answer').fill('192.0.2.99');
   await page.getByRole('button', { name: 'Check Answer' }).click();
