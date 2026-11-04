@@ -86,7 +86,7 @@ The server validates request sizes and fields, checks the lesson and task, then 
 | Usual Docker volume name         | Project name followed by `_study-data`, such as `study-lab_study-data` |
 | Database during host development | `data/study.sqlite`, unless `DATABASE_PATH` selects another location   |
 
-SQLite schema version 1 uses a `progress` table keyed by lesson ID — each record stores its content version, revision, answer text, checked attempts and their results/timestamps, mistake counts, current activity, hints, solution use, self-review and completion time
+SQLite schema version 2 uses a `progress` table keyed by lesson ID and a `progress_migrations` archive — progress stores string answers, option-ID arrays or report-field objects with typed selections, content version, revision, checked-attempt history, dismissal watermarks, current activity, assistance, self-review and completion history
 
 Older records may have no attempt history — the app keeps a fallback message for those records instead of inventing an incorrect answer
 
@@ -100,8 +100,9 @@ There is no sign-in — everyone allowed to access this installation reads and c
 
 - Precise tasks use declared answers and task-specific case or whitespace handling — there is no fuzzy spelling match
 - The HTTP URI activity preserves case
+- Radio and drop-down answers use stable option IDs, checkboxes require the exact selected set, and report facts use field-specific answer keys
 - Writing requires an explicit learner self-review against a rubric and language checklist — text length alone is not a technical grade
-- Completion requires every precise answer and the written self-review, followed by an explicit completion action
+- Completion requires every precise answer, correct report facts and scenario-defined assessment/evidence relationships, plus explicit self-review for writing/report reasoning, followed by an explicit completion action
 - Editing an assessed answer reopens the lesson
 - Hints and revealed solutions are recorded separately from correctness — assisted completion does not prove independent mastery
 - All lessons and activities are unlocked, with order recommended rather than enforced
@@ -131,29 +132,60 @@ Request-origin and host checks reduce unwanted browser access, but do not provid
 
 ## **Code Map**
 
-| File or folder                                              | Purpose                                                                       |
-| ----------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| [src/client/App.tsx](../src/client/App.tsx)                 | Dashboard, lesson page, mistake review and evidence table                     |
-| [src/client/TaskCard.tsx](../src/client/TaskCard.tsx)       | Answers, hints, solutions and explicit writing self-review                    |
-| [src/client/use-progress.ts](../src/client/use-progress.ts) | Ordered saves, confirmed status and retry state                               |
-| [src/client/api.ts](../src/client/api.ts)                   | Browser requests to the backend                                               |
-| [src/client/style.css](../src/client/style.css)             | Local styles and responsive layout                                            |
-| [src/server/main.ts](../src/server/main.ts)                 | Server start and normal shutdown                                              |
-| [src/server/app.ts](../src/server/app.ts)                   | API routes, security headers and static files                                 |
-| [src/server/store.ts](../src/server/store.ts)               | SQLite schema, reads and transactional writes                                 |
-| [src/shared/schema.ts](../src/shared/schema.ts)             | Lesson, progress and request contracts                                        |
-| [src/shared/domain.ts](../src/shared/domain.ts)             | Marking, completion and revision rules                                        |
-| [src/shared/lessons.ts](../src/shared/lessons.ts)           | Parse bundled lessons on startup                                              |
-| [scripts/](../scripts/)                                     | Content/evidence validation, backup, restore, hooks and smoke/security checks |
-| [tests/](../tests/)                                         | Domain, HTTP, UI and complete browser scenarios                               |
-| [.github/workflows/ci.yml](../.github/workflows/ci.yml)     | Quality, test, Docker and security jobs                                       |
+| File or folder                                                    | Purpose                                                                       |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| [src/client/App.tsx](../src/client/App.tsx)                       | Dashboard, lesson page, mistake review and evidence table                     |
+| [src/client/TaskCard.tsx](../src/client/TaskCard.tsx)             | Answers, hints, solutions and explicit writing self-review                    |
+| [src/client/use-progress.ts](../src/client/use-progress.ts)       | Ordered saves, confirmed status and retry state                               |
+| [src/client/api.ts](../src/client/api.ts)                         | Browser requests to the backend                                               |
+| [src/client/style.css](../src/client/style.css)                   | Local styles and responsive layout                                            |
+| [src/server/main.ts](../src/server/main.ts)                       | Server start and normal shutdown                                              |
+| [src/server/app.ts](../src/server/app.ts)                         | API routes, security headers and static files                                 |
+| [src/server/store.ts](../src/server/store.ts)                     | SQLite schema, reads and transactional writes                                 |
+| [src/shared/migrate.ts](../src/shared/migrate.ts)                 | Versioned content migration and preserved previous work                       |
+| [src/client/AnswerControls.tsx](../src/client/AnswerControls.tsx) | Native typed controls and safe literal emphasis                               |
+| [src/client/Review.tsx](../src/client/Review.tsx)                 | Course filtering, practice, persistent dismissal and Undo                     |
+| [src/shared/schema.ts](../src/shared/schema.ts)                   | Lesson, progress and request contracts                                        |
+| [src/shared/domain.ts](../src/shared/domain.ts)                   | Marking, completion and revision rules                                        |
+| [src/shared/lessons.ts](../src/shared/lessons.ts)                 | Parse bundled lessons on startup                                              |
+| [scripts/](../scripts/)                                           | Content/evidence validation, backup, restore, hooks and smoke/security checks |
+| [tests/](../tests/)                                               | Domain, HTTP, UI and complete browser scenarios                               |
+| [.github/workflows/ci.yml](../.github/workflows/ci.yml)           | Quality, test, Docker and security jobs                                       |
 
 ## **Future Changes**
 
 Task IDs stay stable — changed task meaning or answer keys need a deliberate content-version decision before release
 
-At present, a content-version mismatch preserves old work and rejects edits with a conflict — future lesson packs need an explicit migration policy rather than silently reusing correctness from changed questions
+Explicit content migrations archive original JSON before updating it, inside one SQLite savepoint — Cybersecurity now supports the chain 1 → 2 → 3, while English remains at version 2 — unsupported migrations preserve the original state and reject access rather than guessing an answer conversion
 
-SQLite schema changes also need a migration and backup/restore checks — only schema version 1 is implemented now
+English completion remains valid because its objectives are unchanged — Cybersecurity request-frame selection and the guided report require new work, with earlier completion retained in `completionHistory` and old answers/assistance visible under Saved Work
+
+Unchanged task counters and checks survive — changed activities retain attempts, mistakes and attempt history, archive hints/solution/self-review, and start their new checks unassessed
+
+Review removal records the current mistake count as a watermark — it leaves assessment and completion intact, survives reload and is undone explicitly or superseded by a new incorrect checked attempt
+
+SQLite schema changes also need backup/restore checks — restore accepts schemas 1 and 2, and the app refuses schema versions newer than 2
 
 AI, placement assessments, spaced repetition and more lessons are planned, with no provider or AI credentials required by the current app — see the [roadmap](roadmap.md)
+
+## Connected Report And Lesson Navigation
+
+Lesson Route buttons share an immediate navigation lock — selecting the current route does nothing, while a different route flushes the latest draft, waits for the confirmed step write and then focuses and scrolls its heading into view
+
+The same route stays available on phones — a failed write keeps the current card and draft open, and a pending finding copy must finish before navigation saves the report
+
+ReportBuilder renders four sentence-based sections and a separate live learner preview — every control has a native label, and React escapes all learner text
+
+The report stores string fields and stable-ID arrays for request frames and limitations — explicit content rules relate a selected assessment to supporting evidence and the verified request-frame set, without grading arbitrary free-text reasoning
+
+Two short reasoning fields require explicit rubric-based self-review without a word-count threshold — correct objective checks alone cannot complete the report
+
+My Investigation Notes reads only saved learner findings — Use My Finding goes through the same revision queue, copies the source value on the server and records its checked status as provenance without checking the report
+
+A draft edit clears the current checked marker, correctness, feedback and self-review — legacy incorrect records without a reliable edit marker are conservatively shown as Not Checked until checked again
+
+A version 2 → 3 report migration retains equivalent factual fields and safely converts known frame selections — the whole previous report remains readable in Saved Work, including unmapped reasoning, assistance and earlier assessment
+
+New objective relationships and reasoning must be assessed afresh — completion history and review-dismissal watermarks survive, while the newly revealed example remains distinct from an earlier example
+
+Hints and explicit examples both count as assistance, including earlier archived use — accessing notes and previewing one's own draft do not

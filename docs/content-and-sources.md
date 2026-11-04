@@ -25,3 +25,37 @@ pnpm content:validate
 ```
 
 The byte-level parser is the equivalent parser used for required validation; no Wireshark UI execution is claimed. Generator and parser are separate code. Existing summary mismatches fail rather than being silently regenerated. Future content needs human review plus evidence tests and explicit content migrations.
+
+## Guided Report Research — 4 November 2026
+
+Reviewed the [ASD practitioner guidance](https://www.cyber.gov.au/publication/cyber-security-incident-response-planning-practitioner-guidance), its linked [December 2024 PDF](https://www.cyber.gov.au/sites/default/files/2026-10/Cyber%20security%20incident%20response%20planning%20%E2%80%93%20Practitioner%20guidance%20%28December%202024%29.pdf) and [website copyright conditions](https://www.cyber.gov.au/copyright) on 4 November 2026
+
+The relevant PDF sections are Documentation and Evidence Collection And Preservation, printed pages 20–21; Appendix D Situation Report Template, page 32; and Appendix H incident summary, pages 38–39 — PDF page indexes are 23–24, 35 and 41–42 respectively
+
+These support dated, evidence-based reporting — Study Lab's original adaptation separates observable facts, possible interpretation, unknowns and next checks, with all network-specific fields derived independently from its synthetic capture
+
+The real templates include organisational matters that this capture cannot establish — the exercise omits required severity, impact, root cause, containment and confirmed compromise rather than inviting invented findings
+
+Attribution: Australian Signals Directorate, © Commonwealth of Australia 2024 for the PDF and © Commonwealth of Australia 2026 for the website, under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) subject to their stated exceptions — the adaptation uses original learner wording, reproduces no protected symbols or official form and implies no government endorsement
+
+Exact source URLs, access dates, support and reuse notes are also recorded with the lesson — sources are optional links and introduce no runtime network dependency
+
+The version 2 report had eight deterministically checked factual fields and four explicitly self-reviewed reasoning fields, without a word-count requirement — checking facts alone does not complete or technically grade the reasoning
+
+Content validation now checks unique option/field IDs, valid key references, checkable examples, reasoning without answer keys and literal emphasis tokens — the PCAP parser separately verifies selected request frames and all factual report examples against the decoded evidence
+
+## Connected Report Refinement — 5 November 2026
+
+Re-read the official practitioner webpage's Documentation, Evidence Collection And Preservation, Investigation Questions and Appendices D, E, F and H, together with the linked December 2024 PDF and the copyright page linked above — source metadata records this access date
+
+The four learning sections use original wording and retain dated observations, evidence, uncertainty and proposed next checks — they do not claim to be an official ASD, ACSC or AFP form, an endorsed product or an incident-submission service
+
+The current report has twelve objective fields and two short reasoning fields — facts, option IDs and claim-to-evidence relationships are assessed from explicit scenario data, while reasoning remains explicitly self-reviewed
+
+Automated polling, possibly benign polling, potentially suspicious polling and inconclusive purpose are qualified choices — regular request timing and the repeated URI support an automated pattern, while missing endpoint context supports uncertainty about purpose
+
+Frame relationships are verified against the bundled PCAP rather than accepting any existing frame — GET remains the method, /checkin?host=lab-01 the URI and Host a separate header
+
+The limitations include malware status, process identity, theft, compromise and attribution — next steps are recommendations for more evidence, never claims that an action has already been performed
+
+The original adaptation and attribution/reuse notes above still apply — no government logos or official form assets are reproduced

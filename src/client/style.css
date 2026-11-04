@@ -595,3 +595,231 @@ pre {
   padding: 0;
   min-width: 0;
 }
+/* Make deliberate keyboard activation clear without changing click behaviour */
+.task-card button:focus-visible {
+  background: #d8d8d8;
+  color: #17252b;
+  outline: 3px solid #244e7d;
+  outline-offset: 3px;
+}
+.report-fields {
+  display: grid;
+  gap: 1rem;
+}
+.report-fields small {
+  display: block;
+}
+.solution pre,
+.review-table pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: inherit;
+}
+dialog {
+  max-width: min(42rem, 90vw);
+  border: 2px solid #244e7d;
+  border-radius: 1rem;
+  padding: 1.5rem;
+}
+dialog::backdrop {
+  background: #152536aa;
+}
+.review-table {
+  width: 100%;
+  table-layout: fixed;
+}
+.review-table th,
+.review-table td {
+  overflow-wrap: anywhere;
+  vertical-align: top;
+  padding: 0.7rem;
+  text-align: left;
+}
+@media (max-width: 640px) {
+  .review-table,
+  .review-table tbody,
+  .review-table tr,
+  .review-table td,
+  .review-table th {
+    display: block;
+    width: auto;
+  }
+  .review-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .review-table tr {
+    border: 1px solid #aab8c0;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .review-table td::before,
+  .review-table tbody th::before {
+    content: attr(data-label) ': ';
+    font-weight: bold;
+  }
+}
+
+/* Keep stacked review captions readable and short answer labels above their fields */
+.task-card input:not([type]),
+.report-fields select {
+  display: block;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+@media (max-width: 640px) {
+  .review-table caption {
+    display: block;
+    width: 100%;
+    text-align: left;
+  }
+}
+
+/* Keep the simplified wordmark black while preserving its dashboard link */
+.brand,
+.brand:hover,
+.brand:visited {
+  color: #000;
+}
+
+/* Keep the route itself operable on every screen size and leave room above focused headings */
+.study-map .route-item {
+  background: transparent;
+  color: #205e50;
+  border: 0;
+  border-radius: 0;
+  text-align: left;
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  font-weight: 400;
+}
+.study-map .route-item:hover,
+.study-map .route-item[aria-current='step'] {
+  background: #e4ecdc;
+  color: #182d2b;
+  font-weight: 700;
+}
+.study-content h2,
+.report-builder h3,
+.learner-report-preview h2 {
+  scroll-margin-top: 1.5rem;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+@media (max-width: 720px) {
+  .study-map ol {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.2rem;
+  }
+  .study-map nav {
+    display: block;
+  }
+}
+
+/* Let report sentences wrap around controls sized for the evidence they contain */
+.report-builder {
+  display: grid;
+  gap: 1rem;
+}
+.report-builder section {
+  border-left: 3px solid #d7e2cf;
+  padding-left: 1rem;
+}
+.report-sentence {
+  line-height: 2.8;
+  margin: 0.8rem 0;
+}
+.report-blank {
+  display: inline-block;
+  vertical-align: baseline;
+  max-width: 100%;
+  margin: 0.1rem 0.25rem;
+}
+.task-card .report-blank input,
+.report-blank select {
+  display: inline-block;
+  width: 100%;
+  margin: 0;
+  padding: 0.35rem 0.5rem;
+}
+.blank-source,
+.blank-destination {
+  width: 10rem;
+}
+.blank-observed-at {
+  width: 14rem;
+}
+.blank-time-zone,
+.blank-method {
+  width: 6rem;
+}
+.blank-uri {
+  width: 21rem;
+}
+.blank-interval {
+  width: 5rem;
+}
+.blank-assessment,
+.blank-evidence,
+.blank-next-step {
+  width: min(100%, 29rem);
+}
+.inline-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+  padding: 0.5rem 0.75rem;
+  line-height: 1.8;
+  min-width: 0;
+}
+.inline-choices label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 400;
+}
+.report-reasoning {
+  display: block;
+  margin: 0.75rem 0;
+}
+.investigation-notes article {
+  border-bottom: 1px solid #d6dfd1;
+  padding-bottom: 1rem;
+}
+.learner-report-preview {
+  border: 2px solid #8ba995;
+  background: #f3f7ed;
+  padding: 1rem;
+  margin: 1.2rem 0;
+}
+.report-paragraph {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Allow phone grid items and inline blanks to shrink within the available reading width */
+.study-content,
+.report-builder section {
+  min-width: 0;
+}
+.report-blank {
+  max-width: calc(100% - 0.5rem);
+}
+@media (max-width: 720px) {
+  .study-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

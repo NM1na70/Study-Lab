@@ -30,7 +30,7 @@ it('answers, saves before checking and provides progressive hints and explicit s
     <TaskCard task={lessons[0].tasks[0]} enqueue={enqueue} />,
   );
   await user.type(screen.getByLabelText('Your answer'), 'action');
-  await user.click(screen.getByRole('button', { name: 'Check answer' }));
+  await user.click(screen.getByRole('button', { name: 'Check Answer' }));
   expect(enqueue.mock.calls.at(-2)?.[0]).toMatchObject({
     action: 'draft',
     answer: 'action',
@@ -39,7 +39,7 @@ it('answers, saves before checking and provides progressive hints and explicit s
   expect(
     screen.queryByText('Full solution', { exact: true }),
   ).not.toBeInTheDocument();
-  await user.click(screen.getByRole('button', { name: /Next hint/ }));
+  await user.click(screen.getByRole('button', { name: /Next Hint/ }));
   expect(enqueue).toHaveBeenLastCalledWith({
     action: 'hint',
     taskId: 'action',
@@ -58,7 +58,7 @@ it('answers, saves before checking and provides progressive hints and explicit s
       enqueue={enqueue}
     />,
   );
-  expect(screen.getByText('Correct.')).toBeVisible();
+  expect(screen.getByText('Correct')).toBeVisible();
   expect(screen.getByText(/Hint 1/)).toBeVisible();
   expect(screen.getByText('Full solution', { exact: true })).toBeVisible();
 });
@@ -70,14 +70,14 @@ it('requires explicit written self-review and preserves unsaved state on failed 
   const task = lessons[0].tasks.find((t) => t.kind === 'written')!;
   render(<TaskCard task={task} enqueue={enqueue} />);
   expect(
-    screen.getByRole('button', { name: 'Record self-review' }),
+    screen.getByRole('button', { name: 'Record Self-Review' }),
   ).toBeDisabled();
   await user.type(
     screen.getByLabelText('Your answer'),
     'The connection failed. My next action is to check the cable.',
   );
   await user.click(screen.getByRole('checkbox'));
-  await user.click(screen.getByRole('button', { name: 'Record self-review' }));
+  await user.click(screen.getByRole('button', { name: 'Record Self-Review' }));
   expect(screen.getByText(/Unsaved edits/)).toBeVisible();
   expect(enqueue).not.toHaveBeenCalledWith(
     expect.objectContaining({ action: 'selfReview' }),
@@ -118,7 +118,7 @@ it('shows actual progress, loading and save error states', async () => {
   fireEvent.change(screen.getByLabelText('Your answer'), {
     target: { value: 'acttion' },
   });
-  await userEvent.click(screen.getByRole('button', { name: 'Check answer' }));
+  await userEvent.click(screen.getByRole('button', { name: 'Check Answer' }));
   await waitFor(() => expect(screen.getByText('Save error')).toBeVisible());
   expect(screen.getByRole('alert')).toHaveTextContent('Disk unavailable');
   expect(screen.getByLabelText('Your answer')).toHaveValue('acttion');
@@ -181,4 +181,89 @@ it('serialises delayed saves so a quick newer edit cannot be overwritten', async
   });
   expect(changed).toHaveBeenLastCalledWith(second);
   expect(result.current.status).toBe('Saved');
+});
+
+// Require separate intentional Enter presses and leave composition and multiline input alone
+it('focuses Check Answer first, suppresses held Enter and IME, then saves before a deliberate second Enter', async () => {
+  const user = userEvent.setup();
+  const enqueue = vi.fn().mockResolvedValue(true);
+  render(<TaskCard task={lessons[0].tasks[0]} enqueue={enqueue} />);
+  const input = screen.getByLabelText('Your answer');
+  fireEvent.change(input, { target: { value: 'action' } });
+  input.focus();
+  fireEvent.keyDown(input, { key: 'Enter', isComposing: true, keyCode: 229 });
+  expect(input).toHaveFocus();
+  expect(enqueue).not.toHaveBeenCalled();
+  fireEvent.compositionStart(input);
+  fireEvent.keyDown(input, { key: 'Enter' });
+  expect(input).toHaveFocus();
+  fireEvent.compositionEnd(input);
+  await user.keyboard('{Enter>}');
+  const button = screen.getByRole('button', { name: 'Check Answer' });
+  expect(button).toHaveFocus();
+  fireEvent.keyDown(button, { key: 'Enter', repeat: true });
+  expect(enqueue).not.toHaveBeenCalled();
+  await user.keyboard('{/Enter}');
+  await user.keyboard('{Enter}');
+  expect(enqueue.mock.calls.map((call) => call[0].action)).toEqual([
+    'draft',
+    'check',
+  ]);
+});
+
+// Reports autosave structured field IDs and do not redirect Enter away from reasoning text
+it('autosaves a report object and preserves multiline Enter behavior', async () => {
+  const task = lessons[1].tasks.find((task) => task.kind === 'report')!;
+  const enqueue = vi.fn().mockResolvedValue(true);
+  render(<TaskCard task={task} enqueue={enqueue} />);
+  fireEvent.change(screen.getByLabelText(/Source Host/), {
+    target: { value: '192.0.2.10' },
+  });
+  fireEvent.change(
+    screen.getByLabelText(/Why This Evidence Supports Your Assessment/),
+    {
+      target: { value: 'Three requests' },
+    },
+  );
+  await waitFor(() =>
+    expect(enqueue).toHaveBeenCalledWith({
+      action: 'draft',
+      taskId: task.id,
+      answer: { source: '192.0.2.10', 'assessment-reason': 'Three requests' },
+    }),
+  );
+  const input = screen.getByLabelText(
+    /Why This Evidence Supports Your Assessment/,
+  );
+  input.focus();
+  fireEvent.keyDown(input, { key: 'Enter' });
+  expect(input).toHaveFocus();
+});
+
+// Keep one checking action in flight even when activation is repeated before the draft saves
+it('does not enqueue duplicate checks while the preceding save is pending', async () => {
+  let release: (value: boolean) => void = () => {};
+  const enqueue = vi
+    .fn()
+    .mockImplementationOnce(
+      () =>
+        new Promise<boolean>((resolve) => {
+          release = resolve;
+        }),
+    )
+    .mockResolvedValue(true);
+  render(<TaskCard task={lessons[0].tasks[0]} enqueue={enqueue} />);
+  fireEvent.change(screen.getByLabelText('Your answer'), {
+    target: { value: 'action' },
+  });
+  const button = screen.getByRole('button', { name: 'Check Answer' });
+  fireEvent.click(button);
+  fireEvent.click(button);
+  expect(enqueue).toHaveBeenCalledTimes(1);
+  release(true);
+  await waitFor(() => expect(enqueue).toHaveBeenCalledTimes(2));
+  expect(enqueue.mock.calls.map((call) => call[0].action)).toEqual([
+    'draft',
+    'check',
+  ]);
 });

@@ -1,10 +1,16 @@
 // Import page hooks, lesson contracts, progress rules, and shared study components
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Lesson, Progress } from '../shared/schema.js';
-import { satisfied } from '../shared/domain.js';
+import {
+  assisted,
+  remainingTasks,
+  satisfied,
+  taskSatisfied,
+} from '../shared/domain.js';
 import { load, type Snapshot } from './api';
 import { useProgress } from './use-progress';
 import { TaskCard } from './TaskCard';
+import { Review } from './Review';
 
 // Describe the bundled decoded evidence used by the browser review table
 interface Evidence {
@@ -103,29 +109,81 @@ function LessonView({
   onChange: (p: Progress) => void;
 }) {
   // Share one saving queue and retain the current card's save callback during navigation
-  const { enqueue, status, error, retry } = useProgress(progress, onChange);
+  const { enqueue, status, error, retry, confirmed } = useProgress(
+    progress,
+    onChange,
+  );
   const [finishing, setFinishing] = useState(false);
   const [navigating, setNavigating] = useState(false);
+  const navigationPending = useRef(false);
+  const focusStep = useRef<number | null>(null);
   const flush = useRef<(() => Promise<boolean>) | null>(null);
   const registerFlush = useCallback((f: (() => Promise<boolean>) | null) => {
     flush.current = f;
   }, []);
 
+  const dialog = useRef<HTMLDialogElement>(null);
+  const back = useRef<HTMLButtonElement>(null);
+  const [remaining, setRemaining] = useState<string[]>([]);
+
+  // Flush before leaving and decide against confirmed state rather than a pending render
+  async function dashboard() {
+    if (flush.current && !(await flush.current())) return;
+    if (confirmed().completedAt) location.hash = '#/';
+    else {
+      setRemaining([]);
+      dialog.current?.showModal();
+    }
+  }
+  async function leave(completeNow: boolean) {
+    setFinishing(true);
+    try {
+      if (flush.current && !(await flush.current())) return;
+      if (completeNow) {
+        const unfinished = remainingTasks(lesson, confirmed());
+        if (unfinished.length) {
+          setRemaining(unfinished.map((task) => task.id));
+          return;
+        }
+        if (!(await enqueue({ action: 'complete' }))) return;
+      }
+      location.hash = '#/';
+    } finally {
+      setFinishing(false);
+    }
+  }
+
   // Reserve step zero for teaching and map numbered activity steps onto the task list
   const step = progress.step;
   const task = lesson.tasks[step - 1];
 
-  // Save the current draft before changing the activity and release the busy state on every exit
+  // Lock navigation immediately so delayed saves cannot race another route selection
   async function changeStep(value: number) {
+    if (navigationPending.current || value === confirmed().step) return;
+    navigationPending.current = true;
     setNavigating(true);
     try {
       if (flush.current && !(await flush.current())) return;
-      await enqueue({ action: 'step', step: value });
-      window.scrollTo({ top: 0 });
+      focusStep.current = value;
+      if (!(await enqueue({ action: 'step', step: value })))
+        focusStep.current = null;
     } finally {
+      navigationPending.current = false;
       setNavigating(false);
     }
   }
+
+  // Focus only the successfully opened section after React has rendered its heading
+  useEffect(() => {
+    if (navigating || focusStep.current === null || focusStep.current !== step)
+      return;
+    const heading = document.getElementById(
+      step === 0 ? 'learn-heading' : `task-${lesson.tasks[step - 1]?.id}`,
+    );
+    heading?.focus({ preventScroll: true });
+    heading?.scrollIntoView({ block: 'start' });
+    focusStep.current = null;
+  }, [navigating, step, lesson]);
 
   // Save pending edits before asking the server to enforce the completion requirements
   async function complete() {
@@ -154,10 +212,9 @@ function LessonView({
       </div>
       {error && (
         <div className="feedback retry" role="alert">
-          {error} Your text stays in this page. For a network error,{' '}
-          <button onClick={retry}>Enable retry</button> then use Check answer or
-          Save and next again. For a conflict, copy unsaved text before
-          reloading.
+          {error} Your draft stays on this page — select{' '}
+          <button onClick={retry}>Enable Retry</button> then try saving or
+          navigating again For a conflict, copy unsaved text before reloading
         </div>
       )}
       <div className="progress-line">
@@ -171,13 +228,15 @@ function LessonView({
         </span>
       </div>
       <p className="muted">
-        Completion: correct every precise answer and explicitly self-review the
-        writing activity.{' '}
+        Completion: correct every precise answer and{' '}
+        {lesson.tasks.some((task) => task.kind === 'report')
+          ? 'check the report facts and explicitly self-review its reasoning'
+          : 'explicitly self-review the writing activity'}{' '}
         {progress.completedAt
           ? `Completed ${new Date(progress.completedAt).toLocaleDateString('en-AU')}.`
           : 'Not completed yet.'}{' '}
-        {Object.values(progress.tasks).some((t) => t.solution)
-          ? 'Solutions used — assisted completion.'
+        {assisted(progress)
+          ? 'Hints or examples used — assistance remains recorded'
           : ''}
       </p>
 
@@ -185,40 +244,47 @@ function LessonView({
       <div className="study-layout">
         <aside className="study-map">
           <h2>Lesson route</h2>
-          <ol>
-            <li className={step === 0 ? 'current' : ''}>Learn & prepare</li>
-            {lesson.tasks.map((t, i) => (
-              <li key={t.id} className={step === i + 1 ? 'current' : ''}>
-                {i + 1}. {t.stage}{' '}
-                {progress.tasks[t.id]?.correct || progress.tasks[t.id]?.reviewed
-                  ? '✓'
-                  : ''}
+          <nav aria-label="Lesson Route">
+            <ol>
+              <li className={step === 0 ? 'current' : ''}>
+                <button
+                  className="route-item"
+                  aria-current={step === 0 ? 'step' : undefined}
+                  disabled={navigating}
+                  onClick={() => void changeStep(0)}
+                >
+                  Learn &amp; Prepare
+                </button>
               </li>
-            ))}
-          </ol>
-          <p>
-            All activities are unlocked. Use the selector to revisit any
-            activity after saving your current answer.
-          </p>
-          <label htmlFor="step">Go to activity</label>
-          <select
-            id="step"
-            disabled={navigating}
-            value={step}
-            onChange={(e) => void changeStep(Number(e.target.value))}
-          >
-            <option value={0}>Learn & prepare</option>
-            {lesson.tasks.map((t, i) => (
-              <option key={t.id} value={i + 1}>
-                {i + 1}. {t.stage}
-              </option>
-            ))}
-          </select>
-          <p className="muted">Before jumping, wait for “Answer saved”.</p>
+              {lesson.tasks.map((activity, index) => (
+                <li
+                  key={activity.id}
+                  className={step === index + 1 ? 'current' : ''}
+                >
+                  <button
+                    className="route-item"
+                    title={activity.prompt}
+                    aria-current={step === index + 1 ? 'step' : undefined}
+                    disabled={navigating}
+                    onClick={() => void changeStep(index + 1)}
+                  >
+                    {index + 1}.{' '}
+                    {activity.stage[0].toUpperCase() + activity.stage.slice(1)}
+                    {taskSatisfied(activity, progress.tasks[activity.id]) && (
+                      <span aria-label="Requirements Met"> ✓</span>
+                    )}
+                  </button>
+                </li>
+              ))}
+            </ol>
+          </nav>
         </aside>
         <div className="study-content" aria-busy={navigating}>
           {step === 0 ? (
             <>
+              <h2 id="learn-heading" tabIndex={-1}>
+                Learn &amp; Prepare
+              </h2>
               <p className="lead">{lesson.summary}</p>
               <h2>Learning outcomes</h2>
               <ul>
@@ -235,7 +301,7 @@ function LessonView({
               {lesson.evidence && (
                 <p>
                   <a className="button" href={lesson.evidence} download>
-                    Download synthetic PCAP · 1.4 KB
+                    Download Synthetic PCAP · 1.4 KB
                   </a>
                 </p>
               )}
@@ -246,7 +312,7 @@ function LessonView({
                 </section>
               ))}
               <button onClick={() => void changeStep(1)}>
-                Start activities →
+                Start Activities →
               </button>
             </>
           ) : task ? (
@@ -256,9 +322,15 @@ function LessonView({
                 task={task}
                 state={progress.tasks[task.id]}
                 enqueue={enqueue}
+                lesson={lesson}
+                progress={progress}
+                confirmed={confirmed}
+                onRetry={retry}
                 registerFlush={registerFlush}
-                onNext={() =>
-                  changeStep(Math.min(lesson.tasks.length, step + 1))
+                onNext={
+                  step < lesson.tasks.length
+                    ? () => changeStep(step + 1)
+                    : undefined
                 }
               />
             </fieldset>
@@ -267,24 +339,100 @@ function LessonView({
 
           {/* Keep completion requirements and source attribution available from every activity */}
           <section className="finish">
-            <h2>Finish this lesson</h2>
+            <h2>Finish This Lesson</h2>
             <p>
               {progress.completedAt
                 ? 'Your completion is saved. You can revisit any activity. Editing an assessed answer reopens the lesson.'
                 : 'You can retry as often as needed. Reading a solution alone does not complete an activity.'}
             </p>
-            <button
-              disabled={
-                finishing ||
-                satisfied(lesson, progress) !== lesson.tasks.length ||
-                !!progress.completedAt
-              }
-              onClick={() => void complete()}
+            <div className="actions">
+              <button
+                disabled={
+                  finishing ||
+                  satisfied(lesson, progress) !== lesson.tasks.length ||
+                  !!progress.completedAt
+                }
+                onClick={() => void complete()}
+              >
+                {progress.completedAt
+                  ? 'Lesson Completed'
+                  : 'Mark Lesson Complete'}
+              </button>
+              <button
+                ref={back}
+                disabled={finishing}
+                className="secondary"
+                onClick={() => void dashboard()}
+              >
+                Back To Dashboard
+              </button>
+            </div>
+            {!!progress.completionHistory?.length && (
+              <p>
+                Earlier completion records are preserved
+                {!progress.completedAt &&
+                  ' — reopened activities need their own checks'}
+              </p>
+            )}
+            <dialog
+              ref={dialog}
+              aria-labelledby="completion-prompt"
+              onClose={() => back.current?.focus()}
             >
-              {progress.completedAt
-                ? 'Lesson completed'
-                : 'Mark lesson complete'}
-            </button>
+              <h2 id="completion-prompt">
+                This lesson has not been marked as completed — would you like to
+                mark it now?
+              </h2>
+              <div className="actions">
+                <button
+                  autoFocus
+                  disabled={finishing}
+                  onClick={() => void leave(true)}
+                >
+                  Mark It As Completed
+                </button>
+                <button
+                  disabled={finishing}
+                  className="secondary"
+                  onClick={() => void leave(false)}
+                >
+                  Not Completed Yet
+                </button>
+              </div>
+              {error && (
+                <p role="alert">
+                  {error} <button onClick={retry}>Enable Retry</button>
+                </p>
+              )}
+              {!!remaining.length && (
+                <div role="alert">
+                  <p>
+                    Finish these activities, including factual checks and
+                    required self-review
+                  </p>
+                  <ul>
+                    {remaining.map((id) => (
+                      <li key={id}>
+                        <button
+                          className="text-button"
+                          onClick={() => {
+                            dialog.current?.close();
+                            void changeStep(
+                              lesson.tasks.findIndex((task) => task.id === id) +
+                                1,
+                            );
+                          }}
+                        >
+                          Return To Activity{' '}
+                          {lesson.tasks.findIndex((task) => task.id === id) + 1}
+                        </button>{' '}
+                        {lesson.tasks.find((task) => task.id === id)?.prompt}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </dialog>
           </section>
           <details>
             <summary>Sources & content version {lesson.version}</summary>
@@ -339,7 +487,7 @@ function Dashboard({ data }: { data: Snapshot }) {
           </p>
           {next ? (
             <a className="button" href={`#/lesson/${next}`}>
-              Continue studying →
+              Continue Studying →
             </a>
           ) : (
             <p>
@@ -391,10 +539,10 @@ function Dashboard({ data }: { data: Snapshot }) {
               </p>
               <a href={`#/lesson/${l.id}`}>
                 {p.completedAt
-                  ? 'Revisit lesson'
+                  ? 'Revisit Lesson'
                   : p.updatedAt
-                    ? 'Resume lesson'
-                    : 'Open lesson'}{' '}
+                    ? 'Resume Lesson'
+                    : 'Open Lesson'}{' '}
                 →
               </a>
             </article>
@@ -407,128 +555,6 @@ function Dashboard({ data }: { data: Snapshot }) {
         change its progress. Core study uses no external services.
       </aside>
     </>
-  );
-}
-
-// List previously missed precise activities and save before switching the selected retry
-function Review({
-  data,
-  onChange,
-}: {
-  data: Snapshot;
-  onChange: (p: Progress) => void;
-}) {
-  // Keep one active task card so review activities do not compete through separate save queues
-  const [selected, setSelected] = useState(0);
-  const flush = useRef<(() => Promise<boolean>) | null>(null);
-  const registerFlush = useCallback(
-    (callback: (() => Promise<boolean>) | null) => {
-      flush.current = callback;
-    },
-    [],
-  );
-  async function changeReview(index: number) {
-    if (!flush.current || (await flush.current())) setSelected(index);
-  }
-
-  // Retain corrected items in review whenever their saved mistake count is greater than zero
-  const mistakes = data.lessons.flatMap((l) =>
-    l.tasks
-      .filter(
-        (t) =>
-          t.kind === 'exact' &&
-          (data.progress.find((p) => p.lessonId === l.id)?.tasks[t.id]
-            ?.mistakes ?? 0) > 0,
-      )
-      .map((t) => ({ lesson: l, task: t })),
-  );
-
-  // Show the empty state or the selected retry with its lesson's latest progress
-  return (
-    <>
-      <span className="eyebrow">Learn from your attempts</span>
-      <h1>Mistake review</h1>
-      <p>
-        Retry precise answers you missed. Corrected items remain as a record;
-        scheduling comes in the next milestone.
-      </p>
-      {!mistakes.length ? (
-        <div className="empty">
-          No mistakes to review yet. Incorrect checked answers will appear here.
-        </div>
-      ) : (
-        <>
-          <label htmlFor="review-activity">Review activity</label>
-          <select
-            id="review-activity"
-            value={selected}
-            onChange={(e) => void changeReview(Number(e.target.value))}
-          >
-            {mistakes.map(({ lesson, task }, index) => (
-              <option key={`${lesson.id}-${task.id}`} value={index}>
-                {lesson.course}: {task.id}
-              </option>
-            ))}
-          </select>
-          <ReviewItem
-            key={`${mistakes[selected].lesson.id}-${mistakes[selected].task.id}`}
-            lesson={mistakes[selected].lesson}
-            taskId={mistakes[selected].task.id}
-            progress={data.progress.find(
-              (p) => p.lessonId === mistakes[selected].lesson.id,
-            )!}
-            onChange={onChange}
-            registerFlush={registerFlush}
-          />
-        </>
-      )}
-    </>
-  );
-}
-
-// Reuse the normal assessment controls and display the last recorded incorrect answer
-function ReviewItem({
-  lesson,
-  taskId,
-  progress,
-  onChange,
-  registerFlush,
-}: {
-  lesson: Lesson;
-  taskId: string;
-  registerFlush: (callback: (() => Promise<boolean>) | null) => void;
-  progress: Progress;
-  onChange: (p: Progress) => void;
-}) {
-  const { enqueue, status, error, retry } = useProgress(progress, onChange);
-  return (
-    <article>
-      <h2>
-        {lesson.course} · {lesson.title}
-      </h2>
-      <p role="status">{status}</p>
-      {error && (
-        <p role="alert">
-          {error}
-          <button onClick={retry}>Enable retry</button>
-        </p>
-      )}
-      <p className="muted">
-        Last incorrect answer:{' '}
-        <code>
-          {[...(progress.tasks[taskId]?.attemptLog ?? [])]
-            .reverse()
-            .find((attempt) => !attempt.correct)?.answer ??
-            'Recorded in an earlier version; retry below.'}
-        </code>
-      </p>
-      <TaskCard
-        task={lesson.tasks.find((t) => t.id === taskId)!}
-        state={progress.tasks[taskId]}
-        registerFlush={registerFlush}
-        enqueue={enqueue}
-      />
-    </article>
   );
 }
 
@@ -585,12 +611,11 @@ export function App() {
           document.getElementById('main')?.focus();
         }}
       >
-        Skip to content
+        Skip To Content
       </a>
       <header>
         <a className="brand" href="#/">
-          Study<span>Lab</span>
-          <small>ENGLISH + CYBERSECURITY</small>
+          StudyLab
         </a>
         <nav aria-label="Main">
           <a
@@ -603,7 +628,7 @@ export function App() {
             aria-current={route === '#/review' ? 'page' : undefined}
             href="#/review"
           >
-            Mistake review
+            Mistake Review
           </a>
         </nav>
         <span className="local-badge">● Local workspace</span>
@@ -613,7 +638,7 @@ export function App() {
           <div role="alert">
             <h1>Could not load Study Lab</h1>
             <p>{error}</p>
-            <button onClick={() => location.reload()}>Retry loading</button>
+            <button onClick={() => location.reload()}>Retry Loading</button>
           </div>
         ) : !data ? (
           <p role="status">Loading your lessons and progress…</p>
@@ -631,14 +656,11 @@ export function App() {
         ) : (
           <>
             <h1>Page not found</h1>
-            <a href="#/">Back to dashboard</a>
+            <a href="#/">Back To Dashboard</a>
           </>
         )}
       </main>
-      <footer>
-        Study Lab · small steps, useful skills{' '}
-        <span>Local learner · Milestone 1</span>
-      </footer>
+      <footer>2026 | Study Lab </footer>
     </>
   );
 }

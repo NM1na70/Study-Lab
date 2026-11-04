@@ -54,8 +54,23 @@ assert [r['payload'] for r in frames if r['payload'].startswith('HTTP')] == ['HT
 # Derive expected task answers from captured evidence rather than trusting the lesson key alone
 lesson = next(l for l in json.loads(Path('content/lessons.json').read_text()) if l['course'] == 'Cybersecurity')
 answers = {t['id']: t['answers'] for t in lesson['tasks']}
-for key, expected in {'source-host': requests[0]['source'], 'destination-host': requests[0]['destination'], 'request-count': str(len(requests)), 'request-path': requests[0]['payload'].split(' ')[1], 'third-frame': str(requests[2]['frame']), 'interval': str(int(requests[1]['epoch'] - requests[0]['epoch']))}.items():
+for key, expected in {'source-host': requests[0]['source'], 'destination-host': requests[0]['destination'], 'request-path': requests[0]['payload'].split(' ')[1], 'third-frame': str(requests[2]['frame']), 'interval': str(int(requests[1]['epoch'] - requests[0]['epoch']))}.items():
     assert answers[key] == [expected], (key, expected)
+
+# Validate request selections and structured factual answers against the actual packets
+assert answers['request-count'] == [f"frame-{request['frame']}" for request in requests]
+report = next(task for task in lesson['tasks'] if task['id'] == 'incident-note')
+fields = {field['id']: field for field in report['fields']}
+for key, value in {'observed-at': '2026-11-01 00:00:01', 'time-zone': 'utc', 'source': requests[0]['source'], 'destination': requests[0]['destination'], 'frames': [f"frame-{request['frame']}" for request in requests], 'method': requests[0]['payload'].split(' ')[0].lower(), 'uri': requests[0]['payload'].split(' ')[1], 'interval': str(int(requests[1]['epoch'] - requests[0]['epoch']))}.items():
+    assert fields[key]['example'] == value, (key, value)
+    if isinstance(value,list): assert value == fields[key]['answers']
+    else: assert value in fields[key]['answers']
+
+# Bind every declared assessment relationship to the independently decoded request frames
+for rule in report['reportRules']:
+    assert rule['frameIds'] == [f"frame-{request['frame']}" for request in requests]
+assert len(set(request['payload'].split(' ')[1] for request in requests)) == 1
+assert requests[2]['epoch'] - requests[1]['epoch'] == requests[1]['epoch'] - requests[0]['epoch']
 
 # Refuse a stale evidence summary and create it only when it does not already exist
 summary = {'synthetic': True, 'licence': 'CC0-1.0: original Study Lab synthetic evidence dedicated to the public domain.', 'sha256': hashlib.sha256(raw).hexdigest(), 'frames': frames}
