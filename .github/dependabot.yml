@@ -26,6 +26,12 @@ updates:
     directory: /
     schedule:
       interval: weekly
+
+    # Keep Node Docker proposals within Node 24 while other dependencies retain their update policies
+    # Coordinate even Node 24 patches with the exact engine and tooling pins before merging
+    ignore:
+      - dependency-name: node
+        versions: ['>=25']
     groups:
       base-images:
         patterns: ['*']

@@ -17,6 +17,33 @@ pnpm hooks:install
 
 On a fresh WSL installation, download the Linux x64 Node 24.22.2 tarball and SHASUMS256.txt from [nodejs.org](https://nodejs.org/dist/v24.22.2/), verify its SHA256 with `sha256sum -c`, extract it into `$HOME/.local/share/study-lab`, then prepend its bin directory to this shell's PATH and run `npm install --global pnpm@10.32.1`. No system Node, global npm config or shell profile edits are needed. For a different Linux-native installation, set STUDY_NODE_BIN before sourcing the helper.
 
+## **Coordinated Node Updates**
+
+Study Lab stays on Node **24.22.2** for this maintenance baseline — `package.json` pins that exact release and `.npmrc` keeps `engine-strict=true`
+
+Dependabot ignores `node` Docker versions `>=25` using the [documented Docker ignore range syntax](https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference#versions-ignore) — npm packages, GitHub Actions and other Docker dependencies keep their existing update policies
+
+Node 24 Docker updates can still be proposed, but an image-only PR is not ready to merge — even a Node 24 patch release fails the exact engine check until the remaining pins are updated in the same change
+
+| Update together                              | Required action                                                                                                                                               |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `package.json` → `engines.node`              | Set the selected exact Node 24 release, rather than widening the allowed engine range                                                                         |
+| `.node-version`                              | Use the identical exact version for local tools and CI                                                                                                        |
+| Both Dockerfile `FROM node:` lines           | Use the same version in the `bookworm-slim` build stage and the `alpine` runtime stage                                                                        |
+| Local Linux Node installation                | Install the checksum-verified selected release and confirm `node --version` after sourcing `scripts/dev-env.sh`                                               |
+| `.github/workflows/ci.yml`                   | Keep every Node setup step reading `.node-version` and update any future independent exact reference                                                          |
+| Current setup and architecture documentation | Update the Node download URL, user tool directory, version table and other current exact-version examples — keep dated historical verification records intact |
+
+Review Node release/security notes and image availability before choosing a newer Node 24 release — review compatible Node type definitions and pnpm separately instead of changing unrelated dependencies automatically
+
+Keep pnpm's package-manager pin consistent between package.json, Docker and CI if it needs a separate update — never bypass engine validation to make a Node image proposal pass
+
+Use `rg -n --hidden '24\.22\.2|FROM node:|node-version|engine-strict' package.json .node-version .npmrc Dockerfile .github scripts/dev-env.sh README.md docs` from the repository root to review the current references before changing the version
+
+After coordinating the files, use the selected local Node and run frozen installation, `pnpm check`, `pnpm build`, `pnpm test:browser`, the isolated `pnpm docker:smoke` and `pnpm security:container` against the freshly built image — confirm the non-root runtime's Node version during Docker validation and record any unavailable checks
+
+An upgrade beyond Node 24 is a separate compatibility decision that must also deliberately revise the Dependabot limit — the limit is not permission to ignore security fixes within Node 24
+
 ## Work loop
 
 Inspect Git state and applicable AGENTS.md; research official documentation; choose a narrow change; implement and validate it; review the diff; update the handover. Do not run reference-repository setup scripts or inherit its agent configuration. This project contains independently written code and configuration.
