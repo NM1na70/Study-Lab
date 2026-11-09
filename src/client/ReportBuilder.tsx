@@ -53,7 +53,7 @@ export function reportSections(task: Task, values: ReportAnswer) {
   ];
 }
 
-// Keep examples and live previews visually separate while using the same safe sentence assembly
+// Display only the learner's assembled report without adding model values or assessment labels
 export function ReportText({
   task,
   values,

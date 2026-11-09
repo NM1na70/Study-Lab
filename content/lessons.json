@@ -3,8 +3,8 @@
     "id": "english-word-families",
     "version": 2,
     "course": "English",
-    "title": "Build words with -tion",
-    "summary": "Connect spelling, meaning and word families: action, connection, detection and protection. Text-based practice; no listening assessment.",
+    "title": "Build Words With -tion",
+    "summary": "Practise spelling action, connection, detection and protection. Use the words in a short note.",
     "difficulty": "Low",
     "minutes": 25,
     "order": 1,
@@ -44,7 +44,7 @@
         "id": "action",
         "kind": "exact",
         "stage": "practice",
-        "prompt": "Build the noun: act + ion. Write the whole word",
+        "prompt": "Build the noun from act + ion",
         "answers": ["action"],
         "normalise": "case-space",
         "hints": [
@@ -65,13 +65,16 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "action"
-        }
+        },
+        "exercise": "act + ion",
+        "instructions": ["Write the whole noun"],
+        "solutionDisplay": "sentence"
       },
       {
         "id": "connection",
         "kind": "exact",
         "stage": "practice",
-        "prompt": "Build the noun from connect: “Check the network ___.”",
+        "prompt": "Complete the sentence with the noun formed from connect",
         "answers": ["connection"],
         "normalise": "case-space",
         "hints": [
@@ -92,13 +95,15 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "connection"
-        }
+        },
+        "exercise": "Check the network ___.",
+        "solutionDisplay": "sentence"
       },
       {
         "id": "detection",
         "kind": "exact",
         "stage": "practice",
-        "prompt": "Build the noun from detect: “Early ___ helps us find problems.”",
+        "prompt": "Complete the sentence with the noun formed from detect",
         "answers": ["detection"],
         "normalise": "case-space",
         "hints": [
@@ -119,13 +124,15 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "detection"
-        }
+        },
+        "exercise": "Early ___ helps us find problems.",
+        "solutionDisplay": "sentence"
       },
       {
         "id": "protection",
         "kind": "exact",
         "stage": "practice",
-        "prompt": "Build the noun from protect: “A helmet provides ___.”",
+        "prompt": "Complete the sentence with the noun formed from protect",
         "answers": ["protection"],
         "normalise": "case-space",
         "hints": [
@@ -146,13 +153,15 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "protection"
-        }
+        },
+        "exercise": "A helmet provides ___.",
+        "solutionDisplay": "sentence"
       },
       {
         "id": "choose-meaning",
         "kind": "select",
         "stage": "practice",
-        "prompt": "Choose connection or detection: “The alert led to the ___ of unusual traffic.”",
+        "prompt": "Choose the word that completes the sentence",
         "answers": ["detection"],
         "normalise": "case-space",
         "hints": [
@@ -181,13 +190,14 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "choose-meaning"
-        }
+        },
+        "exercise": "The alert led to the ___ of unusual traffic."
       },
       {
         "id": "repair-spelling",
         "kind": "exact",
         "stage": "practice",
-        "prompt": "Correct the spelling of one word: “The conection failed.” Write only the corrected word",
+        "prompt": "Correct the misspelled word",
         "answers": ["connection"],
         "normalise": "case-space",
         "hints": [
@@ -207,13 +217,16 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "repair-spelling"
-        }
+        },
+        "exercise": "The conection failed.",
+        "instructions": ["Write only the corrected word"],
+        "solutionDisplay": "sentence"
       },
       {
         "id": "own-note",
         "kind": "written",
         "stage": "independent",
-        "prompt": "Write 2–3 sentences about a lost network connection and a sensible next action. Use connection and action; use detection or protection if it fits. Then compare your note with the rubric",
+        "prompt": "Write a short note about a lost network connection",
         "answers": [],
         "normalise": "case-space",
         "hints": [
@@ -241,7 +254,12 @@
           "difficulty": "Medium",
           "minutes": 8,
           "group": "own-note"
-        }
+        },
+        "instructions": [
+          "Use 2–3 sentences, including connection and action",
+          "Use detection or protection only if it fits the note",
+          "Compare your writing with the rubric"
+        ]
       },
       {
         "id": "review-family",
@@ -267,7 +285,8 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "review-family"
-        }
+        },
+        "solutionDisplay": "sentence"
       }
     ],
     "sources": [
@@ -293,8 +312,8 @@
     "id": "cyber-network-investigation",
     "version": 4,
     "course": "Cybersecurity",
-    "title": "Investigate a suspicious HTTP check-in",
-    "summary": "A 60-minute evidence investigation using a tiny synthetic PCAP — inspect hosts, requests and timing, then complete a short guided report",
+    "title": "Investigate HTTP Requests",
+    "summary": "Inspect hosts, request details and timing in a small synthetic packet capture (PCAP). Build an evidence-based report.",
     "difficulty": "Medium",
     "minutes": 82,
     "order": 1,
@@ -358,7 +377,7 @@
         "id": "source-host",
         "kind": "exact",
         "stage": "practice",
-        "prompt": "With http.request applied, what IPv4 address sends the requests?",
+        "prompt": "Identify the IPv4 address that sends the HTTP requests",
         "answers": ["192.0.2.10"],
         "normalise": "case-space",
         "hints": [
@@ -379,7 +398,11 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "source-host"
-        }
+        },
+        "exercise": "http.request",
+        "instructions": [
+          "Apply this Wireshark display filter before inspecting the request frames"
+        ]
       },
       {
         "id": "destination-host",
@@ -988,7 +1011,7 @@
         "fields": [],
         "emphasis": [],
         "id": "case-decision",
-        "prompt": "Junior Professional — which finding is supported by the professional case?",
+        "prompt": "Which finding does the professional case support?",
         "tier": "Junior Professional",
         "quiz": {
           "difficulty": "Medium",
@@ -1028,7 +1051,7 @@
         "fields": [],
         "emphasis": [],
         "id": "case-gap",
-        "prompt": "Advanced Challenge — which limitation most directly constrains a stronger conclusion?",
+        "prompt": "Which missing evidence most limits a stronger conclusion?",
         "tier": "Advanced Challenge",
         "quiz": {
           "difficulty": "Medium",
@@ -1047,7 +1070,7 @@
         ],
         "explanation": "The supported decision follows the stated evidence boundary rather than an unsupported certainty",
         "feedback": "Recheck the record identifiers, coverage and competing explanation before choosing",
-        "example": "Collect endpoint process/network records before assigning the traffic to malware — explain the alternative and scope using the named records",
+        "example": "P1 records two GET /status requests, but N1 covers only the first 20 seconds. A1 lists a monitoring agent, which is a plausible legitimate explanation; E1 is unavailable, so process identity is not established.\n\nCollect endpoint process and network records and a capture covering both requests before assessing whether the traffic is malicious.",
         "rubric": [
           "Cite at least two named case records accurately",
           "Compare a plausible competing explanation",
@@ -1063,13 +1086,19 @@
         "fields": [],
         "emphasis": [],
         "id": "case-justification",
-        "prompt": "Advanced Challenge — justify a defensible decision, name two case records, consider a competing explanation and propose a discriminating next check",
+        "prompt": "Explain a defensible decision for this case",
         "tier": "Advanced Challenge",
         "quiz": {
           "difficulty": "Hard",
           "minutes": 12,
           "group": "cyber-network-investigation-case"
-        }
+        },
+        "instructions": [
+          "Use two named case records as evidence",
+          "Consider a plausible competing explanation",
+          "Propose a next check that could distinguish the explanations",
+          "State what remains uncertain"
+        ]
       }
     ],
     "sources": [
@@ -1135,8 +1164,8 @@
     "id": "english-spelling-patterns",
     "version": 1,
     "course": "English",
-    "title": "Recall useful spelling patterns",
-    "summary": "Recall difficult words and notice sound–spelling limits — repair a short maintenance note",
+    "title": "Practise Common Spelling Patterns",
+    "summary": "Recall commonly misspelled words and correct a short maintenance note.",
     "difficulty": "Low",
     "minutes": 25,
     "order": 2,
@@ -1145,7 +1174,7 @@
       "Recall difficult words and notice sound–spelling limits",
       "Repair a short maintenance note"
     ],
-    "prerequisites": ["Recommended earlier lesson: Build words with -tion"],
+    "prerequisites": ["Recommended earlier lesson: Build Words With -tion"],
     "teaching": [
       {
         "title": "Notice before guessing",
@@ -1194,13 +1223,14 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "necessary"
-        }
+        },
+        "solutionDisplay": "sentence"
       },
       {
         "id": "occurred",
         "kind": "exact",
         "stage": "practice",
-        "prompt": "Repair the spelling: The interruption occured yesterday",
+        "prompt": "Correct the misspelled word",
         "answers": ["occurred"],
         "normalise": "case-space",
         "hints": [
@@ -1221,13 +1251,15 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "occurred"
-        }
+        },
+        "exercise": "The interruption occured yesterday.",
+        "solutionDisplay": "sentence"
       },
       {
         "id": "writing",
         "kind": "exact",
         "stage": "practice",
-        "prompt": "Complete the form: write → ___ when adding ing",
+        "prompt": "Complete the word when adding -ing",
         "answers": ["writing"],
         "normalise": "case-space",
         "hints": [
@@ -1248,7 +1280,9 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "writing"
-        }
+        },
+        "exercise": "write → ___",
+        "solutionDisplay": "sentence"
       },
       {
         "id": "pattern",
@@ -1302,7 +1336,7 @@
         ],
         "explanation": "Writing is self-reviewed for meaning and spelling, rather than automatically graded",
         "feedback": "Not supported yet — check the requested word, rule or evidence field and try again",
-        "example": "The inspection is necessary before restart — the interruption occurred during the previous shift",
+        "example": "The inspection is necessary before restart.\nThe interruption occurred during the previous shift.",
         "rubric": [
           "Answer the actual question using the supplied material",
           "Separate what is known from assumptions and make the next step useful"
@@ -1345,7 +1379,8 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "review-spelling"
-        }
+        },
+        "solutionDisplay": "sentence"
       }
     ],
     "sources": [
@@ -1364,8 +1399,8 @@
     "id": "english-reading-actions",
     "version": 2,
     "course": "English",
-    "title": "Read for actions and constraints",
-    "summary": "Extract who, when and conditions from a short notice — turn a maintenance notice into an action summary",
+    "title": "Read Notices And Identify Actions",
+    "summary": "Find who must act, the deadline and any conditions in a notice. Write a clear handover.",
     "difficulty": "Low",
     "minutes": 43,
     "order": 3,
@@ -1375,7 +1410,7 @@
       "Turn a maintenance notice into an action summary"
     ],
     "prerequisites": [
-      "Recommended earlier lesson: Recall useful spelling patterns"
+      "Recommended earlier lesson: Practise Common Spelling Patterns"
     ],
     "teaching": [
       {
@@ -1552,7 +1587,7 @@
         ],
         "explanation": "Self-review the requested constraints without inventing a completed action",
         "feedback": "Not supported yet — check the requested word, rule or evidence field and try again",
-        "example": "Mina needs to email the inventory before 14:00 AEST on Friday — restart the spare device only after Sam confirms its inspection",
+        "example": "Mina must email the updated inventory before 14:00 AEST on Friday. Restart the spare device only after Sam confirms its inspection.",
         "rubric": [
           "Answer the actual question using the supplied material",
           "Separate what is known from assumptions and make the next step useful"
@@ -1596,13 +1631,14 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "review-owner"
-        }
+        },
+        "solutionDisplay": "sentence"
       },
       {
         "id": "news-cyber-medium",
         "kind": "report",
         "stage": "independent",
-        "prompt": "Medium reading — interpret Cybersecurity logging announcement",
+        "prompt": "Read the passage and complete an evidence-based interpretation",
         "answers": [],
         "normalise": "case-space",
         "hints": [
@@ -1739,7 +1775,7 @@
             "label": "Justified Interpretation",
             "kind": "reasoning",
             "answers": [],
-            "example": "The main point is qualified — name the passage detail supporting it and explain one inference that needs further evidence",
+            "example": "The passage recommends correlating useful event records across environments. It does not say that storing more events guarantees detection or that a named organisation has been breached. Coverage and investigation results would be needed to assess detection in a particular organisation.",
             "hint": "Use the exact stored passage and preserve its scope and uncertainty",
             "options": [],
             "normalise": "case-space",
@@ -1777,7 +1813,12 @@
           "difficulty": "Medium",
           "minutes": 18,
           "group": "news-cyber-medium"
-        }
+        },
+        "instructions": [
+          "Answer factual fields using this stored passage",
+          "Explain a qualified interpretation and a limit of the evidence",
+          "Review your reasoning explicitly; factual checks do not grade it"
+        ]
       }
     ],
     "sources": [
@@ -1805,8 +1846,8 @@
     "id": "cyber-dns-behaviour",
     "version": 2,
     "course": "Cybersecurity",
-    "title": "Investigate DNS behaviour",
-    "summary": "Distinguish DNS questions, answers and NXDOMAIN — correlate repeated queries with resolver responses",
+    "title": "Investigate DNS Lookup Results",
+    "summary": "Examine DNS queries and replies, including NXDOMAIN for a missing name. Explain what the records can establish.",
     "difficulty": "Medium",
     "minutes": 62,
     "order": 2,
@@ -1817,9 +1858,7 @@
       "Investigate incomplete professional evidence and compare competing explanations",
       "Justify an independent, proportionate decision while preserving evidence and service availability"
     ],
-    "prerequisites": [
-      "Recommended earlier lesson: Investigate a suspicious HTTP check-in"
-    ],
+    "prerequisites": ["Recommended earlier lesson: Investigate HTTP Requests"],
     "teaching": [
       {
         "title": "Prepare the evidence",
@@ -2011,7 +2050,7 @@
         ],
         "explanation": "Self-review the distinction between a DNS response and an unsupported process claim",
         "feedback": "Not supported yet — check the requested word, rule or evidence field and try again",
-        "example": "Check which process on 192.0.2.30 requested missing.lab.test — the resolver events show failed name lookups, not that process or its intent",
+        "example": "Check which process on 192.0.2.30 requested missing.lab.test.\nThe resolver events show failed name lookups, not that process or its intent",
         "rubric": [
           "Answer the actual question using the supplied material",
           "Separate what is known from assumptions and make the next step useful"
@@ -2103,7 +2142,7 @@
         "fields": [],
         "emphasis": [],
         "id": "case-decision",
-        "prompt": "Junior Professional — which finding is supported by the professional case?",
+        "prompt": "Which finding does the professional case support?",
         "tier": "Junior Professional",
         "quiz": {
           "difficulty": "Medium",
@@ -2143,7 +2182,7 @@
         "fields": [],
         "emphasis": [],
         "id": "case-gap",
-        "prompt": "Advanced Challenge — which limitation most directly constrains a stronger conclusion?",
+        "prompt": "Which missing evidence most limits a stronger conclusion?",
         "tier": "Advanced Challenge",
         "quiz": {
           "difficulty": "Medium",
@@ -2162,7 +2201,7 @@
         ],
         "explanation": "The supported decision follows the stated evidence boundary rather than an unsupported certainty",
         "feedback": "Recheck the record identifiers, coverage and competing explanation before choosing",
-        "example": "Compare affected hosts and process-originated DNS telemetry before asserting command and control — explain the alternative and scope using the named records",
+        "example": "D1 shows 40 NXDOMAIN replies from WS4 in five minutes, above the B1 baseline. C1 records a search-suffix change, and D2 shows that the old-suffix queries stop after rollback, making a configuration problem a plausible alternative to command and control.\n\nCompare process-originated DNS records and affected hosts before making a stronger attribution; process telemetry is missing.",
         "rubric": [
           "Cite at least two named case records accurately",
           "Compare a plausible competing explanation",
@@ -2178,13 +2217,19 @@
         "fields": [],
         "emphasis": [],
         "id": "case-justification",
-        "prompt": "Advanced Challenge — justify a defensible decision, name two case records, consider a competing explanation and propose a discriminating next check",
+        "prompt": "Explain a defensible decision for this case",
         "tier": "Advanced Challenge",
         "quiz": {
           "difficulty": "Hard",
           "minutes": 12,
           "group": "cyber-dns-behaviour-case"
-        }
+        },
+        "instructions": [
+          "Use two named case records as evidence",
+          "Consider a plausible competing explanation",
+          "Propose a next check that could distinguish the explanations",
+          "State what remains uncertain"
+        ]
       }
     ],
     "sources": [
@@ -2220,8 +2265,8 @@
     "id": "cyber-authentication-logs",
     "version": 2,
     "course": "Cybersecurity",
-    "title": "Investigate authentication events",
-    "summary": "Correlate failed and successful network logons cautiously — build an account-focused authentication finding",
+    "title": "Investigate Sign-In Records",
+    "summary": "Compare failed and successful network sign-ins. Build a cautious finding about the account activity.",
     "difficulty": "Medium",
     "minutes": 69,
     "order": 3,
@@ -2232,7 +2277,9 @@
       "Investigate incomplete professional evidence and compare competing explanations",
       "Justify an independent, proportionate decision while preserving evidence and service availability"
     ],
-    "prerequisites": ["Recommended earlier lesson: Investigate DNS behaviour"],
+    "prerequisites": [
+      "Recommended earlier lesson: Investigate DNS Lookup Results"
+    ],
     "teaching": [
       {
         "title": "Prepare the evidence",
@@ -2429,7 +2476,7 @@
         ],
         "explanation": "An observed success does not prove legitimate ownership or theft",
         "feedback": "Not supported yet — check the requested word, rule or evidence field and try again",
-        "example": "Two failed logons for mira precede a successful network logon from 192.0.2.44 — compare endpoint activity and confirm whether this use was expected",
+        "example": "Two failed logons for mira precede a successful network logon from 192.0.2.44.\nCompare endpoint activity and confirm whether this use was expected",
         "rubric": [
           "Answer the actual question using the supplied material",
           "Separate what is known from assumptions and make the next step useful"
@@ -2509,7 +2556,7 @@
         "fields": [],
         "emphasis": [],
         "id": "case-decision",
-        "prompt": "Junior Professional — which finding is supported by the professional case?",
+        "prompt": "Which finding does the professional case support?",
         "tier": "Junior Professional",
         "quiz": {
           "difficulty": "Medium",
@@ -2549,7 +2596,7 @@
         "fields": [],
         "emphasis": [],
         "id": "case-gap",
-        "prompt": "Advanced Challenge — which limitation most directly constrains a stronger conclusion?",
+        "prompt": "Which missing evidence most limits a stronger conclusion?",
         "tier": "Advanced Challenge",
         "quiz": {
           "difficulty": "Medium",
@@ -2568,7 +2615,7 @@
         ],
         "explanation": "The supported decision follows the stated evidence boundary rather than an unsupported certainty",
         "feedback": "Recheck the record identifiers, coverage and competing explanation before choosing",
-        "example": "Preserve authentication/session records and verify the automation owner through an independent channel — explain the alternative and scope using the named records",
+        "example": "A1 and A2 link a new source to authentication and a service ticket, while C1 authorises automation from a different source. A3 explicitly records simulated credential misuse, supporting that bounded finding; it does not show how the credential was acquired.\n\nPreserve session records and independently confirm the automation owner and source before extending the conclusion to other activity.",
         "rubric": [
           "Cite at least two named case records accurately",
           "Compare a plausible competing explanation",
@@ -2584,13 +2631,19 @@
         "fields": [],
         "emphasis": [],
         "id": "case-justification",
-        "prompt": "Advanced Challenge — justify a defensible decision, name two case records, consider a competing explanation and propose a discriminating next check",
+        "prompt": "Explain a defensible decision for this case",
         "tier": "Advanced Challenge",
         "quiz": {
           "difficulty": "Hard",
           "minutes": 12,
           "group": "cyber-authentication-logs-case"
-        }
+        },
+        "instructions": [
+          "Use two named case records as evidence",
+          "Consider a plausible competing explanation",
+          "Propose a next check that could distinguish the explanations",
+          "State what remains uncertain"
+        ]
       },
       {
         "kind": "choice",
@@ -2682,8 +2735,8 @@
     "id": "english-verb-time",
     "version": 1,
     "course": "English",
-    "title": "Make time and actions clear",
-    "summary": "Choose tense and agreement in practical updates — write a clear before-and-now update",
+    "title": "Describe Past Actions And Future Plans",
+    "summary": "Choose verbs that make finished actions, routines and plans clear. Write a short update.",
     "difficulty": "Low",
     "minutes": 25,
     "order": 4,
@@ -2693,7 +2746,7 @@
       "Write a clear before-and-now update"
     ],
     "prerequisites": [
-      "Recommended earlier lesson: Read for actions and constraints"
+      "Recommended earlier lesson: Read Notices And Identify Actions"
     ],
     "teaching": [
       {
@@ -2722,7 +2775,7 @@
         "id": "past-inspect",
         "kind": "exact",
         "stage": "practice",
-        "prompt": "Complete yesterday’s finished action: Jo ___ the device",
+        "prompt": "Complete the sentence about a finished action",
         "answers": ["inspected"],
         "normalise": "case-space",
         "hints": [
@@ -2743,13 +2796,15 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "past-inspect"
-        }
+        },
+        "exercise": "Yesterday, Jo ___ the device.",
+        "solutionDisplay": "sentence"
       },
       {
         "id": "singular-check",
         "kind": "exact",
         "stage": "practice",
-        "prompt": "Complete the routine: Mina ___ the inventory each morning",
+        "prompt": "Complete the sentence about a daily routine",
         "answers": ["checks"],
         "normalise": "case-space",
         "hints": [
@@ -2770,13 +2825,15 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "singular-check"
-        }
+        },
+        "exercise": "Mina ___ the inventory each morning.",
+        "solutionDisplay": "sentence"
       },
       {
         "id": "plural-check",
         "kind": "exact",
         "stage": "practice",
-        "prompt": "Complete the routine: Two technicians ___ the devices",
+        "prompt": "Complete the sentence about a daily routine",
         "answers": ["check"],
         "normalise": "case-space",
         "hints": [
@@ -2796,7 +2853,9 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "plural-check"
-        }
+        },
+        "exercise": "Two technicians ___ the devices.",
+        "solutionDisplay": "sentence"
       },
       {
         "id": "planned",
@@ -2850,7 +2909,7 @@
         ],
         "explanation": "Self-review whether your verbs preserve both timing and completion status",
         "feedback": "Not supported yet — check the requested word, rule or evidence field and try again",
-        "example": "Jo inspected the spare device yesterday — Mina will inspect the replacement tomorrow",
+        "example": "Jo inspected the spare device yesterday.\nMina will inspect the replacement tomorrow.",
         "rubric": [
           "Answer the actual question using the supplied material",
           "Separate what is known from assumptions and make the next step useful"
@@ -2893,7 +2952,8 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "review-past"
-        }
+        },
+        "solutionDisplay": "sentence"
       }
     ],
     "sources": [
@@ -2912,8 +2972,8 @@
     "id": "english-sentence-boundaries",
     "version": 1,
     "course": "English",
-    "title": "Build clear sentences",
-    "summary": "Join or separate ideas without comma splices — edit a short handover paragraph",
+    "title": "Write Clear, Complete Sentences",
+    "summary": "Join related ideas and repair sentence punctuation. Turn device updates into a clear note.",
     "difficulty": "Medium",
     "minutes": 25,
     "order": 5,
@@ -2923,7 +2983,7 @@
       "Edit a short handover paragraph"
     ],
     "prerequisites": [
-      "Recommended earlier lesson: Make time and actions clear"
+      "Recommended earlier lesson: Describe Past Actions And Future Plans"
     ],
     "teaching": [
       {
@@ -2973,13 +3033,14 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "plural"
-        }
+        },
+        "solutionDisplay": "sentence"
       },
       {
         "id": "reason-link",
         "kind": "exact",
         "stage": "practice",
-        "prompt": "Complete the reason: Jo checked the cable ___ the device stopped",
+        "prompt": "Complete the sentence with a word that gives a reason",
         "answers": ["because"],
         "normalise": "case-space",
         "hints": [
@@ -2999,7 +3060,9 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "reason-link"
-        }
+        },
+        "exercise": "Jo checked the cable ___ the device stopped.",
+        "solutionDisplay": "sentence"
       },
       {
         "id": "contrast",
@@ -3093,7 +3156,7 @@
         ],
         "explanation": "Self-review boundaries and the contrast, rather than counting punctuation marks",
         "feedback": "Not supported yet — check the requested word, rule or evidence field and try again",
-        "example": "The replacement works, but the main device still needs inspection",
+        "example": "The replacement works, but the main device still needs inspection.",
         "rubric": [
           "Answer the actual question using the supplied material",
           "Separate what is known from assumptions and make the next step useful"
@@ -3137,7 +3200,8 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "review-plural"
-        }
+        },
+        "solutionDisplay": "sentence"
       }
     ],
     "sources": [
@@ -3156,8 +3220,8 @@
     "id": "english-precise-vocabulary",
     "version": 2,
     "course": "English",
-    "title": "Choose precise workplace words",
-    "summary": "Distinguish similar words and reduce vague wording — repair ambiguous status messages",
+    "title": "Choose Clear Workplace Words",
+    "summary": "Distinguish commonly confused words and replace vague updates with specific information.",
     "difficulty": "Medium",
     "minutes": 43,
     "order": 6,
@@ -3166,7 +3230,9 @@
       "Distinguish similar words and reduce vague wording",
       "Repair ambiguous status messages"
     ],
-    "prerequisites": ["Recommended earlier lesson: Build clear sentences"],
+    "prerequisites": [
+      "Recommended earlier lesson: Write Clear, Complete Sentences"
+    ],
     "teaching": [
       {
         "title": "Start with meaning",
@@ -3199,7 +3265,7 @@
         "id": "affect",
         "kind": "exact",
         "stage": "practice",
-        "prompt": "Fill the common verb use: The delay may ___ the handover",
+        "prompt": "Complete the sentence with the appropriate verb",
         "answers": ["affect"],
         "normalise": "case-space",
         "hints": [
@@ -3220,13 +3286,15 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "affect"
-        }
+        },
+        "exercise": "The delay may ___ the handover.",
+        "solutionDisplay": "sentence"
       },
       {
         "id": "effect",
         "kind": "exact",
         "stage": "practice",
-        "prompt": "Fill the common noun use: One ___ is a later restart",
+        "prompt": "Complete the sentence with the appropriate noun",
         "answers": ["effect"],
         "normalise": "case-space",
         "hints": [
@@ -3247,13 +3315,15 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "effect"
-        }
+        },
+        "exercise": "One ___ is a later restart.",
+        "solutionDisplay": "sentence"
       },
       {
         "id": "advice",
         "kind": "exact",
         "stage": "practice",
-        "prompt": "Fill the noun: Jo gave useful ___",
+        "prompt": "Complete the sentence with the appropriate noun",
         "answers": ["advice"],
         "normalise": "case-space",
         "hints": [
@@ -3274,7 +3344,9 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "advice"
-        }
+        },
+        "exercise": "Jo gave useful ___.",
+        "solutionDisplay": "sentence"
       },
       {
         "id": "precise",
@@ -3319,7 +3391,7 @@
         "id": "rewrite",
         "kind": "written",
         "stage": "independent",
-        "prompt": "Write a useful replacement for It is bad using only the status brief",
+        "prompt": "Replace the vague update using only the status brief",
         "answers": [],
         "normalise": "case-space",
         "hints": [
@@ -3328,7 +3400,7 @@
         ],
         "explanation": "Self-review precision without adding an unsupported cause",
         "feedback": "Not supported yet — check the requested word, rule or evidence field and try again",
-        "example": "The handover is delayed and the restart will be later — the cause has not been confirmed",
+        "example": "The handover is delayed, and the restart will be later. The cause has not been confirmed.",
         "rubric": [
           "Answer the actual question using the supplied material",
           "Separate what is known from assumptions and make the next step useful"
@@ -3345,7 +3417,8 @@
           "difficulty": "Medium",
           "minutes": 8,
           "group": "rewrite"
-        }
+        },
+        "exercise": "It is bad."
       },
       {
         "id": "review-advise",
@@ -3372,13 +3445,14 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "review-advise"
-        }
+        },
+        "solutionDisplay": "sentence"
       },
       {
         "id": "news-international-medium",
         "kind": "report",
         "stage": "independent",
-        "prompt": "Medium reading — interpret Artemis II science records released",
+        "prompt": "Read the passage and complete an evidence-based interpretation",
         "answers": [],
         "normalise": "case-space",
         "hints": [
@@ -3515,7 +3589,7 @@
             "label": "Justified Interpretation",
             "kind": "reasoning",
             "answers": [],
-            "example": "The main point is qualified — name the passage detail supporting it and explain one inference that needs further evidence",
+            "example": "The passage describes NASA material as preliminary and distinguishes edited audio from the unedited library. Release enables examination; it does not make every interpretation final. Checking the underlying report and unedited record would help assess a specific claim.",
             "hint": "Use the exact stored passage and preserve its scope and uncertainty",
             "options": [],
             "normalise": "case-space",
@@ -3553,7 +3627,12 @@
           "difficulty": "Medium",
           "minutes": 18,
           "group": "news-international-medium"
-        }
+        },
+        "instructions": [
+          "Answer factual fields using this stored passage",
+          "Explain a qualified interpretation and a limit of the evidence",
+          "Review your reasoning explicitly; factual checks do not grade it"
+        ]
       }
     ],
     "sources": [
@@ -3589,8 +3668,8 @@
     "id": "english-workplace-emails",
     "version": 2,
     "course": "English",
-    "title": "Write useful workplace emails",
-    "summary": "State purpose, action and a realistic deadline — write a short request with useful context",
+    "title": "Write Clear Workplace Emails",
+    "summary": "Write a polite request that names the action, deadline and purpose. Keep it brief and accurate.",
     "difficulty": "Medium",
     "minutes": 48,
     "order": 7,
@@ -3600,7 +3679,7 @@
       "Write a short request with useful context"
     ],
     "prerequisites": [
-      "Recommended earlier lesson: Choose precise workplace words"
+      "Recommended earlier lesson: Choose Clear Workplace Words"
     ],
     "teaching": [
       {
@@ -3742,7 +3821,7 @@
         "id": "request-word",
         "kind": "exact",
         "stage": "practice",
-        "prompt": "Type the courteous word completing ___ send the revised list",
+        "prompt": "Complete the request with a polite word",
         "answers": ["Please"],
         "normalise": "case-space",
         "hints": [
@@ -3763,13 +3842,15 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "request-word"
-        }
+        },
+        "exercise": "___ send the revised list",
+        "solutionDisplay": "sentence"
       },
       {
         "id": "email",
         "kind": "written",
         "stage": "independent",
-        "prompt": "Write the email request in two or three short sentences",
+        "prompt": "Write a polite email request using the brief",
         "answers": [],
         "normalise": "case-space",
         "hints": [
@@ -3778,13 +3859,14 @@
         ],
         "explanation": "Self-review recipient, action, deadline and supported context",
         "feedback": "Not supported yet — check the requested word, rule or evidence field and try again",
-        "example": "Hi Jo — please send the revised device list by 15:00 AEST today so Mina can prepare the next shift — thank you",
+        "example": "Hi Jo,\n\nPlease send the revised device list by 15:00 AEST today.\nMina needs it to prepare the next shift.\n\nThank you",
         "rubric": [
-          "Answer the actual question using the supplied material",
-          "Separate what is known from assumptions and make the next step useful"
+          "Name Jo as the recipient and request the revised device list",
+          "Preserve 15:00 AEST today and Mina’s next-shift purpose",
+          "Keep the request courteous without inventing an attachment or claiming it was already sent"
         ],
         "languageChecklist": [
-          "Use one or two clear sentences",
+          "Use two or three clear sentences in the message body; greeting and closing do not count",
           "Check spelling, meaning and who must act"
         ],
         "sourceIds": ["plain"],
@@ -3795,7 +3877,11 @@
           "difficulty": "Medium",
           "minutes": 8,
           "group": "email"
-        }
+        },
+        "instructions": [
+          "Use two or three short sentences in the message body",
+          "Keep the greeting and closing separate from the message-body sentence count"
+        ]
       },
       {
         "id": "review-recipient",
@@ -3822,13 +3908,14 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "review-recipient"
-        }
+        },
+        "solutionDisplay": "sentence"
       },
       {
         "id": "news-australia-medium",
         "kind": "report",
         "stage": "independent",
-        "prompt": "Medium reading — interpret Climate patterns and local impacts",
+        "prompt": "Read the passage and complete an evidence-based interpretation",
         "answers": [],
         "normalise": "case-space",
         "hints": [
@@ -3965,7 +4052,7 @@
             "label": "Justified Interpretation",
             "kind": "reasoning",
             "answers": [],
-            "example": "The main point is qualified — name the passage detail supporting it and explain one inference that needs further evidence",
+            "example": "The passage says El Niño is only one influence and that local outcomes differ. It therefore does not support the claim that every Australian location will have the same conditions. Local observations and a location-specific forecast would be needed before advising a particular community.",
             "hint": "Use the exact stored passage and preserve its scope and uncertainty",
             "options": [],
             "normalise": "case-space",
@@ -4003,7 +4090,12 @@
           "difficulty": "Medium",
           "minutes": 18,
           "group": "news-australia-medium"
-        }
+        },
+        "instructions": [
+          "Answer factual fields using this stored passage",
+          "Explain a qualified interpretation and a limit of the evidence",
+          "Review your reasoning explicitly; factual checks do not grade it"
+        ]
       }
     ],
     "sources": [
@@ -4031,8 +4123,8 @@
     "id": "english-evidence-language",
     "version": 2,
     "course": "English",
-    "title": "Express evidence and uncertainty",
-    "summary": "Separate observation, interpretation and missing information — rewrite an overconfident finding",
+    "title": "Explain Evidence And Uncertainty",
+    "summary": "Separate what records show from what they might mean. Write a finding that makes missing information clear.",
     "difficulty": "Medium",
     "minutes": 52,
     "order": 8,
@@ -4042,7 +4134,7 @@
       "Rewrite an overconfident finding"
     ],
     "prerequisites": [
-      "Recommended earlier lesson: Write useful workplace emails"
+      "Recommended earlier lesson: Write Clear Workplace Emails"
     ],
     "teaching": [
       {
@@ -4076,7 +4168,7 @@
         "id": "unknown-word",
         "kind": "exact",
         "stage": "practice",
-        "prompt": "Retrieve the word completing The cause remains ___",
+        "prompt": "Complete the finding with a word that marks missing knowledge",
         "answers": ["unknown"],
         "normalise": "case-space",
         "hints": [
@@ -4097,7 +4189,9 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "unknown-word"
-        }
+        },
+        "exercise": "The cause remains ___.",
+        "solutionDisplay": "sentence"
       },
       {
         "id": "observation",
@@ -4230,7 +4324,7 @@
         ],
         "explanation": "Self-review the boundary between records and interpretation",
         "feedback": "Not supported yet — check the requested word, rule or evidence field and try again",
-        "example": "The records show two failures before success — this may reflect a retry, but the person is not established — confirm the account use with its owner",
+        "example": "Observation: The records show two failures before success.\nInterpretation: This may reflect a retry, but the person is not established.\nNext check: Confirm the account use with its owner.",
         "rubric": [
           "Answer the actual question using the supplied material",
           "Separate what is known from assumptions and make the next step useful"
@@ -4274,13 +4368,14 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "review-evidence"
-        }
+        },
+        "solutionDisplay": "sentence"
       },
       {
         "id": "news-cyber-hard",
         "kind": "report",
         "stage": "independent",
-        "prompt": "Hard reading — interpret Cybersecurity logging announcement",
+        "prompt": "Read the passage and complete an evidence-based interpretation",
         "answers": [],
         "normalise": "case-space",
         "hints": [
@@ -4418,7 +4513,7 @@
             "label": "Justified Interpretation",
             "kind": "reasoning",
             "answers": [],
-            "example": "The main point is qualified — name the passage detail supporting it and explain one inference that needs further evidence",
+            "example": "The passage recommends correlating useful event records across environments. It does not say that storing more events guarantees detection or that a named organisation has been breached. Coverage and investigation results would be needed to assess detection in a particular organisation.\n\nA missed detection despite stored logs would contradict a guarantee that collection alone is sufficient. The publisher recommends correlation; unknown coverage at a particular organisation is a separate limit on my conclusion.",
             "hint": "Use the exact stored passage and preserve its scope and uncertainty",
             "options": [],
             "normalise": "case-space",
@@ -4456,7 +4551,12 @@
           "difficulty": "Hard",
           "minutes": 22,
           "group": "news-cyber-hard"
-        }
+        },
+        "instructions": [
+          "Answer factual fields using this stored passage",
+          "Explain a qualified interpretation and a limit of the evidence",
+          "Review your reasoning explicitly; factual checks do not grade it"
+        ]
       }
     ],
     "sources": [
@@ -4484,8 +4584,8 @@
     "id": "english-instructions",
     "version": 2,
     "course": "English",
-    "title": "Write steps and short summaries",
-    "summary": "Sequence safe actions and preserve important constraints — write a short operational instruction",
+    "title": "Write Clear Steps And Summaries",
+    "summary": "Put actions in a safe order and retain important conditions. Write useful steps and a short summary.",
     "difficulty": "Medium",
     "minutes": 52,
     "order": 9,
@@ -4495,7 +4595,7 @@
       "Write a short operational instruction"
     ],
     "prerequisites": [
-      "Recommended earlier lesson: Express evidence and uncertainty"
+      "Recommended earlier lesson: Explain Evidence And Uncertainty"
     ],
     "teaching": [
       {
@@ -4555,7 +4655,7 @@
         "id": "sequence-word",
         "kind": "exact",
         "stage": "practice",
-        "prompt": "Retrieve the word completing Confirm readiness, ___ begin the test",
+        "prompt": "Complete the instruction with the word that indicates the next step",
         "answers": ["then"],
         "normalise": "case-space",
         "hints": [
@@ -4576,7 +4676,9 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "sequence-word"
-        }
+        },
+        "exercise": "Confirm readiness, ___ begin the test.",
+        "solutionDisplay": "sentence"
       },
       {
         "id": "order",
@@ -4669,7 +4771,7 @@
         ],
         "explanation": "Self-review sequence, responsibility and the retained limit",
         "feedback": "Not supported yet — check the requested word, rule or evidence field and try again",
-        "example": "Jo checks and confirms the spare device — Mina then begins the simulated test and records its result — do not restart the main device",
+        "example": "1. Jo checks the spare device and confirms readiness.\n2. Mina begins the simulated test and records its result.\n3. Do not restart the main device.",
         "rubric": [
           "Answer the actual question using the supplied material",
           "Separate what is known from assumptions and make the next step useful"
@@ -4713,13 +4815,14 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "review-sequence"
-        }
+        },
+        "solutionDisplay": "sentence"
       },
       {
         "id": "news-australia-hard",
         "kind": "report",
         "stage": "independent",
-        "prompt": "Hard reading — interpret Climate patterns and local impacts",
+        "prompt": "Read the passage and complete an evidence-based interpretation",
         "answers": [],
         "normalise": "case-space",
         "hints": [
@@ -4857,7 +4960,7 @@
             "label": "Justified Interpretation",
             "kind": "reasoning",
             "answers": [],
-            "example": "The main point is qualified — name the passage detail supporting it and explain one inference that needs further evidence",
+            "example": "The passage says El Niño is only one influence and that local outcomes differ. It therefore does not support the claim that every Australian location will have the same conditions. Local observations and a location-specific forecast would be needed before advising a particular community.\n\nAn Australian location with different observed conditions would falsify a claim of identical national outcomes. The publisher qualifies the broad influence; missing local evidence is a separate limit on my advice.",
             "hint": "Use the exact stored passage and preserve its scope and uncertainty",
             "options": [],
             "normalise": "case-space",
@@ -4895,7 +4998,12 @@
           "difficulty": "Hard",
           "minutes": 22,
           "group": "news-australia-hard"
-        }
+        },
+        "instructions": [
+          "Answer factual fields using this stored passage",
+          "Explain a qualified interpretation and a limit of the evidence",
+          "Review your reasoning explicitly; factual checks do not grade it"
+        ]
       }
     ],
     "sources": [
@@ -4931,8 +5039,8 @@
     "id": "english-report-handover",
     "version": 2,
     "course": "English",
-    "title": "Write a concise evidence handover",
-    "summary": "Assemble findings, uncertainty and a useful recommendation — complete a short workplace report",
+    "title": "Write A Clear Evidence Handover",
+    "summary": "Bring findings, uncertainty and a useful next action together in a short workplace report.",
     "difficulty": "Medium",
     "minutes": 57,
     "order": 10,
@@ -4942,7 +5050,7 @@
       "Complete a short workplace report"
     ],
     "prerequisites": [
-      "Recommended earlier lesson: Write steps and short summaries"
+      "Recommended earlier lesson: Write Clear Steps And Summaries"
     ],
     "teaching": [
       {
@@ -5049,7 +5157,8 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "handover-word"
-        }
+        },
+        "solutionDisplay": "sentence"
       },
       {
         "id": "read-status",
@@ -5278,7 +5387,7 @@
         "id": "news-international-hard",
         "kind": "report",
         "stage": "independent",
-        "prompt": "Hard reading — interpret Artemis II science records released",
+        "prompt": "Read the passage and complete an evidence-based interpretation",
         "answers": [],
         "normalise": "case-space",
         "hints": [
@@ -5416,7 +5525,7 @@
             "label": "Justified Interpretation",
             "kind": "reasoning",
             "answers": [],
-            "example": "The main point is qualified — name the passage detail supporting it and explain one inference that needs further evidence",
+            "example": "The passage describes NASA material as preliminary and distinguishes edited audio from the unedited library. Release enables examination; it does not make every interpretation final. Checking the underlying report and unedited record would help assess a specific claim.\n\nA revised interpretation after examining the preliminary data would contradict a claim that every finding is final. Edited audio is a source qualification; my lack of the underlying full record limits an independent assessment.",
             "hint": "Use the exact stored passage and preserve its scope and uncertainty",
             "options": [],
             "normalise": "case-space",
@@ -5454,7 +5563,12 @@
           "difficulty": "Hard",
           "minutes": 22,
           "group": "news-international-hard"
-        }
+        },
+        "instructions": [
+          "Answer factual fields using this stored passage",
+          "Explain a qualified interpretation and a limit of the evidence",
+          "Review your reasoning explicitly; factual checks do not grade it"
+        ]
       }
     ],
     "sources": [
@@ -5482,8 +5596,8 @@
     "id": "cyber-phishing-triage",
     "version": 2,
     "course": "Cybersecurity",
-    "title": "Triage a suspicious message",
-    "summary": "Inspect sender, destination and requested action safely — triage a harmless synthetic message without opening links",
+    "title": "Assess A Suspicious Message",
+    "summary": "Inspect sender details, links and requested actions without opening the links. Choose a safe way to verify the message.",
     "difficulty": "Medium",
     "minutes": 62,
     "order": 4,
@@ -5495,7 +5609,7 @@
       "Justify an independent, proportionate decision while preserving evidence and service availability"
     ],
     "prerequisites": [
-      "Recommended earlier lesson: Investigate authentication events"
+      "Recommended earlier lesson: Investigate Sign-In Records"
     ],
     "teaching": [
       {
@@ -5687,7 +5801,7 @@
         ],
         "explanation": "Self-review visible evidence without claiming attribution or a successful compromise",
         "feedback": "Not supported yet — check the requested word, rule or evidence field and try again",
-        "example": "The message requests a password and points to a different portal — verify it through the independent directory without opening the link",
+        "example": "The message requests a password and points to a different portal.\nVerify it through the independent directory without opening the link",
         "rubric": [
           "Answer the actual question using the supplied material",
           "Separate what is known from assumptions and make the next step useful"
@@ -5780,7 +5894,7 @@
         "fields": [],
         "emphasis": [],
         "id": "case-decision",
-        "prompt": "Junior Professional — which finding is supported by the professional case?",
+        "prompt": "Which finding does the professional case support?",
         "tier": "Junior Professional",
         "quiz": {
           "difficulty": "Medium",
@@ -5820,7 +5934,7 @@
         "fields": [],
         "emphasis": [],
         "id": "case-gap",
-        "prompt": "Advanced Challenge — which limitation most directly constrains a stronger conclusion?",
+        "prompt": "Which missing evidence most limits a stronger conclusion?",
         "tier": "Advanced Challenge",
         "quiz": {
           "difficulty": "Medium",
@@ -5839,7 +5953,7 @@
         ],
         "explanation": "The supported decision follows the stated evidence boundary rather than an unsupported certainty",
         "feedback": "Recheck the record identifiers, coverage and competing explanation before choosing",
-        "example": "Preserve message headers and request identity telemetry before deciding whether credentials were used — explain the alternative and scope using the named records",
+        "example": "M1 contains a password request and an external Reply-To. G1 authenticates that external sender domain, not the internal display name; G2 records a blocked click. The pass result therefore does not establish that the message is legitimate.\n\nPreserve the headers and obtain identity telemetry for the interval before claiming credential use, because I1 has no sign-in data.",
         "rubric": [
           "Cite at least two named case records accurately",
           "Compare a plausible competing explanation",
@@ -5855,13 +5969,19 @@
         "fields": [],
         "emphasis": [],
         "id": "case-justification",
-        "prompt": "Advanced Challenge — justify a defensible decision, name two case records, consider a competing explanation and propose a discriminating next check",
+        "prompt": "Explain a defensible decision for this case",
         "tier": "Advanced Challenge",
         "quiz": {
           "difficulty": "Hard",
           "minutes": 12,
           "group": "cyber-phishing-triage-case"
-        }
+        },
+        "instructions": [
+          "Use two named case records as evidence",
+          "Consider a plausible competing explanation",
+          "Propose a next check that could distinguish the explanations",
+          "State what remains uncertain"
+        ]
       }
     ],
     "sources": [
@@ -5897,8 +6017,8 @@
     "id": "cyber-endpoint-correlation",
     "version": 2,
     "course": "Cybersecurity",
-    "title": "Correlate endpoint activity",
-    "summary": "Link process creation to network activity by stable identifiers — compare process and network events",
+    "title": "Investigate Process And Network Activity",
+    "summary": "Link a program to its network activity using stable process identifiers. Compare records before drawing a conclusion.",
     "difficulty": "Medium",
     "minutes": 99,
     "order": 5,
@@ -5910,7 +6030,7 @@
       "Justify an independent, proportionate decision while preserving evidence and service availability"
     ],
     "prerequisites": [
-      "Recommended earlier lesson: Triage a suspicious message"
+      "Recommended earlier lesson: Assess A Suspicious Message"
     ],
     "teaching": [
       {
@@ -6103,7 +6223,7 @@
         ],
         "explanation": "Self-review the evidence needed to interpret the observed process",
         "feedback": "Not supported yet — check the requested word, rule or evidence field and try again",
-        "example": "Verify the binary’s provenance and hash and compare the connection with expected updater activity — its name alone does not establish intent",
+        "example": "Verify the binary’s provenance and hash and compare the connection with expected updater activity.\nIts name alone does not establish intent",
         "rubric": [
           "Answer the actual question using the supplied material",
           "Separate what is known from assumptions and make the next step useful"
@@ -6183,7 +6303,7 @@
         "fields": [],
         "emphasis": [],
         "id": "case-decision",
-        "prompt": "Junior Professional — which finding is supported by the professional case?",
+        "prompt": "Which finding does the professional case support?",
         "tier": "Junior Professional",
         "quiz": {
           "difficulty": "Medium",
@@ -6223,7 +6343,7 @@
         "fields": [],
         "emphasis": [],
         "id": "case-gap",
-        "prompt": "Advanced Challenge — which limitation most directly constrains a stronger conclusion?",
+        "prompt": "Which missing evidence most limits a stronger conclusion?",
         "tier": "Advanced Challenge",
         "quiz": {
           "difficulty": "Medium",
@@ -6242,7 +6362,7 @@
         ],
         "explanation": "The supported decision follows the stated evidence boundary rather than an unsupported certainty",
         "feedback": "Recheck the record identifiers, coverage and competing explanation before choosing",
-        "example": "Acquire the g-a executable hash and lineage before assessing the authorised-name explanation — explain the alternative and scope using the named records",
+        "example": "P1 and N1 join GUID g-a to the connection; P2 later reuses PID 400 with a different GUID. C1 permits the executable name but gives no hash, and H1 hashes only g-b, so an authorised-name explanation remains unverified.\n\nAcquire the hash and lineage for g-a before deciding whether that binary matches the approved updater. P3 establishes separate simulated unauthorised PowerShell execution without proving every process malicious.",
         "rubric": [
           "Cite at least two named case records accurately",
           "Compare a plausible competing explanation",
@@ -6258,13 +6378,19 @@
         "fields": [],
         "emphasis": [],
         "id": "case-justification",
-        "prompt": "Advanced Challenge — justify a defensible decision, name two case records, consider a competing explanation and propose a discriminating next check",
+        "prompt": "Explain a defensible decision for this case",
         "tier": "Advanced Challenge",
         "quiz": {
           "difficulty": "Hard",
           "minutes": 12,
           "group": "cyber-endpoint-correlation-case"
-        }
+        },
+        "instructions": [
+          "Use two named case records as evidence",
+          "Consider a plausible competing explanation",
+          "Propose a next check that could distinguish the explanations",
+          "State what remains uncertain"
+        ]
       },
       {
         "kind": "choice",
@@ -6294,7 +6420,7 @@
         "fields": [],
         "emphasis": [],
         "id": "defence-lab",
-        "prompt": "Advanced Challenge — investigate and contain the modelled endpoint, identity and network threat while retaining the portal",
+        "prompt": "Investigate and contain the modelled threat",
         "labScenario": "defence-v1",
         "tier": "Advanced Challenge",
         "quiz": {
@@ -6302,7 +6428,12 @@
           "minutes": 25,
           "group": "defence-v1",
           "desktop": false
-        }
+        },
+        "instructions": [
+          "Inspect endpoint, identity and network evidence after the scenario event",
+          "Contain the threat while keeping the portal available",
+          "Use owner controls on a desktop to verify the model objectives"
+        ]
       },
       {
         "kind": "choice",
@@ -6386,8 +6517,8 @@
     "id": "cyber-evidence-integrity",
     "version": 2,
     "course": "Cybersecurity",
-    "title": "Preserve and compare evidence",
-    "summary": "Use hashes, collection records and scope limits correctly — verify two original synthetic evidence files",
+    "title": "Check And Preserve Digital Evidence",
+    "summary": "Compare file hashes and collection records. Explain what the comparison shows and what remains unknown.",
     "difficulty": "Medium",
     "minutes": 62,
     "order": 6,
@@ -6399,7 +6530,7 @@
       "Justify an independent, proportionate decision while preserving evidence and service availability"
     ],
     "prerequisites": [
-      "Recommended earlier lesson: Correlate endpoint activity"
+      "Recommended earlier lesson: Investigate Process And Network Activity"
     ],
     "teaching": [
       {
@@ -6591,7 +6722,7 @@
         ],
         "explanation": "Self-review the scope of the hash comparison without treating it as complete provenance",
         "feedback": "Not supported yet — check the requested word, rule or evidence field and try again",
-        "example": "The two comparison files differ — the hash comparison does not establish authorship or whether their claims are true",
+        "example": "The two comparison files differ.\nThe hash comparison does not establish authorship or whether their claims are true",
         "rubric": [
           "Answer the actual question using the supplied material",
           "Separate what is known from assumptions and make the next step useful"
@@ -6684,7 +6815,7 @@
         "fields": [],
         "emphasis": [],
         "id": "case-decision",
-        "prompt": "Junior Professional — which finding is supported by the professional case?",
+        "prompt": "Which finding does the professional case support?",
         "tier": "Junior Professional",
         "quiz": {
           "difficulty": "Medium",
@@ -6724,7 +6855,7 @@
         "fields": [],
         "emphasis": [],
         "id": "case-gap",
-        "prompt": "Advanced Challenge — which limitation most directly constrains a stronger conclusion?",
+        "prompt": "Which missing evidence most limits a stronger conclusion?",
         "tier": "Advanced Challenge",
         "quiz": {
           "difficulty": "Medium",
@@ -6743,7 +6874,7 @@
         ],
         "explanation": "The supported decision follows the stated evidence boundary rather than an unsupported certainty",
         "feedback": "Recheck the record identifiers, coverage and competing explanation before choosing",
-        "example": "Retain the acquired source and document the missing transfer details without inventing them — explain the alternative and scope using the named records",
+        "example": "Q1 identifies the acquisition source and examiner, while Q2 repeats the abbreviated digest label but omits the receiver. Q3 has a different label after annotation, a plausible explanation for the change, but no pre-annotation copy is supplied.\n\nRetain the source and obtain the full manifest and missing transfer details. The abbreviated labels cannot establish full-hash equality or a complete chain of custody.",
         "rubric": [
           "Cite at least two named case records accurately",
           "Compare a plausible competing explanation",
@@ -6759,13 +6890,19 @@
         "fields": [],
         "emphasis": [],
         "id": "case-justification",
-        "prompt": "Advanced Challenge — justify a defensible decision, name two case records, consider a competing explanation and propose a discriminating next check",
+        "prompt": "Explain a defensible decision for this case",
         "tier": "Advanced Challenge",
         "quiz": {
           "difficulty": "Hard",
           "minutes": 12,
           "group": "cyber-evidence-integrity-case"
-        }
+        },
+        "instructions": [
+          "Use two named case records as evidence",
+          "Consider a plausible competing explanation",
+          "Propose a next check that could distinguish the explanations",
+          "State what remains uncertain"
+        ]
       }
     ],
     "sources": [
@@ -6809,8 +6946,8 @@
     "id": "cyber-incident-timeline",
     "version": 2,
     "course": "Cybersecurity",
-    "title": "Build an incident timeline",
-    "summary": "Normalise UTC offsets and distinguish event from ingestion time — order a mixed-offset timeline",
+    "title": "Put Incident Events In Time Order",
+    "summary": "Put events in time order and distinguish when they happened from when they were recorded. Account for time zones and clock uncertainty.",
     "difficulty": "High",
     "minutes": 67,
     "order": 7,
@@ -6822,7 +6959,7 @@
       "Justify an independent, proportionate decision while preserving evidence and service availability"
     ],
     "prerequisites": [
-      "Recommended earlier lesson: Preserve and compare evidence"
+      "Recommended earlier lesson: Check And Preserve Digital Evidence"
     ],
     "teaching": [
       {
@@ -6866,7 +7003,7 @@
         "id": "utc-first",
         "kind": "exact",
         "stage": "practice",
-        "prompt": "Enter time-01 in UTC as YYYY-MM-DDTHH:MM:SSZ",
+        "prompt": "Convert time-01 to UTC",
         "answers": ["2026-11-03T00:00:00Z"],
         "normalise": "trim",
         "hints": [
@@ -6887,7 +7024,9 @@
           "difficulty": "Easy",
           "minutes": 3,
           "group": "utc-first"
-        }
+        },
+        "exercise": "YYYY-MM-DDTHH:MM:SSZ",
+        "instructions": ["Use the exact timestamp format shown below"]
       },
       {
         "id": "first-event",
@@ -7010,7 +7149,7 @@
         ],
         "explanation": "Self-review ordering, time basis and the distinction between sequence and causation",
         "feedback": "Not supported yet — check the requested word, rule or evidence field and try again",
-        "example": "time-01 precedes time-02 and time-03 after UTC conversion — this sequence does not by itself establish that one event caused another",
+        "example": "time-01 precedes time-02 and time-03 after UTC conversion.\nThis sequence does not by itself establish that one event caused another",
         "rubric": [
           "Answer the actual question using the supplied material",
           "Separate what is known from assumptions and make the next step useful"
@@ -7090,7 +7229,7 @@
         "fields": [],
         "emphasis": [],
         "id": "case-decision",
-        "prompt": "Junior Professional — which finding is supported by the professional case?",
+        "prompt": "Which finding does the professional case support?",
         "tier": "Junior Professional",
         "quiz": {
           "difficulty": "Medium",
@@ -7130,7 +7269,7 @@
         "fields": [],
         "emphasis": [],
         "id": "case-gap",
-        "prompt": "Advanced Challenge — which limitation most directly constrains a stronger conclusion?",
+        "prompt": "Which missing evidence most limits a stronger conclusion?",
         "tier": "Advanced Challenge",
         "quiz": {
           "difficulty": "Medium",
@@ -7149,7 +7288,7 @@
         ],
         "explanation": "The supported decision follows the stated evidence boundary rather than an unsupported certainty",
         "feedback": "Recheck the record identifiers, coverage and competing explanation before choosing",
-        "example": "Report both possible orders and obtain clock synchronisation evidence before claiming causation — explain the alternative and scope using the named records",
+        "example": "T1 and T2 have overlapping uncertainty intervals after UTC conversion, so either event order remains possible. T3 records collection order, which cannot resolve their occurrence order or prove causation.\n\nObtain clock-synchronisation records or an independent timing source before asserting which event happened first.",
         "rubric": [
           "Cite at least two named case records accurately",
           "Compare a plausible competing explanation",
@@ -7165,13 +7304,19 @@
         "fields": [],
         "emphasis": [],
         "id": "case-justification",
-        "prompt": "Advanced Challenge — justify a defensible decision, name two case records, consider a competing explanation and propose a discriminating next check",
+        "prompt": "Explain a defensible decision for this case",
         "tier": "Advanced Challenge",
         "quiz": {
           "difficulty": "Hard",
           "minutes": 12,
           "group": "cyber-incident-timeline-case"
-        }
+        },
+        "instructions": [
+          "Use two named case records as evidence",
+          "Consider a plausible competing explanation",
+          "Propose a next check that could distinguish the explanations",
+          "State what remains uncertain"
+        ]
       }
     ],
     "sources": [
@@ -7215,8 +7360,8 @@
     "id": "cyber-cloud-iam",
     "version": 2,
     "course": "Cybersecurity",
-    "title": "Investigate cloud permissions locally",
-    "summary": "Evaluate explicit deny and correlate policy with audit evidence — evaluate a bounded synthetic iam policy case",
+    "title": "Investigate Cloud Access Permissions",
+    "summary": "Compare access policies with recorded requests. Explain an allowed or denied request within the limits of the supplied evidence.",
     "difficulty": "High",
     "minutes": 67,
     "order": 8,
@@ -7227,7 +7372,9 @@
       "Investigate incomplete professional evidence and compare competing explanations",
       "Justify an independent, proportionate decision while preserving evidence and service availability"
     ],
-    "prerequisites": ["Recommended earlier lesson: Build an incident timeline"],
+    "prerequisites": [
+      "Recommended earlier lesson: Put Incident Events In Time Order"
+    ],
     "teaching": [
       {
         "title": "Work locally",
@@ -7401,7 +7548,7 @@
         ],
         "explanation": "Self-review the bounded policy decision and the audit scope",
         "feedback": "Not supported yet — check the requested word, rule or evidence field and try again",
-        "example": "The matching explicit deny prevents this private-object request — AccessDenied does not establish a successful read or describe all other requests",
+        "example": "The matching explicit deny prevents this private-object request.\nAccessDenied does not establish a successful read or describe all other requests",
         "rubric": [
           "Answer the actual question using the supplied material",
           "Separate what is known from assumptions and make the next step useful"
@@ -7493,7 +7640,7 @@
         "fields": [],
         "emphasis": [],
         "id": "case-decision",
-        "prompt": "Junior Professional — which finding is supported by the professional case?",
+        "prompt": "Which finding does the professional case support?",
         "tier": "Junior Professional",
         "quiz": {
           "difficulty": "Medium",
@@ -7533,7 +7680,7 @@
         "fields": [],
         "emphasis": [],
         "id": "case-gap",
-        "prompt": "Advanced Challenge — which limitation most directly constrains a stronger conclusion?",
+        "prompt": "Which missing evidence most limits a stronger conclusion?",
         "tier": "Advanced Challenge",
         "quiz": {
           "difficulty": "Medium",
@@ -7552,7 +7699,7 @@
         ],
         "explanation": "The supported decision follows the stated evidence boundary rather than an unsupported certainty",
         "feedback": "Recheck the record identifiers, coverage and competing explanation before choosing",
-        "example": "Scope the conclusion to each recorded request and obtain omitted policy layers before generalising permissions — explain the alternative and scope using the named records",
+        "example": "I2 explicitly denies the private path requested by R1, which records AccessDenied; R2 succeeds for a public path permitted by I1. These outcomes support conclusions about those requests, not every possible permission.\n\nObtain the missing resource policies and session constraints before generalising. A successful public read is a plausible explanation for R2 and does not establish private-object theft.",
         "rubric": [
           "Cite at least two named case records accurately",
           "Compare a plausible competing explanation",
@@ -7568,13 +7715,19 @@
         "fields": [],
         "emphasis": [],
         "id": "case-justification",
-        "prompt": "Advanced Challenge — justify a defensible decision, name two case records, consider a competing explanation and propose a discriminating next check",
+        "prompt": "Explain a defensible decision for this case",
         "tier": "Advanced Challenge",
         "quiz": {
           "difficulty": "Hard",
           "minutes": 12,
           "group": "cyber-cloud-iam-case"
-        }
+        },
+        "instructions": [
+          "Use two named case records as evidence",
+          "Consider a plausible competing explanation",
+          "Propose a next check that could distinguish the explanations",
+          "State what remains uncertain"
+        ]
       }
     ],
     "sources": [
@@ -7610,8 +7763,8 @@
     "id": "cyber-threat-hunt",
     "version": 2,
     "course": "Cybersecurity",
-    "title": "Test an account-misuse hypothesis",
-    "summary": "Use corroborating and contrary evidence in a local hunt — triage a small account activity dataset",
+    "title": "Investigate Possible Account Misuse",
+    "summary": "Compare evidence for account misuse with a possible legitimate explanation. Identify a check that could resolve uncertainty.",
     "difficulty": "High",
     "minutes": 72,
     "order": 9,
@@ -7623,7 +7776,7 @@
       "Justify an independent, proportionate decision while preserving evidence and service availability"
     ],
     "prerequisites": [
-      "Recommended earlier lesson: Investigate cloud permissions locally"
+      "Recommended earlier lesson: Investigate Cloud Access Permissions"
     ],
     "teaching": [
       {
@@ -7815,7 +7968,7 @@
         ],
         "explanation": "Self-review both the support and the remaining uncertainty",
         "feedback": "Not supported yet — check the requested word, rule or evidence field and try again",
-        "example": "The account/source activity aligns with an approved inventory job — verify the job execution and endpoint context before deciding whether the use was expected",
+        "example": "The account/source activity aligns with an approved inventory job.\nVerify the job execution and endpoint context before deciding whether the use was expected",
         "rubric": [
           "Answer the actual question using the supplied material",
           "Separate what is known from assumptions and make the next step useful"
@@ -7908,7 +8061,7 @@
         "fields": [],
         "emphasis": [],
         "id": "case-decision",
-        "prompt": "Junior Professional — which finding is supported by the professional case?",
+        "prompt": "Which finding does the professional case support?",
         "tier": "Junior Professional",
         "quiz": {
           "difficulty": "Medium",
@@ -7948,7 +8101,7 @@
         "fields": [],
         "emphasis": [],
         "id": "case-gap",
-        "prompt": "Advanced Challenge — which limitation most directly constrains a stronger conclusion?",
+        "prompt": "Which missing evidence most limits a stronger conclusion?",
         "tier": "Advanced Challenge",
         "quiz": {
           "difficulty": "Medium",
@@ -7967,7 +8120,7 @@
         ],
         "explanation": "The supported decision follows the stated evidence boundary rather than an unsupported certainty",
         "feedback": "Recheck the record identifiers, coverage and competing explanation before choosing",
-        "example": "Test both automation and misuse hypotheses against source/session evidence and state the coverage limit — explain the alternative and scope using the named records",
+        "example": "H1 shows an unusual-hour access, but C1 describes an emergency job without confirming the observed source. H2 broadens the source context, while V1 excludes the preceding day, leaving both automation and misuse explanations open.\n\nCheck source and session records against the authorised job execution before accepting the stolen-credential hypothesis.",
         "rubric": [
           "Cite at least two named case records accurately",
           "Compare a plausible competing explanation",
@@ -7983,13 +8136,19 @@
         "fields": [],
         "emphasis": [],
         "id": "case-justification",
-        "prompt": "Advanced Challenge — justify a defensible decision, name two case records, consider a competing explanation and propose a discriminating next check",
+        "prompt": "Explain a defensible decision for this case",
         "tier": "Advanced Challenge",
         "quiz": {
           "difficulty": "Hard",
           "minutes": 12,
           "group": "cyber-threat-hunt-case"
-        }
+        },
+        "instructions": [
+          "Use two named case records as evidence",
+          "Consider a plausible competing explanation",
+          "Propose a next check that could distinguish the explanations",
+          "State what remains uncertain"
+        ]
       }
     ],
     "sources": [
@@ -8033,8 +8192,8 @@
     "id": "cyber-investigation-report",
     "version": 2,
     "course": "Cybersecurity",
-    "title": "Assemble an investigation handover",
-    "summary": "Connect claims to records and recommend proportionate next checks — build a connected report from a combined local evidence pack",
+    "title": "Write An Investigation Handover",
+    "summary": "Connect each finding to its supporting records. Explain uncertainty and recommend proportionate next checks.",
     "difficulty": "High",
     "minutes": 77,
     "order": 10,
@@ -8046,7 +8205,7 @@
       "Justify an independent, proportionate decision while preserving evidence and service availability"
     ],
     "prerequisites": [
-      "Recommended earlier lesson: Test an account-misuse hypothesis"
+      "Recommended earlier lesson: Investigate Possible Account Misuse"
     ],
     "teaching": [
       {
@@ -8508,7 +8667,7 @@
         "fields": [],
         "emphasis": [],
         "id": "case-decision",
-        "prompt": "Junior Professional — which finding is supported by the professional case?",
+        "prompt": "Which finding does the professional case support?",
         "tier": "Junior Professional",
         "quiz": {
           "difficulty": "Medium",
@@ -8548,7 +8707,7 @@
         "fields": [],
         "emphasis": [],
         "id": "case-gap",
-        "prompt": "Advanced Challenge — which limitation most directly constrains a stronger conclusion?",
+        "prompt": "Which missing evidence most limits a stronger conclusion?",
         "tier": "Advanced Challenge",
         "quiz": {
           "difficulty": "Medium",
@@ -8567,7 +8726,7 @@
         ],
         "explanation": "The supported decision follows the stated evidence boundary rather than an unsupported certainty",
         "feedback": "Recheck the record identifiers, coverage and competing explanation before choosing",
-        "example": "Separate recollection, sensor observations and collection times, then request the missing session and payload evidence — explain the alternative and scope using the named records",
+        "example": "W1 recalls a transfer at 12:00, while S1 records a connection at 12:02 without payload. C1 is collection at 14:00, and A1 identifies a shared host; none supplies a user-to-process join.\n\nKeep recollection, sensor observation and collection time separate. Obtain session and payload evidence to distinguish a legitimate shared-host connection from the alleged transfer before assigning responsibility.",
         "rubric": [
           "Cite at least two named case records accurately",
           "Compare a plausible competing explanation",
@@ -8583,13 +8742,19 @@
         "fields": [],
         "emphasis": [],
         "id": "case-justification",
-        "prompt": "Advanced Challenge — justify a defensible decision, name two case records, consider a competing explanation and propose a discriminating next check",
+        "prompt": "Explain a defensible decision for this case",
         "tier": "Advanced Challenge",
         "quiz": {
           "difficulty": "Hard",
           "minutes": 12,
           "group": "cyber-investigation-report-case"
-        }
+        },
+        "instructions": [
+          "Use two named case records as evidence",
+          "Consider a plausible competing explanation",
+          "Propose a next check that could distinguish the explanations",
+          "State what remains uncertain"
+        ]
       }
     ],
     "sources": [

@@ -38,6 +38,10 @@ Lessons may contain more than 10 questions where objectives justify them — do 
 - Hints and solutions are recorded as assistance; assisted completion and self-review are not verified mastery
 - Preserve saved drafts, answers, attempts, legitimate progress and relevant historical completion through deliberate migrations
 - Daily Quiz and lessons share question state; Daily Quiz selects incomplete questions and replaces its selection only on an explicit request, never automatically by date
+- Daily Quiz has accessible English/Cybersecurity tabs with independent question positions and save-aware switching; each new selection aims for seven incomplete task units per course (2 Easy, 3 Medium, 2 Hard), about 60 minutes each / 120 combined
+- Prefer the seven-question count and difficulty mix over an exact duration; fill shortages with nearby difficulties from the same course, show every eligible item when fewer than seven remain, and never add completed questions, duplicates or filler
+- Exhaust alternatives before repeating unfinished selected questions; show actual counts/durations and course-specific completion, with global congratulations only when both courses have no incomplete questions
+- Group existing mixed sessions without changing their saved references; the new policy applies only at the next explicit Refresh, which saves pending work and confirms replacement for both courses
 - Scheduled recall is distinct from incomplete-question practice and does not inflate original assessment history
 - Research claims and required answers must match actual supporting material; respect permissions and retain source provenance and passage versions
 - Preserve accessibility, mobile access to suitable work and save-aware navigation/error recovery

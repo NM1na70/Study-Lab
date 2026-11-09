@@ -184,7 +184,7 @@ main {
   grid-template-columns: 2fr 1fr;
   gap: 3rem;
   align-items: center;
-  margin-bottom: 4rem;
+  margin-bottom: 1.5rem;
 }
 .lead {
   font-size: 1.1rem;
@@ -247,7 +247,7 @@ main {
   background: #e2eaf0;
   color: #3b5b78;
 }
-.course-card h3 {
+.course-card h2 {
   font-size: 1.45rem;
   margin: 0.6rem 0;
 }
@@ -897,4 +897,78 @@ nav[aria-label='Quiz Questions'] {
 }
 .quiz-refresh-dialog button {
   margin: 0.4rem;
+}
+
+/* Separate authored exercise text from instructions without changing technical punctuation or paragraphs */
+.question-exercise {
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  border-left: 3px solid #899c96;
+  background: #f5f6f1;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.question-instructions {
+  padding-left: 1.3rem;
+}
+
+/* Keep compact catalogue controls and the resume action together in the left header column */
+.hero h1 {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+}
+.hero .catalogue-filters {
+  margin-bottom: 1rem;
+}
+.hero .catalogue-filters select {
+  max-width: 100%;
+}
+.hero > div {
+  min-width: 0;
+}
+
+/* Make solution headings subtly larger while retaining readable email paragraphs and exact technical values */
+.solution h3 {
+  font-size: calc(1em + 2px);
+}
+.solution h4 {
+  font-size: 1em;
+}
+.solution-answer,
+.written-example,
+.example-report-fields li {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.example-report-fields li,
+.checked-report-fields li {
+  margin-bottom: 0.6rem;
+}
+.reasoning-note {
+  display: block;
+}
+.field-guidance {
+  font-size: 0.9em;
+}
+
+/* Let phone filters shrink within the compact header without hiding their labels */
+@media (max-width: 720px) {
+  .hero .catalogue-filters > div {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+/* Keep course tabs and question navigation usable with clear keyboard selection at phone widths */
+[role='tablist'] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+[role='tab'][aria-selected='false'] {
+  background: #fff;
+  color: #205e50;
+}
+[role='tabpanel'] {
+  min-width: 0;
 }

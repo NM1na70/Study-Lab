@@ -85,7 +85,12 @@ export const taskSchema = z
       'report',
     ]),
     stage: z.enum(['practice', 'independent', 'review']),
+
+    // Keep authored exercise text and display casing separate from assessment keys
     prompt: z.string().min(10),
+    exercise: z.string().min(1).optional(),
+    instructions: z.array(z.string().min(1)).default([]),
+    solutionDisplay: z.enum(['preserve', 'sentence']).default('preserve'),
     answers: z.array(z.string().min(1)),
     normalise: normaliseSchema,
     hints: z.array(z.string().min(5)).min(2),

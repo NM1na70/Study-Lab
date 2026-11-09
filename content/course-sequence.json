@@ -2,7 +2,7 @@
   {
     "course": "English",
     "id": "english-word-families",
-    "title": "Build words with -tion",
+    "title": "Build Words With -tion",
     "objectives": [
       "Spell four useful -tion nouns without fuzzy matching.",
       "Connect act, connect, detect and protect with their noun forms.",
@@ -33,7 +33,7 @@
   {
     "course": "English",
     "id": "english-spelling-patterns",
-    "title": "Recall useful spelling patterns",
+    "title": "Practise Common Spelling Patterns",
     "objectives": [
       "Recall difficult words and notice sound–spelling limits",
       "Repair a short maintenance note"
@@ -62,7 +62,7 @@
   {
     "course": "English",
     "id": "english-reading-actions",
-    "title": "Read for actions and constraints",
+    "title": "Read Notices And Identify Actions",
     "objectives": [
       "Extract who, when and conditions from a short notice",
       "Turn a maintenance notice into an action summary"
@@ -89,7 +89,7 @@
   {
     "course": "English",
     "id": "english-verb-time",
-    "title": "Make time and actions clear",
+    "title": "Describe Past Actions And Future Plans",
     "objectives": [
       "Choose tense and agreement in practical updates",
       "Write a clear before-and-now update"
@@ -114,7 +114,7 @@
   {
     "course": "English",
     "id": "english-sentence-boundaries",
-    "title": "Build clear sentences",
+    "title": "Write Clear, Complete Sentences",
     "objectives": [
       "Join or separate ideas without comma splices",
       "Edit a short handover paragraph"
@@ -144,7 +144,7 @@
   {
     "course": "English",
     "id": "english-precise-vocabulary",
-    "title": "Choose precise workplace words",
+    "title": "Choose Clear Workplace Words",
     "objectives": [
       "Distinguish similar words and reduce vague wording",
       "Repair ambiguous status messages"
@@ -171,7 +171,7 @@
   {
     "course": "English",
     "id": "english-workplace-emails",
-    "title": "Write useful workplace emails",
+    "title": "Write Clear Workplace Emails",
     "objectives": [
       "State purpose, action and a realistic deadline",
       "Write a short request with useful context"
@@ -198,7 +198,7 @@
   {
     "course": "English",
     "id": "english-evidence-language",
-    "title": "Express evidence and uncertainty",
+    "title": "Explain Evidence And Uncertainty",
     "objectives": [
       "Separate observation, interpretation and missing information",
       "Rewrite an overconfident finding"
@@ -230,7 +230,7 @@
   {
     "course": "English",
     "id": "english-instructions",
-    "title": "Write steps and short summaries",
+    "title": "Write Clear Steps And Summaries",
     "objectives": [
       "Sequence safe actions and preserve important constraints",
       "Write a short operational instruction"
@@ -258,7 +258,7 @@
   {
     "course": "English",
     "id": "english-report-handover",
-    "title": "Write a concise evidence handover",
+    "title": "Write A Clear Evidence Handover",
     "objectives": [
       "Assemble findings, uncertainty and a useful recommendation",
       "Complete a short workplace report"
@@ -283,7 +283,7 @@
   {
     "course": "Cybersecurity",
     "id": "cyber-network-investigation",
-    "title": "Investigate a suspicious HTTP check-in",
+    "title": "Investigate HTTP Requests",
     "objectives": [
       "Identify hosts and isolate HTTP requests with display filters.",
       "Follow a TCP conversation and cite frames and timestamps.",
@@ -312,7 +312,7 @@
   {
     "course": "Cybersecurity",
     "id": "cyber-dns-behaviour",
-    "title": "Investigate DNS behaviour",
+    "title": "Investigate DNS Lookup Results",
     "objectives": [
       "Distinguish DNS questions, answers and NXDOMAIN",
       "Correlate repeated queries with resolver responses"
@@ -339,7 +339,7 @@
   {
     "course": "Cybersecurity",
     "id": "cyber-authentication-logs",
-    "title": "Investigate authentication events",
+    "title": "Investigate Sign-In Records",
     "objectives": [
       "Correlate failed and successful network logons cautiously",
       "Build an account-focused authentication finding"
@@ -370,7 +370,7 @@
   {
     "course": "Cybersecurity",
     "id": "cyber-phishing-triage",
-    "title": "Triage a suspicious message",
+    "title": "Assess A Suspicious Message",
     "objectives": [
       "Inspect sender, destination and requested action safely",
       "Triage a harmless synthetic message without opening links"
@@ -400,7 +400,7 @@
   {
     "course": "Cybersecurity",
     "id": "cyber-endpoint-correlation",
-    "title": "Correlate endpoint activity",
+    "title": "Investigate Process And Network Activity",
     "objectives": [
       "Link process creation to network activity by stable identifiers",
       "Compare process and network events"
@@ -427,7 +427,7 @@
   {
     "course": "Cybersecurity",
     "id": "cyber-evidence-integrity",
-    "title": "Preserve and compare evidence",
+    "title": "Check And Preserve Digital Evidence",
     "objectives": [
       "Use hashes, collection records and scope limits correctly",
       "Verify two original synthetic evidence files"
@@ -458,7 +458,7 @@
   {
     "course": "Cybersecurity",
     "id": "cyber-incident-timeline",
-    "title": "Build an incident timeline",
+    "title": "Put Incident Events In Time Order",
     "objectives": [
       "Normalise UTC offsets and distinguish event from ingestion time",
       "Order a mixed-offset timeline"
@@ -485,7 +485,7 @@
   {
     "course": "Cybersecurity",
     "id": "cyber-cloud-iam",
-    "title": "Investigate cloud permissions locally",
+    "title": "Investigate Cloud Access Permissions",
     "objectives": [
       "Evaluate explicit deny and correlate policy with audit evidence",
       "Evaluate a bounded synthetic IAM policy case"
@@ -511,7 +511,7 @@
   {
     "course": "Cybersecurity",
     "id": "cyber-threat-hunt",
-    "title": "Test an account-misuse hypothesis",
+    "title": "Investigate Possible Account Misuse",
     "objectives": [
       "Use corroborating and contrary evidence in a local hunt",
       "Triage a small account activity dataset"
@@ -542,7 +542,7 @@
   {
     "course": "Cybersecurity",
     "id": "cyber-investigation-report",
-    "title": "Assemble an investigation handover",
+    "title": "Write An Investigation Handover",
     "objectives": [
       "Connect claims to records and recommend proportionate next checks",
       "Build a connected report from a combined local evidence pack"

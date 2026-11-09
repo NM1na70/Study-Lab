@@ -62,28 +62,32 @@ it('uses the same lesson answers and excludes satisfied questions without comple
   }
 });
 
-it('uses catalogue metadata for balanced near-90-minute groups and keeps Medium work reachable', () => {
+// Preserve the requested mix and real metadata even when seven complete task units take longer than an hour
+it('selects seven per course with a 2/3/2 mix and unmodified metadata durations', () => {
   const store = new Store(':memory:');
   try {
     const first = quiz(store);
-    const minutes = first.items.reduce(
-      (total, item) => total + item.minutes,
-      0,
-    );
-    expect(minutes).toBeGreaterThanOrEqual(65);
-    expect(minutes).toBeLessThanOrEqual(115);
+    expect(first.policy).toBe('course-7');
+    expect(first.items).toHaveLength(14);
     for (const course of ['English', 'Cybersecurity']) {
       const items = first.items.filter(
         (item) =>
           lessons.find((lesson) => lesson.id === item.lessonId)?.course ===
           course,
       );
-      expect(items.filter((item) => item.difficulty === 'Easy')).toHaveLength(
-        2,
-      );
-      expect(items.filter((item) => item.difficulty === 'Hard')).toHaveLength(
-        2,
-      );
+      expect(items).toHaveLength(7);
+      expect(
+        ['Easy', 'Medium', 'Hard'].map(
+          (difficulty) =>
+            items.filter((item) => item.difficulty === difficulty).length,
+        ),
+      ).toEqual([2, 3, 2]);
+      for (const item of items) {
+        const task = lessons
+          .find((lesson) => lesson.id === item.lessonId)!
+          .tasks.find((task) => task.id === item.taskId)!;
+        expect(item.minutes).toBe(task.quiz!.minutes);
+      }
     }
     const second = quiz(store, first.revision);
     expect(
@@ -95,25 +99,29 @@ it('uses catalogue metadata for balanced near-90-minute groups and keeps Medium 
           ),
       ),
     ).toBe(true);
-    expect(second.items.some((item) => item.difficulty === 'Medium')).toBe(
-      true,
+  } finally {
+    store.close();
+  }
+});
+
+// Count a self-contained reading or model question once rather than separately counting its fields and commands
+it('keeps multi-step reading and lab durations attached to their single stable task reference', () => {
+  const store = new Store(':memory:');
+  try {
+    const catalogue = lessons.map((lesson) => ({
+      ...lesson,
+      tasks: lesson.tasks.filter((task) => task.passage || task.labScenario),
+    }));
+    const selected = selectQuiz(store, [], catalogue);
+    expect(selected).toHaveLength(
+      catalogue.flatMap((lesson) => lesson.tasks).length,
     );
-    expect(
-      first.items.some(
-        (item) =>
-          lessons
-            .find((lesson) => lesson.id === item.lessonId)
-            ?.tasks.find((task) => task.id === item.taskId)?.passage,
-      ),
-    ).toBe(true);
-    expect(
-      first.items.some(
-        (item) =>
-          lessons
-            .find((lesson) => lesson.id === item.lessonId)
-            ?.tasks.find((task) => task.id === item.taskId)?.labScenario,
-      ),
-    ).toBe(true);
+    for (const item of selected)
+      expect(item.minutes).toBe(
+        catalogue
+          .find((lesson) => lesson.id === item.lessonId)!
+          .tasks.find((task) => task.id === item.taskId)!.quiz!.minutes,
+      );
   } finally {
     store.close();
   }
@@ -142,9 +150,9 @@ it.each([1, 2, 3])(
     const store = new Store(':memory:');
     try {
       const source = lessons[0];
-      const catalogue = [{ ...source, tasks: source.tasks.slice(0, 5) }];
+      const catalogue = [{ ...source, tasks: source.tasks }];
       const pool = selectQuiz(store, [], catalogue);
-      const previous = catalogue[0].tasks.slice(0, 5 - count).map((task) => ({
+      const previous = catalogue[0].tasks.slice(0, 8 - count).map((task) => ({
         lessonId: source.id,
         taskId: task.id,
         version: source.version,
@@ -152,7 +160,7 @@ it.each([1, 2, 3])(
         difficulty: 'Easy',
       }));
       const next = selectQuiz(store, previous, catalogue);
-      const alternatives = catalogue[0].tasks.slice(5 - count);
+      const alternatives = catalogue[0].tasks.slice(8 - count);
       expect(
         alternatives.every((task) =>
           next.some((item) => item.taskId === task.id),
@@ -162,10 +170,143 @@ it.each([1, 2, 3])(
         next.filter((item) =>
           previous.some((old) => old.taskId === item.taskId),
         ).length,
-      ).toBeLessThanOrEqual(Math.max(0, 4 - count));
+      ).toBeLessThanOrEqual(Math.max(0, 7 - count));
       expect(pool.length).toBeGreaterThan(0);
     } finally {
       store.close();
     }
   },
 );
+
+// Fill only the same course's incomplete pool when preferred difficulty slots are unavailable
+it('uses nearby difficulties and fewer-than-seven pools without borrowing from another course', () => {
+  const store = new Store(':memory:');
+  try {
+    const source = lessons[0];
+    const catalogue = [
+      {
+        ...source,
+        tasks: source.tasks.slice(0, 6).map((task) => ({
+          ...task,
+          quiz: { ...task.quiz!, difficulty: 'Medium' as const },
+        })),
+      },
+      { ...lessons[1], tasks: [] },
+    ];
+    const selected = selectQuiz(store, [], catalogue);
+    expect(selected).toHaveLength(6);
+    expect(
+      selected.every(
+        (item) => item.lessonId === source.id && item.difficulty === 'Medium',
+      ),
+    ).toBe(true);
+    expect(new Set(selected.map((item) => item.taskId)).size).toBe(6);
+  } finally {
+    store.close();
+  }
+});
+
+// Ordinary reads must return a stored mixed session exactly as saved; only explicit Refresh adopts the new policy
+it('retains legacy mixed sessions and saved answers until an explicit refresh', () => {
+  const store = new Store(':memory:');
+  try {
+    const candidates = selectQuiz(store);
+    const legacy = {
+      id: 'legacy-selection',
+      revision: 4,
+      createdAt: '2026-11-01T00:00:00Z',
+      items: [...candidates.slice(0, 3), ...candidates.slice(7, 9)],
+    };
+    store.db
+      .prepare('INSERT INTO quiz_session VALUES (1,?)')
+      .run(JSON.stringify(legacy));
+    const original = store.get(lessons[0]);
+    const saved = store.update(lessons[0], {
+      action: 'draft',
+      taskId: 'action',
+      answer: 'unfinished work',
+      revision: original.revision,
+    });
+    expect(quiz(store)).toEqual(legacy);
+    const refreshed = quiz(store, legacy.revision);
+    expect(refreshed.policy).toBe('course-7');
+    expect(refreshed.items).toHaveLength(14);
+    const persisted = { ...saved };
+    delete persisted.reviewDueCount;
+    expect(store.get(lessons[0])).toEqual(persisted);
+    expect(
+      JSON.parse(
+        String(
+          store.db
+            .prepare('SELECT state FROM quiz_history WHERE id=?')
+            .get(legacy.id)?.state,
+        ),
+      ),
+    ).toEqual(legacy);
+  } finally {
+    store.close();
+  }
+});
+
+// A completed course contributes no filler while the other course keeps its own incomplete selection
+it('returns no questions for satisfied courses and no global filler when both are finished', () => {
+  const store = new Store(':memory:');
+  try {
+    const catalogue = [
+      lessons[0],
+      lessons.find((lesson) => lesson.course === 'Cybersecurity')!,
+    ].map((lesson) => ({
+      ...lesson,
+      tasks: [lesson.tasks.find((task) => task.kind === 'exact')!],
+    }));
+    for (const [index, lesson] of catalogue.entries()) {
+      const task = lesson.tasks[0];
+      let progress = store.get(lesson);
+      progress = store.update(lesson, {
+        action: 'draft',
+        taskId: task.id,
+        answer: exampleAnswer(task),
+        revision: progress.revision,
+      });
+      store.update(lesson, {
+        action: 'check',
+        taskId: task.id,
+        revision: progress.revision,
+      });
+      const selected = selectQuiz(store, [], catalogue);
+      expect(selected).toHaveLength(index === 0 ? 1 : 0);
+      expect(selected.every((item) => item.lessonId !== catalogue[0].id)).toBe(
+        true,
+      );
+    }
+  } finally {
+    store.close();
+  }
+});
+
+// A scarce difficulty mix must still fill seven real questions when that course has enough incomplete work
+it('fills seven with same-course fallback without altering task durations', () => {
+  const store = new Store(':memory:');
+  try {
+    const source = lessons[0];
+    const catalogue = [
+      {
+        ...source,
+        tasks: source.tasks.map((task) => ({
+          ...task,
+          quiz: { ...task.quiz!, difficulty: 'Medium' as const },
+        })),
+      },
+    ];
+    const selected = selectQuiz(store, [], catalogue);
+    expect(selected).toHaveLength(7);
+    expect(new Set(selected.map((item) => item.taskId)).size).toBe(7);
+    expect(
+      selected.every(
+        (item) => item.lessonId === source.id && item.difficulty === 'Medium',
+      ),
+    ).toBe(true);
+  } finally {
+    store.close();
+  }
+});

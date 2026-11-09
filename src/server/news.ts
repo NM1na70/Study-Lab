@@ -156,6 +156,11 @@ export class News {
         ...template,
         id,
         prompt: 'Fresh news reading — ' + p.title,
+        exercise: undefined,
+        instructions: [
+          'Use the stored snapshot for factual answers and review the interpretation separately',
+        ],
+        solutionDisplay: 'preserve',
         sourceIds: ['usgs-source'],
         fields,
         reportLayout: [

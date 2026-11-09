@@ -37,7 +37,7 @@ it('answers, saves before checking and provides progressive hints and explicit s
   });
   expect(enqueue.mock.calls.at(-1)?.[0]).toMatchObject({ action: 'check' });
   expect(
-    screen.queryByText('Full solution', { exact: true }),
+    screen.queryByText('Full Solution', { exact: true }),
   ).not.toBeInTheDocument();
   await user.click(screen.getByRole('button', { name: /Next Hint/ }));
   expect(enqueue).toHaveBeenLastCalledWith({
@@ -60,7 +60,7 @@ it('answers, saves before checking and provides progressive hints and explicit s
   );
   expect(screen.getByText('Correct')).toBeVisible();
   expect(screen.getByText(/Hint 1/)).toBeVisible();
-  expect(screen.getByText('Full solution', { exact: true })).toBeVisible();
+  expect(screen.getByText('Full Solution', { exact: true })).toBeVisible();
 });
 
 // Keep written review explicit and retain the draft when saving fails before the action
@@ -266,4 +266,183 @@ it('does not enqueue duplicate checks while the preceding save is pending', asyn
     'draft',
     'check',
   ]);
+});
+
+// Exercise explicit authored display metadata while preserving technical keys and safe escaped exercise text
+it('separates instructions and exercises and formats common-word solutions without changing technical values', async () => {
+  const { QuestionPrompt, solutionAnswer, SolutionAnswer } =
+    await import('../src/client/QuestionPresentation');
+  const email = lessons.find(
+    (lesson) => lesson.id === 'english-workplace-emails',
+  )!;
+  const word = email.tasks.find((task) => task.id === 'request-word')!;
+  const view = render(<QuestionPrompt task={word} />);
+  expect(
+    screen.getByRole('heading', { name: word.prompt }),
+  ).not.toHaveTextContent('___');
+  expect(view.container.querySelector('blockquote')).toHaveTextContent(
+    '___ send the revised list',
+  );
+  const recipient = email.tasks.find((task) => task.id === 'review-recipient')!;
+  expect(solutionAnswer(recipient)).toBe('Recipient');
+  expect(recipient.answers).toEqual(['recipient']);
+  for (const [lessonId, taskId, expected] of [
+    ['cyber-network-investigation', 'request-path', '/checkin?host=lab-01'],
+    ['cyber-cloud-iam', 'action', 's3:GetObject'],
+    ['cyber-endpoint-correlation', 'image', 'C:/Lab/updater.exe'],
+    ['cyber-endpoint-correlation', 'guid', 'proc-alpha'],
+    ['cyber-dns-behaviour', 'negative-code', 'NXDOMAIN'],
+  ]) {
+    const task = lessons
+      .find((lesson) => lesson.id === lessonId)!
+      .tasks.find((task) => task.id === taskId)!;
+    expect(solutionAnswer(task)).toBe(expected);
+  }
+  view.rerender(<SolutionAnswer task={recipient} />);
+  expect(screen.getByText('Recipient').tagName).toBe('STRONG');
+  view.rerender(
+    <QuestionPrompt
+      task={{ ...word, exercise: '<img src=x onerror=alert(1)>' }}
+    />,
+  );
+  expect(view.container.querySelector('img')).toBeNull();
+  expect(view.container).toHaveTextContent('<img src=x onerror=alert(1)>');
+});
+
+// Keep professional email paragraphs and report model fields separate from learner-authored preview content
+it('renders email paragraphs and labelled structured examples with no learner-grade labels', async () => {
+  const { SolutionAnswer } = await import('../src/client/QuestionPresentation');
+  const email = lessons.find(
+    (lesson) => lesson.id === 'english-workplace-emails',
+  )!;
+  const task = email.tasks.find((task) => task.id === 'email')!;
+  const view = render(<SolutionAnswer task={task} />);
+  expect(view.container.querySelector('.written-example')?.textContent).toBe(
+    task.example,
+  );
+  expect(task.example).toContain('Hi Jo,\n\n');
+  expect(task.example).toContain('15:00 AEST today.');
+  expect(task.example).toContain('\n\nThank you');
+  for (const lesson of lessons)
+    for (const report of lesson.tasks.filter(
+      (task) => task.kind === 'report',
+    )) {
+      view.rerender(<SolutionAnswer task={report} />);
+      const fields = view.container.querySelectorAll(
+        '.example-report-fields > li',
+      );
+      expect(fields).toHaveLength(report.fields.length);
+      for (const field of fields)
+        expect(field.querySelector('strong')).not.toBeNull();
+      expect(view.container).not.toHaveTextContent('— Correct');
+      expect(view.container).not.toHaveTextContent('— Wrong');
+      expect(view.container).not.toHaveTextContent('name the passage detail');
+    }
+});
+
+// Require objective feedback for submitted fields and remove that feedback immediately when the draft changes
+it('labels correct, wrong and missing report fields while keeping reasoning explicitly self-reviewed', async () => {
+  const { CheckedReportFeedback } =
+    await import('../src/client/QuestionPresentation');
+  const { reportResults } = await import('../src/shared/domain.js');
+  const task = lessons
+    .find((lesson) => lesson.id === 'english-workplace-emails')!
+    .tasks.find((task) => task.passage)!;
+  const state = {
+    ...emptyTask(task),
+    answer: { main: 'main', publisher: 'Wrong publisher' },
+    attempts: 1,
+    checked: true,
+  };
+  const checked = { ...state, fieldResults: reportResults(task, state.answer) };
+  const view = render(<CheckedReportFeedback task={task} state={checked} />);
+  const rows = [...view.container.querySelectorAll('li')];
+  expect(
+    rows.find((row) => row.textContent?.includes('Main Point')),
+  ).toHaveTextContent('— Correct');
+  expect(
+    rows.find((row) => row.textContent?.includes('Publisher')),
+  ).toHaveTextContent('Wrong publisher — Wrong');
+  expect(
+    rows.find((row) => row.textContent?.includes('Fill In The Gap')),
+  ).toHaveTextContent('— Not Answered');
+  expect(screen.getByText(/Reasoning:/)).toHaveTextContent(
+    'Self-Review Required — Not Automatically Graded',
+  );
+  view.rerender(
+    <TaskCard
+      task={task}
+      state={checked}
+      enqueue={vi.fn().mockResolvedValue(true)}
+    />,
+  );
+  fireEvent.change(screen.getByLabelText('Publisher', { exact: true }), {
+    target: { value: 'edited publisher' },
+  });
+  expect(view.container.querySelector('.checked-report-fields')).toBeNull();
+  expect(
+    screen.getByText('Answer changed — check again to update feedback'),
+  ).toBeVisible();
+});
+
+// A completed course must not block the other course or announce global completion prematurely
+it('shows course-specific completion and reserves global congratulations for both completed courses', async () => {
+  const { DailyQuiz } = await import('../src/client/DailyQuiz');
+  const { exampleAnswer } = await import('../src/shared/domain.js');
+  const progress = lessons.map((lesson) => ({
+    ...emptyProgress(lesson),
+    tasks: Object.fromEntries(
+      lesson.tasks.map((task) => [
+        task.id,
+        {
+          ...emptyTask(task),
+          answer: exampleAnswer(task),
+          correct: lesson.course === 'English',
+          reviewed: lesson.course === 'English',
+        },
+      ]),
+    ),
+  }));
+  vi.stubGlobal(
+    'fetch',
+    vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          id: 'course-completion',
+          revision: 1,
+          items: [],
+          policy: 'course-7',
+        }),
+      ),
+    ),
+  );
+  const view = render(
+    <DailyQuiz data={{ lessons, progress }} onChange={vi.fn()} />,
+  );
+  expect(screen.getByText('All English Questions Completed')).toBeVisible();
+  expect(screen.queryByText(/Congratulations/)).toBeNull();
+  await userEvent.click(screen.getByRole('tab', { name: /Cybersecurity/ }));
+  expect(
+    screen.queryByText('All Cybersecurity Questions Completed'),
+  ).toBeNull();
+  view.rerender(
+    <DailyQuiz
+      data={{
+        lessons,
+        progress: progress.map((saved) => ({
+          ...saved,
+          tasks: Object.fromEntries(
+            Object.entries(saved.tasks).map(([id, state]) => [
+              id,
+              { ...state, correct: true, reviewed: true },
+            ]),
+          ),
+        })),
+      }}
+      onChange={vi.fn()}
+    />,
+  );
+  expect(
+    screen.getByText('Congratulations! You Have Completed All Questions'),
+  ).toBeVisible();
 });

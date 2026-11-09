@@ -108,7 +108,7 @@ test('external-network-free original lessons, resume, mistakes and completion', 
           .getByRole('button', { name: 'Reveal Example Answer' })
           .click();
         await expect(
-          page.getByRole('heading', { name: 'Example answer', exact: true }),
+          page.getByRole('heading', { name: 'Example Answer', exact: true }),
         ).toBeVisible();
         await page.getByRole('checkbox').check();
         await page.getByRole('button', { name: 'Record Self-Review' }).click();

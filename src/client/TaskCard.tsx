@@ -11,16 +11,14 @@ import type {
 import { DefenceLab } from './Lab';
 import { registerNavigation } from './navigation';
 import { AiFeedback } from './Ai';
-import { ReportBuilder, ReportText } from './ReportBuilder';
-import { AnswerControls, EvidenceText } from './AnswerControls';
+import { ReportBuilder } from './ReportBuilder';
 import {
-  displayAnswer,
-  exampleAnswer,
-  emptyTask,
-  validateAnswer,
-  isRecord,
-  displayField,
-} from '../shared/domain.js';
+  QuestionPrompt,
+  SolutionAnswer,
+  CheckedReportFeedback,
+} from './QuestionPresentation';
+import { AnswerControls, EvidenceText } from './AnswerControls';
+import { emptyTask, validateAnswer, isRecord } from '../shared/domain.js';
 
 // Define the task data and callbacks received from the parent component
 interface Props {
@@ -252,9 +250,7 @@ export function TaskCard({
         }
       </span>
       {task.tier && <p>{task.tier}</p>}
-      <h2 tabIndex={-1} id={`task-${task.id}`}>
-        {task.prompt}
-      </h2>
+      <QuestionPrompt task={task} />
       {task.passage && (
         <section aria-label="Reading Passage">
           <h3>{task.passage.title}</h3>
@@ -370,48 +366,46 @@ export function TaskCard({
           )}
         </p>
       )}
-      {state.attempts > 0 && !dirty && task.kind !== 'written' && (
-        <div
-          className={`feedback ${state.correct ? 'good' : 'retry'}`}
-          role="status"
-        >
-          <strong>
-            {state.correct
-              ? task.kind === 'report'
-                ? 'Objective Report Checks Met'
-                : 'Correct'
-              : 'Not Correct Yet — Try Again'}
-          </strong>
-          <p>
-            <EvidenceText
-              text={
-                state.correct || state.solution
-                  ? task.explanation
-                  : task.feedback
-              }
-              emphasis={task.emphasis}
-            />
+
+      {/* Show submitted results only while they still apply to the current answer, leaving reasoning ungraded */}
+      {state.attempts > 0 &&
+        state.checked !== false &&
+        !dirty &&
+        task.kind !== 'written' && (
+          <div
+            className={`feedback ${state.correct ? 'good' : 'retry'}`}
+            role="status"
+          >
+            <strong>
+              {state.correct
+                ? task.kind === 'report'
+                  ? 'Objective Report Checks Met'
+                  : 'Correct'
+                : 'Not Correct Yet — Try Again'}
+            </strong>
+            <p>
+              <EvidenceText
+                text={
+                  state.correct || state.solution
+                    ? task.explanation
+                    : task.feedback
+                }
+                emphasis={task.emphasis}
+              />
+            </p>
+            {task.kind === 'report' && (
+              <CheckedReportFeedback task={task} state={state} />
+            )}
+          </div>
+        )}
+
+      {state.attempts > 0 &&
+        (dirty || state.checked === false) &&
+        task.kind !== 'written' && (
+          <p className="muted">
+            Answer changed — check again to update feedback
           </p>
-          {task.kind === 'report' &&
-            task.fields
-              .filter((field) => field.kind !== 'reasoning')
-              .map((field) => (
-                <p key={field.id}>
-                  {field.label}:{' '}
-                  {state.fieldResults?.[field.id] ? (
-                    <strong>
-                      {isRecord(answer)
-                        ? displayField(field, answer[field.id])
-                        : ''}
-                      — Correct
-                    </strong>
-                  ) : (
-                    field.feedback
-                  )}
-                </p>
-              ))}
-        </div>
-      )}
+        )}
 
       {/* Keep explicit reasoning self-review separate from objective answer checks */}
       {(task.kind === 'written' || task.kind === 'report') && (
@@ -478,9 +472,11 @@ export function TaskCard({
           disabled={busy || state.solution}
           onClick={() => void act('solution')}
         >
-          {['written', 'report'].includes(task.kind)
-            ? 'Reveal Example Answer'
-            : 'Reveal Full Solution'}
+          {task.kind === 'report'
+            ? 'Reveal Example Report'
+            : task.kind === 'written'
+              ? 'Reveal Example Answer'
+              : 'Reveal Full Solution'}
         </button>
       </div>
       {task.hints.slice(0, state.hints).map((h, i) => (
@@ -494,21 +490,10 @@ export function TaskCard({
             {task.kind === 'report'
               ? 'Example Report'
               : task.kind === 'written'
-                ? 'Example answer'
-                : 'Full solution'}
+                ? 'Example Answer'
+                : 'Full Solution'}
           </h3>
-          {task.kind === 'report' && isRecord(exampleAnswer(task)) ? (
-            <ReportText
-              task={task}
-              values={
-                exampleAnswer(
-                  task,
-                ) as import('../shared/schema.js').ReportAnswer
-              }
-            />
-          ) : (
-            <pre>{displayAnswer(task, exampleAnswer(task))}</pre>
-          )}
+          <SolutionAnswer task={task} />
           <p>{task.explanation}</p>
           <small>
             Solution use is recorded. Finishing with assistance does not
