@@ -259,3 +259,13 @@ Generate evidence with `python3 scripts/generate-evidence.py`; validate with `pn
 Update sequence and source records when objectives, controls or evidence change — preserve stable IDs, explicit versions and historical learner work
 
 See [AI feedback](ai-feedback.md), [Review Due](review-due.md), [curriculum](curriculum-depth.md), [pilot findings](pilot-findings.md) and [operations](operations.md) for their specific boundaries
+
+## Question Presentation And Course Quiz Policy
+
+Keep authored `prompt`, optional `exercise` and `instructions` separate in strict JSON; render them through the shared question component as escaped text. Do not split natural-language prompts at runtime. `solutionDisplay: "sentence"` is an explicit display-only choice for common-word answers; commands, paths, identifiers, technical evidence and accepted-answer keys retain their exact casing. Writing examples preserve paragraphs; structured model reports use labelled lists, separate from the learner's unchanged report preview. Checked fields show Correct, Wrong or Not Answered; reasoning remains self-reviewed and editing invalidates prior feedback.
+
+New Daily Quiz selections aim for seven incomplete task units in each course: 2 Easy, 3 Medium and 2 Hard, approximately 60 minutes per course / 120 combined. Count and difficulty mix take priority over exact minutes. Retain activity metadata durations, count a multi-step task once, fill scarce ranks with nearby difficulties in the same course, and use all eligible questions if fewer than seven remain. Never borrow across courses or add completed work/filler. Exhaust alternatives before repeating unfinished selection members. Show actual counts, mix and duration, including shorter/longer selections.
+
+Existing sessions are read unchanged and grouped by course in the client; only explicit Refresh adopts the new `course-7` policy. Switching courses saves the mounted draft and preserves independent positions without replacing either selection. Refresh saves pending work before replacement, lists unfinished work with its course, requires Still Refresh / Don’t Refresh confirmation, archives the previous selection and retains all lesson answers/history. Revision conflicts and failed saves must preserve the current draft and session. There is no date-based refresh.
+
+For changes here run quiz/UI regressions first, then `pnpm check`, `pnpm build` and the complete desktop/mobile browser suite. Exercise legacy mixed sessions, save failures, keyboard tabs, scarce/completed pools and honest duration reporting using disposable databases. Keep the simulation lab desktop boundary and all owner/rate/paid limits intact.

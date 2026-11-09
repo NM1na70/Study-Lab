@@ -353,7 +353,9 @@ export async function createApp(
       taskId: task.id,
       mode: body.mode,
       course: lesson.course,
-      question: task.prompt,
+      question: [task.prompt, ...(task.instructions ?? []), task.exercise]
+        .filter(Boolean)
+        .join('\n\n'),
       rubric: task.rubric,
       languageChecklist: task.languageChecklist,
       learnerAnswer: answer,

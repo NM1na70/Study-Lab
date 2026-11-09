@@ -20,7 +20,9 @@ export function DailyQuiz({
 }) {
   // Keep the selection separate from the shared saved answer and current draft flush
   const [session, setSession] = useState<QuizSession>();
-  const [index, setIndex] = useState(0);
+  const [course, setCourse] = useState<'English' | 'Cybersecurity'>('English');
+  const [indices, setIndices] = useState({ English: 0, Cybersecurity: 0 });
+  const changing = useRef(false);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const dialog = useRef<HTMLDialogElement>(null);
@@ -58,7 +60,8 @@ export function DailyQuiz({
 
   // Flush the current card before replacing the selection; failures retain the draft and session
   async function refresh() {
-    if (busy || !session) return;
+    if (busy || changing.current || !session) return;
+    changing.current = true;
     setBusy(true);
     try {
       if (flush.current && !(await flush.current())) {
@@ -71,17 +74,97 @@ export function DailyQuiz({
         revision: session.revision,
       });
       setSession(next);
-      setIndex(0);
+      setIndices({ English: 0, Cybersecurity: 0 });
       dialog.current?.close();
     } catch (reason) {
       setError(String(reason));
     } finally {
+      changing.current = false;
       setBusy(false);
     }
   }
 
-  // Resolve the selected version against the current catalogue before mounting its ordinary task card
-  const item = session?.items[index];
+  // Show confirmation before flushing so a newly edited completed answer is listed once its saved completion is invalidated
+  async function confirmRefresh() {
+    if (busy || changing.current || !session) return;
+    if (!session.items.length) return refresh();
+    dialog.current?.showModal();
+    changing.current = true;
+    setBusy(true);
+    setError('');
+    try {
+      if (flush.current && !(await flush.current()))
+        setError(
+          'Save did not succeed — your session and draft remain unchanged',
+        );
+    } finally {
+      changing.current = false;
+      setBusy(false);
+    }
+  }
+
+  // Group legacy references in place without generating new questions or rewriting their persisted selection
+  const courses = ['English', 'Cybersecurity'] as const;
+  const courseItems = (name: string) =>
+    session?.items.filter(
+      (item) =>
+        data.lessons.find((lesson) => lesson.id === item.lessonId)?.course ===
+        name,
+    ) ?? [];
+  const items = courseItems(course);
+  const index = indices[course];
+  const remaining = data.lessons
+    .filter((lesson) => lesson.course === course)
+    .flatMap((lesson) =>
+      lesson.tasks.filter(
+        (task) =>
+          !taskSatisfied(
+            task,
+            data.progress.find((progress) => progress.lessonId === lesson.id)
+              ?.tasks[task.id],
+          ),
+      ),
+    );
+  const minutes = items.reduce((sum, item) => sum + item.minutes, 0);
+  const met = items.filter((item) => !incomplete.includes(item)).length;
+
+  // Flush the mounted draft before changing a course or question, reserving navigation immediately to prevent overlap
+  async function select(
+    name: typeof course,
+    question?: number,
+    focusTab = false,
+  ) {
+    if (
+      changing.current ||
+      busy ||
+      (name === course && (question === undefined || question === index))
+    )
+      return;
+    changing.current = true;
+    setBusy(true);
+    try {
+      if (flush.current && !(await flush.current())) {
+        setError(
+          'Save did not succeed — your tab, question and draft remain unchanged',
+        );
+        return;
+      }
+      setError('');
+      setCourse(name);
+      if (question !== undefined)
+        setIndices((previous) => ({ ...previous, [name]: question }));
+      if (focusTab)
+        requestAnimationFrame(() =>
+          document.getElementById('quiz-tab-' + name)?.focus(),
+        );
+    } finally {
+      changing.current = false;
+      setBusy(false);
+    }
+  }
+
+  // Resolve stable catalogue identities and reject version mismatches before mounting the shared assessment controls
+  const item = items[index];
   const lesson = data.lessons.find((lesson) => lesson.id === item?.lessonId);
   const task = lesson?.tasks.find((task) => task.id === item?.taskId);
   const progress = data.progress.find(
@@ -102,21 +185,20 @@ export function DailyQuiz({
         with lessons
       </p>
       {error && <p role="alert">{error}</p>}
-      {allComplete ? (
+      {allComplete && (
         <h2>Congratulations! You Have Completed All Questions</h2>
-      ) : (
+      )}
+      {session && session.policy !== 'course-7' && (
         <p>
-          {session?.items.length ?? 0} selected questions · About{' '}
-          {session?.items.reduce((sum, item) => sum + item.minutes, 0) ?? 0}{' '}
-          minutes — available work may be shorter than 90 minutes
+          Existing selection grouped by course — use Refresh to apply the new
+          seven-question course targets
         </p>
       )}
-      <button
-        disabled={busy || !session}
-        onClick={() =>
-          incomplete.length ? dialog.current?.showModal() : void refresh()
-        }
-      >
+      <p>
+        Aim: 2 Easy, 3 Medium and 2 Hard questions per course, about 60 minutes
+        each — 120 minutes combined
+      </p>
+      <button disabled={busy || !session} onClick={() => void confirmRefresh()}>
         Refresh
       </button>
 
@@ -126,7 +208,7 @@ export function DailyQuiz({
         ref={dialog}
         aria-labelledby="quiz-refresh-title"
       >
-        <h2 id="quiz-refresh-title">Refresh Unfinished Quiz?</h2>
+        <h2 id="quiz-refresh-title">Refresh Quiz Selection?</h2>
         <p>Your answers and progress remain saved</p>
         {error && <p role="alert">{error}</p>}
         <ul>
@@ -149,65 +231,139 @@ export function DailyQuiz({
           Don’t Refresh
         </button>
       </dialog>
-      <nav aria-label="Quiz Questions">
-        {session?.items.map((entry, i) => (
+
+      {/* Accessible course tabs change only the view and preserve each course's selected question */}
+      <div role="tablist" aria-label="Quiz Courses">
+        {courses.map((name) => (
           <button
-            key={entry.lessonId + entry.taskId}
-            aria-current={i === index ? 'step' : undefined}
-            onClick={async () => {
-              if (!flush.current || (await flush.current())) setIndex(i);
+            id={'quiz-tab-' + name}
+            key={name}
+            role="tab"
+            aria-selected={name === course}
+            aria-controls={'quiz-panel-' + name}
+            tabIndex={name === course ? 0 : -1}
+            disabled={busy}
+            onClick={() => void select(name)}
+            onKeyDown={(event) => {
+              if (
+                !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)
+              )
+                return;
+              event.preventDefault();
+              const next =
+                event.key === 'Home'
+                  ? 'English'
+                  : event.key === 'End'
+                    ? 'Cybersecurity'
+                    : name === 'English'
+                      ? 'Cybersecurity'
+                      : 'English';
+              void select(next, undefined, true);
             }}
           >
-            {i + 1} ·{' '}
-            {
-              data.lessons.find((lesson) => lesson.id === entry.lessonId)
-                ?.course
-            }{' '}
-            · {entry.difficulty}
+            {name} — {courseItems(name).length} Questions
           </button>
         ))}
-      </nav>
-      {item &&
-        lesson &&
-        task &&
-        progress &&
-        lesson.version === item.version && (
-          <>
-            <h2>{lesson.title}</h2>
-            <details>
-              <summary>Preparation And Evidence</summary>
-              {lesson.teaching.map((section) => (
-                <section key={section.title}>
-                  <h3>{section.title}</h3>
-                  <p>{section.body}</p>
-                </section>
-              ))}
-              <pre>{lesson.material}</pre>
-              {lesson.evidence && (
-                <a href={lesson.evidence}>Download Evidence</a>
-              )}
-            </details>
-            <QuizQuestion
-              key={lesson.id + task.id + session?.id}
-              lesson={lesson}
-              task={task}
-              progress={progress}
-              onChange={onChange}
-              attach={attach}
-            />
-            <a href={'#/lesson/' + lesson.id}>Open Lesson</a>
-          </>
-        )}
-      {item && lesson?.version !== item.version && (
-        <p role="alert">
-          Content changed — saved work remains available in its lesson, Refresh
-          to select current questions
+      </div>
+      {courses
+        .filter((name) => name !== course)
+        .map((name) => (
+          <section
+            key={name}
+            role="tabpanel"
+            hidden
+            id={'quiz-panel-' + name}
+            aria-labelledby={'quiz-tab-' + name}
+          />
+        ))}
+      <section
+        role="tabpanel"
+        id={'quiz-panel-' + course}
+        aria-labelledby={'quiz-tab-' + course}
+      >
+        <p>
+          {items.length} selected questions · About {minutes} minutes —{' '}
+          {minutes < 60 ? 'shorter than' : minutes > 60 ? 'longer than' : 'at'}{' '}
+          the 60-minute aim
         </p>
-      )}
-      <p>
-        <a href="#/review">Mistake Review</a> ·{' '}
-        <a href="#/">Course Catalogue</a>
-      </p>
+        <p>
+          {['Easy', 'Medium', 'Hard']
+            .map(
+              (difficulty) =>
+                `${difficulty}: ${items.filter((item) => item.difficulty === difficulty).length}`,
+            )
+            .join(' · ')}
+        </p>
+        <p>
+          {met}/{items.length} selected question requirements met
+        </p>
+        {!remaining.length && <h2>All {course} Questions Completed</h2>}
+        {remaining.length > 0 && items.length < 7 && (
+          <p>
+            This selection has fewer than seven questions — no completed work or
+            filler has been added
+          </p>
+        )}
+        {items.length > 0 &&
+          (items.filter((item) => item.difficulty === 'Easy').length !== 2 ||
+            items.filter((item) => item.difficulty === 'Medium').length !== 3 ||
+            items.filter((item) => item.difficulty === 'Hard').length !==
+              2) && (
+            <p>
+              Available incomplete work uses a different difficulty mix — nearby
+              difficulties fill shortages within this course
+            </p>
+          )}
+        <nav aria-label="Quiz Questions">
+          {items.map((entry, i) => (
+            <button
+              key={entry.lessonId + entry.taskId}
+              aria-current={i === index ? 'step' : undefined}
+              disabled={busy}
+              onClick={() => void select(course, i)}
+            >
+              {i + 1} · {entry.difficulty}
+            </button>
+          ))}
+        </nav>
+        {remaining.length > 0 &&
+          item &&
+          lesson &&
+          task &&
+          progress &&
+          lesson.version === item.version && (
+            <>
+              <h2>{lesson.title}</h2>
+              <details>
+                <summary>Preparation And Evidence</summary>
+                {lesson.teaching.map((section) => (
+                  <section key={section.title}>
+                    <h3>{section.title}</h3>
+                    <p>{section.body}</p>
+                  </section>
+                ))}
+                <pre>{lesson.material}</pre>
+                {lesson.evidence && (
+                  <a href={lesson.evidence}>Download Evidence</a>
+                )}
+              </details>
+              <QuizQuestion
+                key={lesson.id + task.id + session?.id}
+                lesson={lesson}
+                task={task}
+                progress={progress}
+                onChange={onChange}
+                attach={attach}
+              />
+            </>
+          )}
+        {item && lesson?.version !== item.version && (
+          <p role="alert">
+            Content changed — saved work remains available in its lesson,
+            Refresh to select current questions
+          </p>
+        )}
+      </section>
     </>
   );
 }

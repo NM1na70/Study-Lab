@@ -519,18 +519,61 @@ function Dashboard({ data }: { data: Snapshot }) {
   // Render the filtered lesson catalogue with actual counts and the shared-profile explanation
   return (
     <>
-      <span className="eyebrow">Your local learning workspace</span>
+      <span className="eyebrow">Your Local Learning Workspace</span>
       <div className="hero">
         <div>
-          <h1>
-            A little practice.
-            <br />A clearer next step.
-          </h1>
-          <p className="lead">
-            Build your English. Follow the evidence.
-            <br />
-            Learn at your own pace, with your work saved here.
-          </p>
+          <h1>Your Courses</h1>
+          <div className="catalogue-filters">
+            <div>
+              <label htmlFor="catalogue-course">Course</label>
+              <select
+                id="catalogue-course"
+                value={course}
+                onChange={(event) => {
+                  setCourse(event.target.value);
+                  setTopic('All');
+                }}
+              >
+                {['All', 'English', 'Cybersecurity'].map((name) => (
+                  <option key={name}>{name}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="catalogue-topic">Topic</label>
+              <select
+                id="catalogue-topic"
+                value={topic}
+                onChange={(event) => setTopic(event.target.value)}
+              >
+                {[
+                  'All',
+                  ...new Set(
+                    data.lessons
+                      .filter(
+                        (lesson) =>
+                          course === 'All' || lesson.course === course,
+                      )
+                      .flatMap((lesson) => lesson.topics),
+                  ),
+                ].map((name) => (
+                  <option key={name}>{name}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="catalogue-completion">Completion</label>
+              <select
+                id="catalogue-completion"
+                value={completion}
+                onChange={(event) => setCompletion(event.target.value)}
+              >
+                {['All', 'Completed', 'Not Completed'].map((name) => (
+                  <option key={name}>{name}</option>
+                ))}
+              </select>
+            </div>
+          </div>
           {next ? (
             <a className="button" href={`#/lesson/${next}`}>
               Continue Studying →
@@ -547,65 +590,10 @@ function Dashboard({ data }: { data: Snapshot }) {
             <span>/ {data.lessons.length}</span>
           </strong>
           <p>lessons completed</p>
-          <span className="tag">No accounts · No AI required</span>
+          <span className="tag">No Accounts · No AI Required</span>
         </div>
       </div>
-      <p>
-        <a className="button secondary" href="#/due">
-          Review Due ({data.dueCount ?? 0})
-        </a>
-      </p>
-      <h2>Your courses</h2>
-      <div className="catalogue-filters">
-        <div>
-          <label htmlFor="catalogue-course">Course</label>
-          <select
-            id="catalogue-course"
-            value={course}
-            onChange={(event) => {
-              setCourse(event.target.value);
-              setTopic('All');
-            }}
-          >
-            {['All', 'English', 'Cybersecurity'].map((name) => (
-              <option key={name}>{name}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="catalogue-topic">Topic</label>
-          <select
-            id="catalogue-topic"
-            value={topic}
-            onChange={(event) => setTopic(event.target.value)}
-          >
-            {[
-              'All',
-              ...new Set(
-                data.lessons
-                  .filter(
-                    (lesson) => course === 'All' || lesson.course === course,
-                  )
-                  .flatMap((lesson) => lesson.topics),
-              ),
-            ].map((name) => (
-              <option key={name}>{name}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="catalogue-completion">Completion</label>
-          <select
-            id="catalogue-completion"
-            value={completion}
-            onChange={(event) => setCompletion(event.target.value)}
-          >
-            {['All', 'Completed', 'Not Completed'].map((name) => (
-              <option key={name}>{name}</option>
-            ))}
-          </select>
-        </div>
-      </div>
+
       <p>
         {visible.length} lessons shown — recommended order, with all activities
         unlocked
@@ -629,7 +617,7 @@ function Dashboard({ data }: { data: Snapshot }) {
                 }{' '}
                 available lessons
               </span>
-              <h3>{l.title}</h3>
+              <h2>{l.title}</h2>
               <p>{l.summary}</p>
               <div className="tags">
                 <span>{l.difficulty} difficulty</span>

@@ -438,3 +438,54 @@ Local Docker smoke and container scanning were attempted but the socket remains 
 All tests used disposable databases and closed their own servers; no new persistent preview/service was started — temporary evidence, baselines and CodeQL databases remain under /tmp, with no permanent tracking archive in Git
 
 Suggested commit: fix(ci): throttle owner routes and stabilize browser state checks — leave all changes uncommitted and unpushed for owner review
+
+## UI/UX Clarity And Course Quiz — 9 November 2026
+
+Current VS Code folder: `/home/james/VibeCoding/study-lab`; branch: `codex/ui-ux-clarity-course-quiz`; unchanged HEAD/base: `acacf0af481b11a9f3693b78a8a30a3ab7189874` (merged main/PR #6). Continue in this original folder. The older next-milestones and /tmp learning-ux worktrees were not changed. All changes remain uncommitted and unpushed.
+
+All eight requested improvements are implemented: compact dashboard; all 20 plain-English card titles/descriptions; structured instruction/exercise display; paragraph-based professional writing examples; exact solution headings and display-only casing; grouped labelled model reports with evidence-based reasoning; explicit submitted-field statuses and stale-result invalidation; save-aware accessible course quiz tabs with independent positions. See the latest verification entry for exact scope, inventory and test evidence.
+
+New quiz selections aim for seven incomplete task units per course with 2 Easy / 3 Medium / 2 Hard. Nearby same-course difficulty fallback fills shortages; smaller pools include all eligible items, never completed work, duplicates or filler. Alternatives precede unfinished repeats. Existing selections stay unchanged until explicit Refresh. Honest initial estimates are English 74 and Cybersecurity 51 minutes, 125 combined; 60 each / 120 combined remains an aim. The old 90-minute heuristic is superseded in current status, brief, architecture and workflow. Saved answers, attempts, assistance, reviews, news snapshots, completion history, owner/rate/paid limits and desktop lab boundaries remain intact.
+
+Recovered final validation: pnpm check passed format/lint/types/content/evidence plus 61 backend and 11 UI tests; build passed; focused browser regressions passed 38; full desktop/mobile browser suite completed with 82 passed in 3.5 minutes. The interruption did not leave an unfinished suite: final logs were recovered and checked. The earlier axe heading-order regression was fixed with h2 card titles and fully rerun. Local CodeQL on final source passes the unchanged SARIF guard with zero warning/error findings. Native redacted Gitleaks, actionlint, Compose configuration, content compatibility and whitespace checks passed. Two moderate dependency advisories remain below the unchanged HIGH threshold. Docker smoke/container scanning were attempted again after resumption and remain blocked by missing /var/run/docker.sock; rerun both once Docker is available, then inspect the next authorised hosted run. No local/hosted Docker success is inferred.
+
+The requested repository-wide comment audit is complete across 87 code/config/entry files, including untracked source/tests, plus separate strict-JSON configuration/content review. Useful existing comments were retained; new comments explain rendering versus keys, report separation/staleness, selection fallback/history, legacy sessions and draft flushes. The original capture preview's outdated comment was corrected. Exact inspected files and exclusions are in verification.md. README, package/lockfile/pins, Docker/CI, storage/migration and provider/model boundaries are unchanged; no live learner data was used.
+
+All original issue screenshots and the duplicate clipboard image were inspected; updated desktop and phone screenshots were captured and visually reviewed at 1280×900 and 390×844 without horizontal overflow. Files live outside Git under `/tmp/study-ui-screenshots/` (dashboard/card, both course quiz views, question, email, report, including readable solution/feedback details). Temporary evidence may disappear on a reboot. Physical-phone and real-provider checks were not performed.
+
+The declined screenshot command was not executed: the recorded review response says approval review could not complete, includes a usage-limit message, and explicitly does not determine the action unsafe. No separate rejection reason was available. After resumption, a new readable temporary script restricted to the disposable localhost preview was approved and completed; no malformed transcript command was executed or approval bypassed.
+
+### Disposable Preview And Restart
+
+Preview remains available at http://localhost:3020/ with database `/tmp/study-ui-preview.Hs6Cy2/study.sqlite`. Server PID at verification: 566479, spawned by the existing pnpm start session; no owner capability or provider credential is set. Only this task-owned preview is deliberately left running for review. Tests and screenshot browsers have stopped; unrelated services were not stopped. Check ownership/port before stopping or restarting anything.
+
+If the preview stops, preserve its database and run from the exact folder:
+
+```bash
+cd /home/james/VibeCoding/study-lab
+source scripts/dev-env.sh
+pnpm build
+env -u STUDY_OWNER_TOKEN HOST=127.0.0.1 PORT=3020 DATABASE_PATH=/tmp/study-ui-preview.Hs6Cy2/study.sqlite pnpm start
+```
+
+If /tmp has been cleared, create a new directory with `mktemp -d /tmp/study-ui-preview.XXXXXX` and set DATABASE_PATH to its study.sqlite instead; never fall back to the live data/study.sqlite. The review preview contains only disposable demonstration answers and recorded solution use. Temporary screenshot helper: `/tmp/study-ui-capture.mjs`; source baseline: `/tmp/study-ui-baseline-pjzw96r1`.
+
+Remaining steps: review the UI and diff; when Docker is available run `pnpm docker:smoke` and `pnpm security:container`, then inspect hosted CI after a separately authorised commit/push. No known local application/test blocker remains. Do not commit, push, merge or publish without instruction.
+
+Suggested commit: `feat(study): clarify activities and split quiz by course`
+
+Suggested PR description:
+
+> Simplify the dashboard and clarify all 20 lesson cards, question instructions, writing examples and report feedback. Add safe shared solution/report presentation and save-aware English/Cybersecurity quiz tabs; select seven incomplete questions per course with a preferred 2/3/2 mix, honest durations and compatible existing sessions until explicit Refresh. Preserve stable assessment identities, learner history and security boundaries; update policy docs and complete the first-party comment audit.
+>
+> Validation: pnpm check (61 backend / 11 UI), production build, 82 desktop/mobile browser cases, final local CodeQL/SARIF enforcement, native Gitleaks and configuration/preservation checks passed. Docker smoke and container scanning remain blocked by the missing local daemon; two moderate dependency advisories remain. Phone evidence uses Chromium viewports; hosted confirmation is pending.
+
+## Daily Quiz Bottom Links — 10 November 2026
+
+Continued in `/home/james/VibeCoding/study-lab` on `codex/ui-ux-clarity-course-quiz`, preserving all existing tracked/untracked UI/UX changes. Removed only Daily Quiz's Open Lesson anchor and the bottom Mistake Review / Course Catalogue paragraph, leaving no empty footer wrapper. Main navigation, links on other pages, course tabs, question controls, save queues and selection behaviour are unchanged.
+
+Updated the existing Daily Quiz shared-draft browser case to assert the three links are absent after question controls load, then navigate through the retained Dashboard navigation/card before verifying the same saved lesson answer. Its grouped purpose comment follows the existing sentence-case/blank-line rules. No broader comment audit or application change was needed.
+
+Actual validation: pnpm check passed formatting, lint, types, content/evidence, 61 backend and 11 UI tests; production build passed; final Daily Quiz browser file passed all 12 desktop/mobile cases. Documentation formatting and Git whitespace checks passed. The full browser suite and Docker/security scans were not rerun for this scoped link removal; earlier results above retain their original scope/date. Tests used disposable fixture databases, and no learner data or unrelated service was changed.
+
+Task-relative preservation comparison found only src/client/DailyQuiz.tsx, tests/browser/daily.spec.ts and this handover changed from the start of this follow-up. All work remains uncommitted and unpushed.

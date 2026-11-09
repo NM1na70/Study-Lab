@@ -18,105 +18,90 @@ export interface QuizSession {
   revision: number;
   createdAt: string;
   items: QuizItem[];
+  policy?: 'course-7';
 }
 
-// Prefer two short questions and two substantial questions per course, then use the available medium work
+// Select seven distinct incomplete task units per course, aiming for a 2/3/2 difficulty mix and honest durations
 export function selectQuiz(
   store: Store,
   previous: QuizItem[] = [],
   catalogue: Lesson[] = lessons,
 ): QuizItem[] {
-  // Exclude satisfied questions using the same factual and self-review requirements as lessons
-  const pool = catalogue.flatMap((lesson) => {
-    const progress = store.get(lesson);
-    return lesson.tasks
-      .filter((task) => !taskSatisfied(task, progress.tasks[task.id]))
-      .map((task) => ({
-        lessonId: lesson.id,
-        taskId: task.id,
-        version: lesson.version,
-        minutes: task.quiz?.minutes ?? 3,
-        difficulty: task.quiz?.difficulty ?? 'Medium',
-      }));
-  });
-  const avoided = (item: QuizItem) =>
-    previous.some(
-      (old) => old.lessonId === item.lessonId && old.taskId === item.taskId,
-    )
-      ? 1
-      : 0;
-  pool.sort(
-    (a, b) =>
-      avoided(a) - avoided(b) ||
-      (a.difficulty === 'Hard' && b.difficulty === 'Hard'
-        ? Math.abs(a.minutes - 22) - Math.abs(b.minutes - 22)
-        : 0),
-  );
-  const selected = ['English', 'Cybersecurity'].flatMap((course) => {
-    let available = pool.filter(
-      (item) =>
-        catalogue.find((lesson) => lesson.id === item.lessonId)?.course ===
-        course,
-    );
+  const counts = new Map<string, number>();
+  const key = (item: QuizItem) => item.lessonId + ':' + item.taskId;
+  for (const row of store.db.prepare('SELECT state FROM quiz_history').all())
+    for (const item of (JSON.parse(String(row.state)) as QuizSession).items)
+      counts.set(key(item), (counts.get(key(item)) ?? 0) + 1);
+  const previousKeys = new Set(previous.map(key));
+  const ranks = ['Easy', 'Medium', 'Hard'];
+  const targets = [2, 3, 2];
 
-    // Separate new candidates from the previous selection before applying per-course quotas
-    const alternatives = available.filter((item) => !avoided(item));
-    const repeated = available.filter((item) => avoided(item));
-    available = alternatives;
+  // Each catalogue task is one selection unit, including all fields of a reading activity or model lab
+  return ['English', 'Cybersecurity'].flatMap((course) => {
+    const pool = catalogue
+      .filter((lesson) => lesson.course === course)
+      .flatMap((lesson) => {
+        const progress = store.get(lesson);
+        return lesson.tasks
+          .filter((task) => !taskSatisfied(task, progress.tasks[task.id]))
+          .map((task) => ({
+            lessonId: lesson.id,
+            taskId: task.id,
+            version: lesson.version,
+            minutes: task.quiz?.minutes ?? 3,
+            difficulty: task.quiz?.difficulty ?? 'Medium',
+          }));
+      });
     const chosen: QuizItem[] = [];
-    const counts = new Map<string, number>();
-    for (const row of store.db.prepare('SELECT state FROM quiz_history').all())
-      for (const item of (JSON.parse(String(row.state)) as QuizSession).items) {
-        const key = item.lessonId + ':' + item.taskId;
-        counts.set(key, (counts.get(key) ?? 0) + 1);
+
+    // Prefer less frequently selected work, using real minutes only to guide ties rather than dropping question units
+    const order = (a: QuizItem, b: QuizItem) => {
+      const minutesLeft =
+        60 - chosen.reduce((sum, item) => sum + item.minutes, 0);
+      const desired = minutesLeft / Math.max(1, 7 - chosen.length);
+      return (
+        (counts.get(key(a)) ?? 0) - (counts.get(key(b)) ?? 0) ||
+        Math.abs(a.minutes - desired) - Math.abs(b.minutes - desired)
+      );
+    };
+
+    // Exhaust alternatives before reusing unfinished questions, even when the ideal difficulty mix is scarce
+    for (const candidates of [
+      pool.filter((item) => !previousKeys.has(key(item))),
+      pool.filter((item) => previousKeys.has(key(item))),
+    ]) {
+      for (const [rank, difficulty] of ranks.entries()) {
+        const missing =
+          targets[rank] -
+          chosen.filter((item) => item.difficulty === difficulty).length;
+        chosen.push(
+          ...candidates
+            .filter((item) => item.difficulty === difficulty)
+            .sort(order)
+            .slice(0, Math.max(0, Math.min(missing, 7 - chosen.length))),
+        );
       }
-    for (const [difficulty, count] of [
-      ['Easy', 2],
-      ['Hard', 2],
-      ['Medium', 2],
-    ] as const) {
-      for (const item of available
-        .filter((item) => item.difficulty === difficulty)
-        .sort(
-          (a, b) =>
-            avoided(a) - avoided(b) ||
-            (counts.get(a.lessonId + ':' + a.taskId) ?? 0) -
-              (counts.get(b.lessonId + ':' + b.taskId) ?? 0) ||
-            (difficulty === 'Hard'
-              ? Math.abs(a.minutes - 22) - Math.abs(b.minutes - 22)
-              : 0),
-        )
-        .slice(0, count)) {
-        if (chosen.length < 4) chosen.push(item);
+
+      // Fill shortages with the nearest available difficulty in this course; never borrow completed work or another course
+      while (chosen.length < 7) {
+        const missing = ranks.findIndex(
+          (difficulty, rank) =>
+            chosen.filter((item) => item.difficulty === difficulty).length <
+            targets[rank],
+        );
+        const next = candidates
+          .filter((item) => !chosen.includes(item))
+          .sort(
+            (a, b) =>
+              Math.abs(ranks.indexOf(a.difficulty) - missing) -
+                Math.abs(ranks.indexOf(b.difficulty) - missing) || order(a, b),
+          )[0];
+        if (!next) break;
+        chosen.push(next);
       }
     }
-    for (const item of available)
-      if (chosen.length < 4 && !chosen.includes(item)) chosen.push(item);
-
-    // Reuse unfinished questions only after every available alternative has been considered
-    for (const item of repeated) if (chosen.length < 4) chosen.push(item);
     return chosen;
   });
-
-  // Add genuine Medium work only when it brings a bounded session closer to the duration aim
-  for (let extra = 0; extra < 2; extra++) {
-    const total = selected.reduce((sum, item) => sum + item.minutes, 0);
-    const next = pool
-      .filter(
-        (item) =>
-          item.difficulty === 'Medium' &&
-          !avoided(item) &&
-          !selected.includes(item),
-      )
-      .sort(
-        (a, b) =>
-          Math.abs(90 - total - a.minutes) - Math.abs(90 - total - b.minutes),
-      )[0];
-    if (!next || Math.abs(90 - total - next.minutes) >= Math.abs(90 - total))
-      break;
-    selected.push(next);
-  }
-  return selected;
 }
 
 // Replace the selection transactionally and archive the old session without resetting question progress
@@ -180,6 +165,7 @@ export function quiz(
       revision: (old?.revision ?? 0) + 1,
       createdAt: new Date().toISOString(),
       items: selectQuiz(store, old?.items, catalogue),
+      policy: 'course-7',
     };
     store.db
       .prepare(

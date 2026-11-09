@@ -54,7 +54,7 @@ test('review sessions survive refresh without modifying original assessed answer
   await expect(page.getByText(/Recorded — Next Review/)).toBeVisible();
   await page.getByRole('link', { name: 'Dashboard', exact: true }).click();
   await expect(
-    page.getByRole('heading', { name: /A little practice/ }),
+    page.getByRole('heading', { name: 'Your Courses' }),
   ).toBeVisible();
   await page.getByRole('link', { name: 'Mistake Review', exact: true }).click();
   await page.reload();
