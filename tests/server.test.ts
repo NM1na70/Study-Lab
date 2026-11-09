@@ -1,5 +1,5 @@
 // Import the HTTP app and temporary-file helpers for isolated persistence scenarios
-import { it, expect } from 'vitest';
+import { it, expect, vi } from 'vitest';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -498,6 +498,87 @@ it('refuses to smoke an owner-enabled host as though it were the shipped Docker 
         .json()
         .progress.every((p: Progress) => p.revision === 0),
     ).toBe(true);
+  } finally {
+    await app.close();
+  }
+});
+
+// Share a bounded owner budget across routes and reject spoofed address rotation before authorisation work
+it('throttles all owner routes while retaining ordinary study and recovering after the request window', async () => {
+  const owner = 'fictional-owner-for-rate-limit-regression-test';
+  const transport = vi.fn<typeof fetch>();
+  const app = await createApp(':memory:', '/nonexistent', {
+    ownerToken: owner,
+    fetch: transport,
+  });
+  try {
+    const before = (await app.inject('/api/lessons')).json().progress;
+    for (let count = 0; count < 120; count++) {
+      const rejected = await app.inject({
+        url: '/api/lab',
+        headers: {
+          'x-study-owner': 'invalid-owner',
+          'x-forwarded-for': `192.0.2.${count}`,
+        },
+      });
+      expect(rejected.statusCode).toBe(403);
+    }
+    const routes = [
+      ['POST', '/api/news/update'],
+      ['GET', '/api/lab'],
+      ['POST', '/api/lab'],
+      ['GET', '/api/lab/history'],
+      ['POST', '/api/lab/verify'],
+      ['GET', '/api/ai/status'],
+      ...['connect', 'test', 'disconnect', 'cancel', 'feedback'].map((name) => [
+        'POST',
+        '/api/ai/' + name,
+      ]),
+    ] as const;
+    for (const [method, url] of routes) {
+      const rejected = await app.inject({
+        method: method as 'GET' | 'POST',
+        url,
+        headers: { 'x-study-owner': owner, 'x-forwarded-for': '127.0.0.2' },
+      });
+      expect(rejected.statusCode, url).toBe(429);
+      expect(Number(rejected.headers['retry-after'])).toBeGreaterThan(0);
+    }
+    expect(transport).not.toHaveBeenCalled();
+    expect((await app.inject('/api/lessons')).json().progress).toEqual(before);
+    expect(
+      (
+        await app.inject({
+          method: 'POST',
+          url: '/api/progress/' + lessons[0].id,
+          payload: { action: 'step', revision: 0, step: 1 },
+        })
+      ).statusCode,
+    ).toBe(200);
+    expect(
+      (
+        await app.inject({
+          url: '/api/lab',
+          remoteAddress: '192.0.2.10',
+          headers: { 'x-study-owner': owner },
+        })
+      ).statusCode,
+    ).toBe(403);
+
+    // Advance only the limiter's clock so recovery is deterministic and no real delay is needed
+    const clock = vi.spyOn(Date, 'now').mockReturnValue(Date.now() + 60_001);
+    try {
+      expect(
+        (
+          await app.inject({
+            url: '/api/ai/status',
+            headers: { 'x-study-owner': owner },
+          })
+        ).statusCode,
+      ).toBe(200);
+    } finally {
+      clock.mockRestore();
+    }
   } finally {
     await app.close();
   }

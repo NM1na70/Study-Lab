@@ -14,3 +14,15 @@ Security checks have concrete failure criteria:
 No `continue-on-error` or scanner exception is configured. Scanner container tags and official action SHAs were resolved from upstream during development on 3 November 2026. Dependabot updates npm groups, GitHub Actions and Docker base images weekly. Scanner image versions in scripts need manual review too. Review upgrades and run checks; a dependency audit alone is not a complete security assessment. Docker base image uses the exact Node runtime tag; lockfile pins package resolution.
 
 No intentionally vulnerable target is included. Future targets need separate networks, volumes and lifecycle commands, with no default LAN exposure or access to learner data, the Docker socket or optional AI credentials.
+
+## Owner Request Throttling
+
+Owner-route requests share an in-memory limit of 120 per socket IP per 60 seconds before authorisation — this covers news update, all model reads/actions/history/verification and AI status/settings/feedback, including rejected credentials
+
+The maintained @fastify/rate-limit plugin uses a bounded 1,000-entry cache and normalises client IPs — forwarded headers are not trusted and rotating tokens or owner endpoints does not create a fresh budget
+
+Exceeded requests receive HTTP 429 and Retry-After without performing owner operations or changing learning state — ordinary lesson reads/writes remain outside this owner budget; direct-loopback authorisation and durable paid-request limits remain required independently
+
+This local process budget resets on restart and is not a distributed or durable monetary limit — it leaves room for the model's one-second tick requests and explicit controls while bounding repeated authorisation attempts
+
+The warning/error SARIF threshold and CodeQL workflow remain unchanged — see the PR #6 remediation record in verification.md for all eight original findings and before/after analysis

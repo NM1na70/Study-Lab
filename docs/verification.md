@@ -228,3 +228,62 @@ The previous helper's lab-check blocker is resolved by explicitly asserting the 
 No browser application code or controls changed, so the full browser suite was not rerun for this helper-only fix — its preceding audit result remains historical evidence, not a new run; no Docker image health/UID/volume or vulnerability success is inferred from the host CLI tests
 
 The task-start baseline confirms changes are limited to the two smoke scripts, two test files and four documentation files — README, application code, content, lockfile, version pins and all earlier audit changes remain preserved; all data-changing tests used disposable databases and closed their own servers
+
+## PR #6 Hosted CI Remediation — 9 November 2026
+
+Verified worktree `/home/james/VibeCoding/study-lab-next-milestones`, branch `codex/next-milestones` — local HEAD, remote branch and PR head all matched `088fc9f2f5096eaede13ac1c1d5279bddf39aaa6` before editing; the worktree was clean
+
+Evidence came from [run 42581459588](https://github.com/NM1na70/Study-Lab/actions/runs/42581459588), including codeql-reports/javascript.sarif, the full failed-job logs and all three browser trace ZIPs/error contexts/screencast screenshots — temporary copies are under /tmp/study-pr6-evidence, with no learner data used
+
+### Eight CodeQL Findings
+
+All eight are genuine `js/missing-rate-limiting` warnings (security severity 7.5) in src/server/app.ts — these are problem-query results with a related authorisation location, not taint-path results with codeFlows; each incoming request's owner header, socket IP and Host reaches AiService.authorise before the operation
+
+| Finding | Original handler line | Operation                                     | Related authorisation line | Disposition                                                                                          |
+| ------- | --------------------: | --------------------------------------------- | -------------------------: | ---------------------------------------------------------------------------------------------------- |
+| 1       |                    34 | POST /api/news/update                         |                         35 | Fixed: request budget before owner validation and external fetch                                     |
+| 2       |                   125 | GET /api/lab                                  |                        126 | Fixed: request budget before owner validation and state read                                         |
+| 3       |                   133 | POST /api/lab                                 |                        134 | Fixed: request budget before owner validation and model mutation                                     |
+| 4       |                   157 | GET /api/lab/history                          |                        158 | Fixed: request budget before owner validation and history reads                                      |
+| 5       |                   174 | POST /api/lab/verify                          |                        175 | Fixed: request budget before owner validation and server-derived verification                        |
+| 6       |                   258 | GET /api/ai/status                            |                        261 | Fixed: token-bearing status validation is covered, along with public status reads                    |
+| 7       |                   269 | POST /api/ai/{connect,test,disconnect,cancel} |                        270 | Fixed: all generated control routes share the budget before owner validation                         |
+| 8       |                   287 | POST /api/ai/feedback                         |                        288 | Fixed: request budget before owner validation; paid-request reservations/caps still apply separately |
+
+Each related site passes request.headers['x-study-owner'], request.ip and request.headers.host to the same direct-loopback capability check — the existing feedback quota only bounded paid attempts after successful authorisation; it did not throttle rejected capabilities or the other seven handlers
+
+Added exact @fastify/rate-limit 11.2.2, compatible with Fastify 5, and its frozen lockfile entries — owner routes share 120 requests per socket IP per 60 seconds with a bounded 1,000-entry in-memory cache; forwarded headers do not select a different budget, and changing owner route or token does not reset the counter
+
+HTTP 429 includes Retry-After; ordinary lesson reads/writes remain outside this owner-only budget, and there is no localhost exemption, new owner access, durable credential storage or change to paid-request limits
+
+Tests consume the budget using rejected owner credentials, cover every protected route family, reject forwarded-address rotation, confirm no provider/progress side effects, retain core saving, preserve LAN denial and recover deterministically after the window — no false-positive suppression or SARIF threshold/workflow change was used
+
+### Browser Failure Causes And Fixes
+
+| Hosted failure             | Trace evidence and cause                                                                                                                                                                                    | Correction and regression                                                                                                                                                                                                                                                                                                                                              |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Desktop endpoint catalogue | Start returned revision 1, then the first command request contained command:"" and returned 400; persisted history contained every required command except ps, so verification correctly recorded incorrect | Start's unconditional setCommand('') erased ps typed while its response was pending; non-command responses now retain drafts, a successful command clears only its submitted draft, mutations use an immediate in-flight guard/confirmed revision and stale initial reads cannot overwrite newer state; the helper waits for real command history and enabled controls |
+| Desktop fresh news         | The post-check self-review prerequisite draft was aborted by page.reload; there was no selfReview POST, and reload correctly showed facts checked but reviewed:false                                        | The test now waits for confirmed Self-review recorded before reload; a controlled-response gate proves no review confirmation appears while its draft save is pending, then persistence is asserted after completion — no application persistence rule was changed                                                                                                     |
+| Mobile model               | Same empty-command request after Start; screenshot showed owner controls and terminal despite the intended desktop-only experience                                                                          | The shared draft-race fix applies on desktop; views at 720px or narrower now mount only the desktop explanation/lesson link, with no model transport or controls; mobile catalogue tests assess every ordinary question, assert zero model requests and retain incomplete lab/lesson state, and the standalone mobile case verifies return to ordinary work            |
+
+The hosted browser fixtures were already isolated by database/server — no evidence indicated cross-test learner-state leakage or an incorrect portal output expectation; the mobile issue combined the same application race with a missing responsive boundary
+
+All six original focused cases happened to pass locally before edits, consistent with an intermittent timing race — controlled real-response gates now exercise pending Start, newer typing during a command response and the news draft-before-review ordering without sleeps, retries or timeout changes
+
+### Actual Validation
+
+- Focused API/server/lab/AI regressions passed 28 tests
+- Focused desktop/mobile browser scenarios plus the command-draft regression passed 8 cases
+- pnpm check passed formatting, lint, both strict TypeScript checks, content/PCAP/synthetic evidence/depth validation, 56 backend tests and 7 UI tests
+- Production build passed; full pnpm test:browser passed all 68 desktop/mobile cases in 3.3 minutes
+- Frozen install, native redacted Gitleaks, actionlint, Compose configuration and Git whitespace checks passed
+- pnpm security:audit passed its HIGH/CRITICAL threshold with two moderate advisories remaining
+- Official checksum-verified CodeQL CLI 2.27.4 and codeql/javascript-queries 2.5.0 reproduced the exact eight original rate-limit findings on the untouched baseline; the full default 89-query suite on the fixed source returned zero findings and passed the unchanged check-sarif.py enforcement
+- Final source snapshot was re-extracted and the full default suite completed with zero findings; its code files match the final working tree exactly, and check-sarif.py passed on the final SARIF directory
+- Local pnpm docker:smoke and pnpm security:container were attempted and blocked by absent /var/run/docker.sock; hosted Docker smoke and container scanning were confirmed successful for the pushed baseline run, but no new image/runtime/scan pass is inferred for this unpushed limiter dependency
+
+Hosted confirmation of these fixes remains pending because changes are intentionally uncommitted and unpushed — repeat Docker build/smoke/container scanning when available and inspect the next authorised CI run
+
+No learner database, live preview or unrelated service was touched; lesson IDs/content, grading rules, Node/pnpm pins, Docker/Compose/CI configuration, SARIF enforcement and the corrected smoke helper remain unchanged
+
+Suggested commit message: fix(ci): throttle owner routes and stabilize browser state checks

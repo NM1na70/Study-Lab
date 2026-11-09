@@ -335,3 +335,15 @@ Recreation and real SQLite backup/restore must preserve both completed ordinary 
 Host-process lab tests separately cover bridge denial even with a valid fictional owner capability, rejection of supplied success flags, failed/incomplete objectives, successful live model proof and deduplication — they do not establish Docker lab completion support
 
 See [verification](verification.md) for actual smoke results and Docker availability — run only against isolated test data, never a normal learner instance
+
+## Desktop Simulation Controls And Request Limits
+
+Simulation controls are available above the study layout's 720-pixel mobile breakpoint — smaller views show a desktop requirement, preserve saved model/question progress and provide a return link to the endpoint lesson, with ordinary questions still available
+
+The mobile view mounts no model transport, owner token input or terminal — this UI boundary does not replace direct-localhost owner authorisation on the server
+
+Start, pause and background ticks retain an unsubmitted command — a successful command response clears only the exact draft that was submitted, preserving newer typing; failed operations retain the draft
+
+Owner endpoints share a process-local 120-request/minute client-IP limit and return 429 with Retry-After when exceeded — wait for that interval, preserving current work; ordinary lesson saving is not throttled by this owner budget, and paid-feedback caps remain separate
+
+The Docker owner-disabled boundary and isolated smoke behaviour above are unchanged — no new owner credentials or bridged access were enabled

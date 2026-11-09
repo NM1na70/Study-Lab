@@ -412,3 +412,29 @@ Smoke-fix final results: pnpm check passed (55 backend and 7 UI tests, plus form
 The intended supported Docker flow has no known remaining helper blocker; actual image/runtime/UID/volume/scan evidence remains unavailable until the daemon is running — rerun pnpm docker:smoke and pnpm security:container before PR sign-off, with hosted CI still unverified and no full browser rerun warranted for unchanged application code
 
 Task-relative preservation check confirmed exactly eight changed files, with application code, README, content, package/lockfile/version pins and all other earlier changes byte-identical to this task's start — no new persistent services or preview processes remain from these tests
+
+## PR #6 CI Fixes — 9 November 2026
+
+Active folder `/home/james/VibeCoding/study-lab-next-milestones`, branch `codex/next-milestones` — verified clean local HEAD, remote head and PR #6 at 088fc9f2f5096eaede13ac1c1d5279bddf39aaa6 before edits; no branch switch, commit, push or learner-data operation was performed
+
+Read the applicable root AGENTS.md, project brief, development workflow, current status, handover and security/operations guidance — new/modified code comments were checked for purpose-based grouped imports/state/effects, precise concurrency/security safeguards, sentence case, no terminal full stops and blank-line separation; strict JSON/lockfile syntax and directives were preserved
+
+Retrieved the actual failing run 42581459588 SARIF, logs, all three browser traces/error contexts and screenshots — verification.md records each of the eight js/missing-rate-limiting findings, original handler/authorisation lines and disposition, plus the exact browser evidence
+
+All eight gaps are fixed at the owner request boundary using exact @fastify/rate-limit 11.2.2 with one bounded socket-IP budget (120/minute, 1,000 cached clients), without exemptions for local owner attempts or changes to direct-loopback access, paid quotas, CodeQL enforcement or core saving
+
+Lab Start/clock responses no longer erase typed commands, submitted commands do not erase newer typing, immediate mutation locking uses confirmed revisions, and late initial reads cannot restore stale state — desktop simulations now have the requested mobile explanation/access boundary, retaining ordinary mobile question coverage and incomplete lab status
+
+The news failure was reload racing the prerequisite save before self-review was sent — its browser test waits for confirmed review, with a controlled draft-response gate; no application grading or persistence behaviour was weakened
+
+Changed package/lockfile, src/server/app.ts, src/client/Lab.tsx, the four browser helper/spec files and tests/server.test.ts, plus security/operations/verification and this handover — preserved README, content, Node/pnpm pins, all Docker/CI/smoke files and other existing implementation
+
+Actual checks: focused API 28 tests, focused browser 8 cases, pnpm check (56 backend and 7 UI plus format/lint/types/content/evidence), build and full 68-case desktop/mobile suite passed — frozen install, native secrets, actionlint, Compose and whitespace checks passed; dependency audit passed its HIGH threshold with two moderate advisories
+
+Local CodeQL 2.27.4/query pack 2.5.0 reproduced all eight warnings on the unmodified source, then the full default suite returned zero findings on the fix and the unchanged SARIF guard passed — final snapshot result is recorded in verification.md
+
+Local Docker smoke and container scanning were attempted but the socket remains absent — the retrieved hosted run passed both on the pushed baseline, while the new limiter image and next hosted checks remain unverified until an authorised push/rerun; no passing Docker or hosted result is claimed for these uncommitted fixes
+
+All tests used disposable databases and closed their own servers; no new persistent preview/service was started — temporary evidence, baselines and CodeQL databases remain under /tmp, with no permanent tracking archive in Git
+
+Suggested commit: fix(ci): throttle owner routes and stabilize browser state checks — leave all changes uncommitted and unpushed for owner review

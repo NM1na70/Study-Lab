@@ -1,5 +1,6 @@
 // Import the HTTP server, static serving, lesson validation, and SQLite storage
 import Fastify from 'fastify';
+import rateLimit from '@fastify/rate-limit';
 import { isIP } from 'node:net';
 import serveStatic from '@fastify/static';
 import { resolve } from 'node:path';
@@ -26,6 +27,22 @@ export async function createApp(
 
   // Limit incoming bodies and close the SQLite connection when the server shuts down
   const app = Fastify({ logger: false, bodyLimit: 32_768 });
+
+  // Bound owner-route traffic before authorisation, sharing one socket-IP budget across operations
+  // Keep ordinary learning saves outside this process-local budget and ignore untrusted forwarding headers
+  await app.register(rateLimit, {
+    max: 120,
+    timeWindow: 60_000,
+    cache: 1000,
+    allowList: (request) => {
+      const route = request.routeOptions.url ?? '';
+      return (
+        !route.startsWith('/api/ai/') &&
+        !route.startsWith('/api/lab') &&
+        route !== '/api/news/update'
+      );
+    },
+  });
   const store = new Store(path);
   const ai = new AiService(store.db, aiOptions);
   const news = new News(store, lessons, options.newsFetch);

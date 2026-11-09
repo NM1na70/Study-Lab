@@ -1,5 +1,5 @@
 // Fill native activity controls from content-defined examples in isolated acceptance tests
-import type { Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 import type { Task } from '../../src/shared/schema.js';
 import { exampleAnswer } from '../../src/shared/domain.js';
 
@@ -17,6 +17,9 @@ export async function answerTask(
       .getByLabel('Owner Token', { exact: true })
       .fill('test-owner-capability-with-at-least-thirty-two-characters');
     await page.getByRole('button', { name: 'Start', exact: true }).click();
+    await expect(
+      page.getByRole('button', { name: 'Run Command' }),
+    ).toBeEnabled();
     advanceLab(46000);
     for (const command of [
       'ps',
@@ -29,11 +32,14 @@ export async function answerTask(
     ]) {
       await page.getByLabel('Model Command').fill(command);
       await page.getByRole('button', { name: 'Run Command' }).click();
-      await page.waitForFunction(
-        () =>
-          document.querySelector<HTMLInputElement>('input[maxlength="100"]')
-            ?.value === '',
-      );
+
+      // Wait for the actual command evidence rather than an input that unrelated responses could clear
+      await expect(
+        page.locator('ol li').filter({ hasText: command }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole('button', { name: 'Run Command' }),
+      ).toBeEnabled();
     }
     await page.getByRole('button', { name: 'Verify Lab Question' }).click();
     return;

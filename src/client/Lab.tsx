@@ -1,10 +1,43 @@
 // Expose only fixed model operations through the same owner capability boundary as paid feedback
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Progress } from '../shared/schema.js';
 import { labObjectives, type LabState } from '../shared/lab.js';
 
+// Keep model controls on desktop while leaving ordinary lesson work accessible on phones
+export function DefenceLab(
+  props: {
+    progress?: Progress;
+    onProgress?: (progress: Progress) => void;
+  } = {},
+) {
+  // Follow the same breakpoint as the study layout and mount no owner transport on smaller screens
+  const [desktop, setDesktop] = useState(
+    () => window.matchMedia('(min-width: 721px)').matches,
+  );
+  useEffect(() => {
+    const media = window.matchMedia('(min-width: 721px)');
+    const update = () => setDesktop(media.matches);
+    media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
+  }, []);
+  if (!desktop)
+    return (
+      <section aria-label="Desktop Simulation Lab">
+        <h1>Simulation Defence</h1>
+        <p>
+          Simulation labs require a desktop screen — your progress is saved and
+          other lesson questions remain available on this device
+        </p>
+        <a href="#/lesson/cyber-endpoint-correlation">
+          Return To Endpoint Lesson
+        </a>
+      </section>
+    );
+  return <DesktopDefenceLab {...props} />;
+}
+
 // Display the persisted model and request owner-authorised actions from the server
-export function DefenceLab({
+function DesktopDefenceLab({
   progress,
   onProgress,
 }: { progress?: Progress; onProgress?: (progress: Progress) => void } = {}) {
@@ -18,29 +51,38 @@ export function DefenceLab({
   const [command, setCommand] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const active = useRef(false);
+  const current = useRef<LabState | undefined>(undefined);
 
-  // Send a revisioned model operation and retain displayed state when it fails
+  // Serialize model mutations against the last confirmed revision and retain drafts when a request fails
   async function action(action: string) {
-    if (busy) return;
+    if (active.current) return;
+    active.current = true;
+    const submitted = command;
     setBusy(true);
     try {
       const response = await fetch('/api/lab', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-Study-Owner': token },
         body: JSON.stringify({
-          revision: state?.revision ?? 0,
+          revision: current.current?.revision ?? 0,
           action,
-          command: action === 'command' ? command : '',
+          command: action === 'command' ? submitted : '',
         }),
       });
       const result = await response.json();
       if (!response.ok) throw Error(result.error);
+      current.current = result;
       setState(result);
-      setCommand('');
+
+      // Start, pause and clock responses must not erase typed work; retain newer edits during a command save
+      if (action === 'command')
+        setCommand((draft) => (draft === submitted ? '' : draft));
       setError('');
     } catch (reason) {
       setError(String(reason));
     } finally {
+      active.current = false;
       setBusy(false);
     }
   }
@@ -48,11 +90,28 @@ export function DefenceLab({
   // Load existing state when owner input changes without implicitly starting the model
   useEffect(() => {
     if (!token) return;
-    void fetch('/api/lab', { headers: { 'X-Study-Owner': token } }).then(
-      async (response) => {
-        if (response.ok) setState(await response.json());
-      },
-    );
+    const controller = new AbortController();
+    void fetch('/api/lab', {
+      headers: { 'X-Study-Owner': token },
+      signal: controller.signal,
+    })
+      .then(async (response) => {
+        if (!response.ok) throw Error('Owner access was not accepted');
+        const loaded: LabState = await response.json();
+
+        // Ignore an older initial read after a mutation has already confirmed a newer revision
+        if (
+          !controller.signal.aborted &&
+          loaded.revision >= (current.current?.revision ?? 0)
+        ) {
+          current.current = loaded;
+          setState(loaded);
+        }
+      })
+      .catch((reason) => {
+        if (!controller.signal.aborted) setError(String(reason));
+      });
+    return () => controller.abort();
   }, [token]);
 
   // Request clock ticks only while the displayed model is running and release the timer on cleanup
@@ -77,7 +136,8 @@ export function DefenceLab({
         verifying
       </p>
       <p>
-        Desktop recommended — other course questions remain available on phones
+        Desktop simulation lab — other course questions remain available on
+        phones
       </p>
       <label>
         Owner Token

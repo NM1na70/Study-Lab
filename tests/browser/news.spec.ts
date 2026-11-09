@@ -61,8 +61,32 @@ test('fresh reading keeps the active selection, shares its exact snapshot and su
   await expect(
     page.getByText('Objective Report Checks Met', { exact: true }),
   ).toBeVisible();
+
+  // Hold the prerequisite draft response to prove a click is not a confirmed self-review save
+  let releaseDraft!: () => void;
+  const draftGate = new Promise<void>((resolve) => {
+    releaseDraft = resolve;
+  });
+  let draftReceived = false;
+  await page.route(
+    '**/api/progress/english-evidence-language',
+    async (route) => {
+      if (route.request().postDataJSON().action !== 'draft')
+        return route.continue();
+      const response = await route.fetch();
+      draftReceived = true;
+      await draftGate;
+      await route.fulfill({ response });
+    },
+  );
   await page.getByLabel(/I compared my response/).check();
   await page.getByRole('button', { name: 'Record Self-Review' }).click();
+  await expect.poll(() => draftReceived).toBe(true);
+  await expect(page.getByText(/Self-review recorded/)).toHaveCount(0);
+  releaseDraft();
+
+  // Wait for the confirmed review result before testing its persistence across a full document reload
+  await expect(page.getByText(/Self-review recorded/)).toBeVisible();
   await page.reload();
   await expect(
     page.getByRole('region', { name: 'Reading Passage' }),
