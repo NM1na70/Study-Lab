@@ -2,49 +2,11 @@
 import { test, expect } from './fixtures';
 import AxeBuilder from '@axe-core/playwright';
 import { exampleAnswer } from '../../src/shared/domain.js';
-import type { Task } from '../../src/shared/schema.js';
-import type { Page } from '@playwright/test';
+import { answerTask } from './answers';
 import { lessons } from '../../src/shared/lessons.js';
 
-// Fill the actual control chosen for each learning objective
-async function answerTask(page: Page, task: Task) {
-  const answer = exampleAnswer(task);
-  if (task.kind === 'report') {
-    for (const field of task.fields) {
-      const control = page.getByLabel(field.label, { exact: true });
-      if (field.kind === 'multiple') {
-        for (const id of field.example as string[])
-          await page
-            .getByRole('group', { name: field.label, exact: true })
-            .getByRole('checkbox', {
-              name: field.options.find((option) => option.id === id)!.label,
-              exact: true,
-            })
-            .check();
-      } else if (field.kind === 'select')
-        await control.selectOption(String(field.example));
-      else await control.fill(String(field.example));
-    }
-  } else if (task.kind === 'multiple') {
-    for (const option of task.options)
-      if (task.answers.includes(option.id))
-        await page
-          .getByRole('checkbox', { name: option.label, exact: true })
-          .check();
-  } else if (task.kind === 'choice')
-    await page
-      .getByRole('radio', {
-        name: task.options.find((option) => option.id === answer)!.label,
-        exact: true,
-      })
-      .check();
-  else if (task.kind === 'select')
-    await page.getByLabel('Your answer').selectOption(String(answer));
-  else await page.getByLabel('Your answer').fill(String(answer));
-}
-
 // Exercise both real lessons while blocking external services and checking saved work across browser contexts
-test('external-network-free study, resume, mistakes and complete both lessons', async ({
+test('external-network-free original lessons, resume, mistakes and completion', async ({
   page,
   context,
   browser,
@@ -75,7 +37,7 @@ test('external-network-free study, resume, mistakes and complete both lessons', 
   });
 
   // Make and correct a mistake, resume saved work, and satisfy every required activity in each course
-  for (const lesson of lessons) {
+  for (const lesson of lessons.slice(0, 2)) {
     await page.goto(`/#/lesson/${lesson.id}`);
     await expect(
       page.getByRole('heading', { name: lesson.title, exact: true }),
@@ -215,7 +177,9 @@ test('external-network-free study, resume, mistakes and complete both lessons', 
   const reopened = await browser.newContext();
   const newPage = await reopened.newPage();
   await newPage.goto(baseURL! + '/');
-  await expect(newPage.locator('.stats strong')).toHaveText('2/ 2');
+  await expect(newPage.locator('.stats strong')).toHaveText(
+    `2/ ${lessons.length}`,
+  );
   await reopened.close();
 });
 
@@ -319,28 +283,45 @@ test('keyboard, completion dialog and persistent course review', async ({
   await expect(input).toHaveValue('unsaved connection');
   await page.getByRole('link', { name: 'Mistake Review', exact: true }).click();
   await expect(
-    page.getByRole('button', { name: 'English (1)', exact: true }),
+    page
+      .locator('#mistake-review')
+      .getByRole('button', { name: 'English (1)', exact: true }),
   ).toBeVisible();
   await page
+    .locator('#mistake-review')
     .getByRole('button', { name: 'Cybersecurity (0)', exact: true })
     .click();
   await expect(
     page.getByText('No active mistakes in Cybersecurity'),
   ).toBeVisible();
-  await page.getByRole('button', { name: 'English (1)', exact: true }).click();
+  await page
+    .locator('#mistake-review')
+    .getByRole('button', { name: 'English (1)', exact: true })
+    .click();
   await expect(page.getByRole('table')).toBeVisible();
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await page.screenshot({
     path: 'test-results/review-' + test.info().project.name + '.png',
     fullPage: true,
   });
-  await page.getByRole('button', { name: 'Remove', exact: true }).click();
+  await page
+    .locator('#mistake-review')
+    .getByRole('button', { name: 'Remove', exact: true })
+    .click();
   await expect(page.getByText('No active mistakes in English')).toBeVisible();
-  await page.getByRole('button', { name: 'Undo', exact: true }).click();
+  await page
+    .locator('#mistake-review')
+    .getByRole('button', { name: 'Undo', exact: true })
+    .click();
   await expect(
-    page.getByRole('button', { name: 'Review', exact: true }),
+    page
+      .locator('#mistake-review')
+      .getByRole('button', { name: 'Review', exact: true }),
   ).toBeVisible();
-  await page.getByRole('button', { name: 'Remove', exact: true }).click();
+  await page
+    .locator('#mistake-review')
+    .getByRole('button', { name: 'Remove', exact: true })
+    .click();
   await page.reload();
   await expect(page.getByText('No active mistakes in English')).toBeVisible();
   await page.goto('/#/lesson/' + lessons[0].id);
@@ -353,7 +334,9 @@ test('keyboard, completion dialog and persistent course review', async ({
   await expect(page.getByText(/2 checked attempts/)).toBeVisible();
   await page.getByRole('link', { name: 'Mistake Review', exact: true }).click();
   await expect(
-    page.getByRole('button', { name: 'English (1)', exact: true }),
+    page
+      .locator('#mistake-review')
+      .getByRole('button', { name: 'English (1)', exact: true }),
   ).toBeVisible();
 });
 
@@ -618,7 +601,11 @@ test('report notes, overwrite confirmation, live preview and final activity cont
   await page.unroute('**/api/progress/**');
   await page.getByRole('button', { name: 'Retry Report Check' }).click();
   await expect(page.getByText('Not Correct Yet — Try Again')).toBeVisible();
-  await route.getByRole('button', { name: /^8\. / }).click();
+  await route
+    .getByRole('button', {
+      name: new RegExp('^' + lessons[1].tasks.length + '[.] '),
+    })
+    .click();
   await expect(
     page.getByRole('button', { name: /Save And Next Activity/ }),
   ).toHaveCount(0);

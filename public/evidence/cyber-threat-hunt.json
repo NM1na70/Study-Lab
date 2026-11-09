@@ -1,0 +1,38 @@
+{
+  "synthetic": true,
+  "licence": "CC0-1.0: Original Study Lab synthetic evidence",
+  "records": [
+    {
+      "id": "hunt-01",
+      "time": "2026-11-03T05:00:00Z",
+      "user": "mira",
+      "source": "192.0.2.90",
+      "activity": "Network logon",
+      "result": "success"
+    },
+    {
+      "id": "hunt-02",
+      "time": "2026-11-03T05:01:00Z",
+      "user": "mira",
+      "source": "192.0.2.90",
+      "activity": "Read shared inventory",
+      "result": "success"
+    },
+    {
+      "id": "change-01",
+      "time": "2026-11-03T04:55:00Z",
+      "user": "mira",
+      "source": "192.0.2.90",
+      "activity": "Approved inventory job",
+      "result": "Change window approved"
+    },
+    {
+      "id": "hunt-03",
+      "time": "2026-11-03T05:01:30Z",
+      "user": "jo",
+      "source": "192.0.2.91",
+      "activity": "Network logon",
+      "result": "success"
+    }
+  ]
+}

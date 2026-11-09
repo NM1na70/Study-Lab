@@ -15,7 +15,7 @@ Verified pages on 3 November 2026:
 
 The brief's external Garage reference was treated as engineering ideas, not copied source or authority. The web fetch of its repository failed; independent implementation used the detailed supplied review. No licence-dependent code reuse was necessary.
 
-`pnpm content:validate` parses the Zod schema and checks duplicate lesson/task/source IDs, task-source and teaching-source references, exact answer/example consistency, hints, explanations and required activity stages. This model has no cross-task references: current-position numbers are bounds-checked by domain logic. The separate capture parser verifies the file header, packet lengths, IPv4/TCP checksums, HTTP payloads, frame numbers, UTC timestamps, host addresses, request intervals, decoded summary and actual answer keys. No generated answer is accepted merely because it looks plausible.
+`pnpm content:validate` parses the Zod schema and checks duplicate lesson/task/source IDs, task-source and teaching-source references, exact answer/example consistency, hints, explanations and required activity stages. Finding mappings reference other tasks in the same lesson and report fields; content validation resolves these identities, while domain logic bounds current-position numbers. The separate capture parser verifies the file header, packet lengths, IPv4/TCP checksums, HTTP payloads, frame numbers, UTC timestamps, host addresses, request intervals, decoded summary and actual answer keys. No generated answer is accepted merely because it looks plausible.
 
 ```bash
 python3 scripts/generate-capture.py
@@ -59,3 +59,52 @@ Frame relationships are verified against the bundled PCAP rather than accepting 
 The limitations include malware status, process identity, theft, compromise and attribution — next steps are recommendations for more evidence, never claims that an action has already been performed
 
 The original adaptation and attribution/reuse notes above still apply — no government logos or official form assets are reproduced
+
+## Expanded Pack — 5 November 2026
+
+The catalogue contains 10 English and 10 Cybersecurity lessons — course-sequences.md records the intended progression and pilot-findings.md explains changes learned from the six-lesson checkpoint
+
+New teaching, workplace briefs and all nine additional cyber datasets are original — reference pages are linked, no passages or third-party datasets are copied, and no agency endorsement is implied
+
+Synthetic .test hosts, documentation addresses, fictional users and inert records require no contact with live systems — comparison text files are real downloadable bytes with independently checked SHA256 digests
+
+- [Australian Government Style Manual: Spelling](https://www.stylemanual.gov.au/grammar-punctuation-and-conventions/spelling) — accessed 2026-11-05; Relevant section: Dictionary consistency and spelling guidance — Choose one dictionary for consistency; original Australian English word practice; reference only, no source material copied
+- [Australian Government Style Manual: Plain language and word choice](https://www.stylemanual.gov.au/writing-and-designing-content/clear-language-and-writing-style/plain-language-and-word-choice) — accessed 2026-11-05; Relevant section: Plain language and word choice guidance — Use everyday words and active voice; original workplace examples; reference only, no source material copied
+- [RFC 1035: Domain names — implementation and specification](https://www.rfc-editor.org/rfc/rfc1035.txt) — accessed 2026-11-05; Relevant section: Sections 3.2.2 A, 4.1.1 RCODE and 4.1.3 resource records — Sections 3.2 and 4.1: A records, questions and response codes; synthetic DNS events; reference only, no source material copied
+- [Microsoft Learn: Event 4625](https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-4625) — accessed 2026-11-05; Relevant section: Event description, account information, logon type and network information — Event description and TargetUserName, IpAddress and LogonType fields; synthetic simplified event projection; reference only, no source material copied
+- [Microsoft Learn: Event 4624](https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-4624) — accessed 2026-11-05; Relevant section: Event description and logon types — Successful logon and type 3 network logon; original simplified event records; reference only, no source material copied
+- [Australian Government Style Manual: Verbs](https://www.stylemanual.gov.au/grammar-punctuation-and-conventions/types-words/verbs) — accessed 2026-11-05; Relevant section: Verb tense and subject–verb agreement — Verb choices and active voice; original tense exercises; reference only, no source material copied
+- [Australian Government Style Manual: Punctuation](https://www.stylemanual.gov.au/grammar-punctuation-and-conventions/punctuation) — accessed 2026-11-05; Relevant section: Sentence punctuation and apostrophe guidance — Full stops, commas and apostrophes; original sentence-editing practice; reference only, no source material copied
+- [ASD: Learn about phishing scams](https://www.cyber.gov.au/guidance/learn-about-phishing-scams) — accessed 2026-11-05; Relevant section: Recognise phishing and verify through trusted channels — Warning signs and separate verification; original harmless message and .test URLs; reference only, no source material copied
+- [Microsoft Sysinternals: Sysmon](https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon) — accessed 2026-11-05; Relevant section: Events 1 Process creation and 3 Network connection — Event IDs 1 and 3, ProcessGuid and hashes; original simplified process/network records; reference only, no source material copied
+- [NIST SP 800-86: Guide to Integrating Forensic Techniques into Incident Response](https://csrc.nist.gov/pubs/sp/800/86/final) — accessed 2026-11-05; Relevant section: Section 3.1 Collection and data integrity — Collection, examination, analysis and reporting; original evidence-register exercise; reference only, no source material copied
+- [RFC 3339: Date and Time on the Internet](https://www.rfc-editor.org/rfc/rfc3339.txt) — accessed 2026-11-05; Relevant section: Sections 4 offsets and 5.6 Internet date/time format — Section 5.6: offsets and UTC timestamps; original timeline records; reference only, no source material copied
+- [ASD: Best practices for event logging and threat detection](https://www.cyber.gov.au/publication/best-practices-for-event-logging-and-threat-detection) — accessed 2026-11-05; Relevant section: Event log quality, centralisation and correlation — Event correlation and investigation context; original synthetic scenarios; reference only, no source material copied
+- [AWS IAM: Policy evaluation logic](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html) — accessed 2026-11-05; Relevant section: Explicit deny overrides allow; identity-based policy evaluation — Explicit deny overrides allows in the simplified identity-policy exercise; not a complete AWS authorisation simulator; reference only, no source material copied
+- [MITRE ATT&CK: Valid Accounts T1078](https://attack.mitre.org/techniques/T1078/) — accessed 2026-11-05; Relevant section: Description and detection context for valid account use — Hypotheses about account misuse require corroboration; original local hunt exercise; reference only, no source material copied
+
+Run python3 scripts/generate-evidence.py to recreate all nine JSON packs and both comparison files — python3 scripts/verify-lessons.py independently parses the records, recomputes extraction keys and verifies hashes, UTC ordering and bounded IAM evaluation
+
+The JSON evidence is a simplified teaching representation rather than raw Windows XML, production mail headers or a complete AWS authorisation simulation — each lesson states the limits of the supplied record set
+
+## Completed Depth And News Extension — 6 November 2026
+
+Professional case records are original and downloadable in evidence/professional-cases.json, reproduced from content/professional-cases.json — verify-depth.py checks tier coverage, exact case inclusion, time-uncertainty overlap, mapping evidence and reading keys
+
+The original small foundations were retained as guided practice — new professional questions assess coverage, alternative explanations and qualified decisions rather than transferring old completion to different requirements
+
+Primary references accessed on 6 November 2026 include ASD incident-response practitioner guidance and logging guidance, MITRE T1078 and T1059.001, Bureau of Meteorology climate-impact reporting, NASA preliminary lunar-science publication, and the official USGS GeoJSON summary contract and public-domain reuse policy
+
+- https://www.cyber.gov.au/publication/cyber-security-incident-response-planning-practitioner-guidance — documentation/evidence boundaries, original cases only
+- https://attack.mitre.org/techniques/T1078/ — valid-account misuse, supported only by explicit controlled evidence
+- https://attack.mitre.org/techniques/T1059/001/ — PowerShell execution mechanism, not attribution
+- https://www.bom.gov.au/news-and-media/el-nino-strength-doesnt-always-match-impact-on-australia — issued 15 September 2026, climate drivers versus local outcomes
+- https://science.nasa.gov/feature/artemis-ii-preliminary-lunar-science-report/ — 7 October 2026 preliminary records, edited/unedited material distinction
+- https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php — supported event fields, fixed weekly significant-event feed
+- https://www.usgs.gov/faqs/are-usgs-reportspublications-copyrighted — USGS-produced facts are public domain; third-party media is not assumed reusable
+
+Each bundled passage records its publisher, URL, date, retrieval, reuse basis and version — Study Lab summaries and fictional teaching analysis are labelled separately, with no publisher multimedia or full articles reproduced
+
+Fresh snapshots preserve event occurrence separately from report-update/retrieval time, explicitly state unknown publication time and never infer local impact from magnitude alone — questions use the exact stored values rather than a changing live page
+
+The AFP careers page attempted during research returned 404 and is not relied on as a verified current source — agency career emphasis is not an endorsement or a claim of access to internal methods

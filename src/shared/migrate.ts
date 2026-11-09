@@ -2,8 +2,41 @@
 import type { Lesson, Progress } from './schema.js';
 import { assisted, emptyTask, isRecord } from './domain.js';
 
+// Apply only known version transitions and leave unsupported historical state untouched
 export function migrateProgress(lesson: Lesson, previous: Progress): Progress {
   if (previous.contentVersion === lesson.version) return previous;
+
+  // Preserve unchanged question state and historical completion when additional assessed requirements are introduced
+  if (
+    lesson.previousVersion &&
+    previous.contentVersion <= lesson.previousVersion
+  ) {
+    const base =
+      previous.contentVersion < lesson.previousVersion
+        ? migrateProgress(
+            {
+              ...lesson,
+              version: lesson.previousVersion,
+              previousVersion: undefined,
+            },
+            previous,
+          )
+        : previous;
+    const next = structuredClone(base);
+    if (next.completedAt) {
+      (next.completionHistory ??= []).push({
+        contentVersion: base.contentVersion,
+        completedAt: next.completedAt,
+        assisted: assisted(base),
+      });
+      next.completedAt = null;
+    }
+    for (const task of lesson.tasks) next.tasks[task.id] ??= emptyTask(task);
+    next.contentVersion = lesson.version;
+    next.revision++;
+    return next;
+  }
+
   // Retain equivalent facts and archive the full earlier report before requiring the new evidence relationships
   if (lesson.version === 3 && [1, 2].includes(previous.contentVersion)) {
     const prior =
@@ -28,6 +61,7 @@ export function migrateProgress(lesson: Lesson, previous: Progress): Progress {
         reviewed: state.reviewed,
         hints: state.hints,
         solution: state.solution,
+        aiHelp: state.aiHelp,
       });
       const old = isRecord(state.answer) ? state.answer : {};
       const answer: Record<string, string | string[]> = {};
@@ -70,6 +104,8 @@ export function migrateProgress(lesson: Lesson, previous: Progress): Progress {
     next.revision++;
     return next;
   }
+
+  // Reject unknown transitions before cloning or converting any saved answer
   if (previous.contentVersion !== 1 || lesson.version !== 2)
     throw new Error('Unsupported content migration');
   const next = structuredClone(previous);
@@ -91,6 +127,7 @@ export function migrateProgress(lesson: Lesson, previous: Progress): Progress {
         reviewed: saved.reviewed,
         hints: saved.hints,
         solution: saved.solution,
+        aiHelp: saved.aiHelp,
       };
       next.tasks[task.id] = {
         ...saved,
@@ -109,6 +146,7 @@ export function migrateProgress(lesson: Lesson, previous: Progress): Progress {
         reviewed: saved.reviewed,
         hints: saved.hints,
         solution: saved.solution,
+        aiHelp: saved.aiHelp,
       });
       const answer = String(saved.answer).trim().toLowerCase();
       if (task.options.some((option) => option.id === answer))

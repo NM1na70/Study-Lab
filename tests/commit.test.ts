@@ -1,3 +1,4 @@
+// Import the test assertions and executable subject validator while preserving its TypeScript directive
 import { it, expect } from 'vitest';
 // @ts-expect-error This executable hook intentionally uses plain JS for Git/Node.
 import { validSubject } from '../scripts/check-commit-msg.mjs';

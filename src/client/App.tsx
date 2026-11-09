@@ -10,6 +10,10 @@ import {
 import { load, type Snapshot } from './api';
 import { useProgress } from './use-progress';
 import { TaskCard } from './TaskCard';
+import { AiOwnerProvider, AiSettings } from './Ai';
+import { ReviewDue } from './ReviewDue';
+import { DefenceLab } from './Lab';
+import { DailyQuiz } from './DailyQuiz';
 import { Review } from './Review';
 
 // Describe the bundled decoded evidence used by the browser review table
@@ -26,6 +30,7 @@ interface Evidence {
 
 // Load and display the local evidence summary behind an explicit spoiler disclosure
 function EvidenceSummary() {
+  // Retain decoded evidence and load errors separately from learner assessment state
   const [data, setData] = useState<Evidence>();
   const [error, setError] = useState('');
 
@@ -205,6 +210,9 @@ function LessonView({
             {lesson.course} · {lesson.difficulty} · {lesson.minutes} minutes
           </span>
           <h1>{lesson.title}</h1>
+          {lesson.id === 'cyber-endpoint-correlation' && (
+            <a href="#/lab">Open Simulation Defence</a>
+          )}
         </div>
         <span className={`save-state ${error ? 'error' : ''}`} role="status">
           {status}
@@ -280,6 +288,24 @@ function LessonView({
           </nav>
         </aside>
         <div className="study-content" aria-busy={navigating}>
+          {lesson.material && (
+            <details className="study-material">
+              <summary>Study Materials — Original Or Synthetic</summary>
+              <pre>{lesson.material}</pre>
+              {lesson.resources.map((resource) => (
+                <p key={resource.url}>
+                  <a href={resource.url} download>
+                    {resource.label}
+                  </a>
+                </p>
+              ))}
+              {lesson.evidence && (
+                <a href={lesson.evidence} download>
+                  Download Evidence
+                </a>
+              )}
+            </details>
+          )}
           {step === 0 ? (
             <>
               <h2 id="learn-heading" tabIndex={-1}>
@@ -301,7 +327,9 @@ function LessonView({
               {lesson.evidence && (
                 <p>
                   <a className="button" href={lesson.evidence} download>
-                    Download Synthetic PCAP · 1.4 KB
+                    {lesson.evidenceKind === 'pcap'
+                      ? 'Download Synthetic PCAP · 1.4 KB'
+                      : 'Download Synthetic Evidence'}
                   </a>
                 </p>
               )}
@@ -326,6 +354,7 @@ function LessonView({
                 progress={progress}
                 confirmed={confirmed}
                 onRetry={retry}
+                onProgress={onChange}
                 registerFlush={registerFlush}
                 onNext={
                   step < lesson.tasks.length
@@ -335,7 +364,9 @@ function LessonView({
               />
             </fieldset>
           ) : null}
-          {lesson.evidence && <EvidenceSummary />}
+          {lesson.evidence && lesson.evidenceKind === 'pcap' && (
+            <EvidenceSummary />
+          )}
 
           {/* Keep completion requirements and source attribution available from every activity */}
           <section className="finish">
@@ -458,6 +489,21 @@ function LessonView({
 
 // Derive course progress and the next study destination from persisted learner state
 function Dashboard({ data }: { data: Snapshot }) {
+  // Keep catalogue filters local while deriving counts from saved lesson state
+  const [course, setCourse] = useState('All');
+  const [topic, setTopic] = useState('All');
+  const [completion, setCompletion] = useState('All');
+  const visible = data.lessons
+    .filter(
+      (lesson) =>
+        (course === 'All' || lesson.course === course) &&
+        (topic === 'All' || lesson.topics.includes(topic)) &&
+        (completion === 'All' ||
+          (completion === 'Completed') ===
+            !!data.progress.find((progress) => progress.lessonId === lesson.id)
+              ?.completedAt),
+    )
+    .sort((a, b) => a.course.localeCompare(b.course) || a.order - b.order);
   const completed = data.progress.filter((p) => p.completedAt).length;
 
   // Resume the most recently updated unfinished lesson, then fall back to the first unfinished one
@@ -470,7 +516,7 @@ function Dashboard({ data }: { data: Snapshot }) {
       (l) => !data.progress.find((p) => p.lessonId === l.id)?.completedAt,
     )?.id;
 
-  // Render the two available lessons with actual counts and the shared-profile explanation
+  // Render the filtered lesson catalogue with actual counts and the shared-profile explanation
   return (
     <>
       <span className="eyebrow">Your local learning workspace</span>
@@ -491,7 +537,7 @@ function Dashboard({ data }: { data: Snapshot }) {
             </a>
           ) : (
             <p>
-              Both lessons completed. Revisit a lesson or review your mistakes.
+              All lessons completed — revisit a lesson or review your learning
             </p>
           )}
         </div>
@@ -504,9 +550,68 @@ function Dashboard({ data }: { data: Snapshot }) {
           <span className="tag">No accounts · No AI required</span>
         </div>
       </div>
+      <p>
+        <a className="button secondary" href="#/due">
+          Review Due ({data.dueCount ?? 0})
+        </a>
+      </p>
       <h2>Your courses</h2>
+      <div className="catalogue-filters">
+        <div>
+          <label htmlFor="catalogue-course">Course</label>
+          <select
+            id="catalogue-course"
+            value={course}
+            onChange={(event) => {
+              setCourse(event.target.value);
+              setTopic('All');
+            }}
+          >
+            {['All', 'English', 'Cybersecurity'].map((name) => (
+              <option key={name}>{name}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="catalogue-topic">Topic</label>
+          <select
+            id="catalogue-topic"
+            value={topic}
+            onChange={(event) => setTopic(event.target.value)}
+          >
+            {[
+              'All',
+              ...new Set(
+                data.lessons
+                  .filter(
+                    (lesson) => course === 'All' || lesson.course === course,
+                  )
+                  .flatMap((lesson) => lesson.topics),
+              ),
+            ].map((name) => (
+              <option key={name}>{name}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="catalogue-completion">Completion</label>
+          <select
+            id="catalogue-completion"
+            value={completion}
+            onChange={(event) => setCompletion(event.target.value)}
+          >
+            {['All', 'Completed', 'Not Completed'].map((name) => (
+              <option key={name}>{name}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+      <p>
+        {visible.length} lessons shown — recommended order, with all activities
+        unlocked
+      </p>
       <div className="course-grid">
-        {data.lessons.map((l) => {
+        {visible.map((l) => {
           const p = data.progress.find((p) => p.lessonId === l.id)!;
           return (
             <article
@@ -516,7 +621,14 @@ function Dashboard({ data }: { data: Snapshot }) {
               <span className="course-symbol" aria-hidden="true">
                 {l.course === 'English' ? 'Aa' : '⌘'}
               </span>
-              <span className="eyebrow">{l.course} · 1 available lesson</span>
+              <span className="eyebrow">
+                {l.course} ·{' '}
+                {
+                  data.lessons.filter((lesson) => lesson.course === l.course)
+                    .length
+                }{' '}
+                available lessons
+              </span>
               <h3>{l.title}</h3>
               <p>{l.summary}</p>
               <div className="tags">
@@ -558,8 +670,8 @@ function Dashboard({ data }: { data: Snapshot }) {
   );
 }
 
-// Load the local learner snapshot and select the dashboard, lesson, or mistake-review page
-export function App() {
+// Route the shared learner snapshot to study, combined review and optional owner pages
+function StudyApp() {
   // Keep loading feedback and the hash route independent from saved lesson data
   const [data, setData] = useState<Snapshot>();
   const [error, setError] = useState('');
@@ -575,7 +687,14 @@ export function App() {
       .catch((e) => {
         if (active) setError(e instanceof Error ? e.message : 'Load failed.');
       });
-    const navigate = () => setRoute(location.hash);
+    const navigate = () => {
+      if (location.hash === '#/due') {
+        location.replace('#/review');
+        return;
+      }
+      setRoute(location.hash);
+    };
+    navigate();
     window.addEventListener('hashchange', navigate);
     return () => {
       active = false;
@@ -590,12 +709,19 @@ export function App() {
         d
           ? {
               ...d,
+              dueCount: progress.reviewDueCount ?? d.dueCount,
               progress: d.progress.map((p) =>
                 p.lessonId === progress.lessonId ? progress : p,
               ),
             }
           : d,
       ),
+    [],
+  );
+
+  const updateDue = useCallback(
+    (count: number) =>
+      setData((data) => (data ? { ...data, dueCount: count } : data)),
     [],
   );
 
@@ -619,16 +745,27 @@ export function App() {
         </a>
         <nav aria-label="Main">
           <a
-            aria-current={!lesson && route !== '#/review' ? 'page' : undefined}
+            aria-current={route === '' || route === '#/' ? 'page' : undefined}
             href="#/"
           >
             Dashboard
           </a>
           <a
-            aria-current={route === '#/review' ? 'page' : undefined}
+            href="#/quiz"
+            aria-current={route === '#/quiz' ? 'page' : undefined}
+          >
+            Daily Quiz
+          </a>
+          <a
             href="#/review"
+            aria-current={
+              ['#/review', '#/due'].includes(route) ? 'page' : undefined
+            }
           >
             Mistake Review
+          </a>
+          <a href="#/ai" aria-current={route === '#/ai' ? 'page' : undefined}>
+            AI Settings
           </a>
         </nav>
         <span className="local-badge">● Local workspace</span>
@@ -649,8 +786,33 @@ export function App() {
             progress={data.progress.find((p) => p.lessonId === lesson.id)!}
             onChange={update}
           />
-        ) : route === '#/review' ? (
-          <Review data={data} onChange={update} />
+        ) : route === '#/ai' ? (
+          <AiSettings />
+        ) : route === '#/lab' ? (
+          <DefenceLab
+            progress={data.progress.find(
+              (progress) => progress.lessonId === 'cyber-endpoint-correlation',
+            )}
+            onProgress={update}
+          />
+        ) : route === '#/quiz' ? (
+          <DailyQuiz data={data} onChange={update} onSnapshot={setData} />
+        ) : ['#/due', '#/review'].includes(route) ? (
+          <>
+            <section id="review-due" aria-label="Scheduled Review">
+              <ReviewDue
+                lessons={data.lessons}
+                onCount={updateDue}
+                revisionKey={data.progress
+                  .map((progress) => progress.revision)
+                  .join(':')}
+                onSnapshot={setData}
+              />
+            </section>
+            <section id="mistake-review" aria-label="Recorded Mistakes">
+              <Review data={data} onChange={update} />
+            </section>
+          </>
         ) : route === '' || route === '#/' ? (
           <Dashboard data={data} />
         ) : (
@@ -662,5 +824,14 @@ export function App() {
       </main>
       <footer>2026 | Study Lab </footer>
     </>
+  );
+}
+
+// Share only a transient owner capability across the local UI
+export function App() {
+  return (
+    <AiOwnerProvider>
+      <StudyApp />
+    </AiOwnerProvider>
   );
 }

@@ -1,0 +1,32 @@
+{
+  "synthetic": true,
+  "licence": "CC0-1.0: Original Study Lab synthetic evidence",
+  "records": [
+    {
+      "id": "case-01",
+      "time": "2026-11-04T00:00:00Z",
+      "host": "LAB-WS07",
+      "user": "mira",
+      "observation": "Two network logon failures followed by success",
+      "source": "192.0.2.70"
+    },
+    {
+      "id": "case-02",
+      "time": "2026-11-04T00:01:00Z",
+      "host": "LAB-WS07",
+      "process": "C:/Lab/sync.exe",
+      "observation": "Connection to 198.51.100.70:443",
+      "processGuid": "sync-07"
+    },
+    {
+      "id": "case-03",
+      "time": "2026-11-04T00:03:00Z",
+      "host": "LAB-WS07",
+      "observation": "Inventory job was scheduled; account-owner confirmation is not recorded"
+    },
+    {
+      "id": "scope-01",
+      "observation": "No process-to-logon identifier, message contents, file-access record or data-transfer contents are supplied"
+    }
+  ]
+}

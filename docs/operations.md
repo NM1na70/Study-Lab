@@ -73,7 +73,7 @@ For native Linux Engine, put `sudo` before each `docker` command
 
 The restore container reads the backup from standard input, checks database integrity and schema, then replaces the database as the app's non-root user — never restore while another app is writing to the same volume
 
-Open both lessons after restoration and check their saved state — see [verification](verification.md) for recorded backup/restore results and limits
+Open your saved lessons and Review Due after restoration and check their saved state — see [verification](verification.md) for recorded backup/restore results and limits
 
 ## **Explicit LAN Option**
 
@@ -229,7 +229,7 @@ Escape cancels the dialog and restores focus — unmet requirements offer Return
 
 Mistake Review starts with English and Cybersecurity course buttons — Remove hides an active item, Undo restores it, and a new incorrect checked attempt makes it active again without deleting earlier history
 
-Backups made after this update require an app that supports schema 2 — to roll back to older code, restore a separate pre-update schema 1 backup with the app stopped, preserving the newer backup for later recovery
+Current backups require an app that supports schema 4 — to roll back to older code, restore a separate pre-update schema 1 backup with the app stopped, preserving the newer backup for later recovery
 
 ### Disposable Manual Preview
 
@@ -262,4 +262,76 @@ Content version 2 → 3 retains equivalent factual report drafts and archives th
 
 Hints and examples remain recorded as assistance — copying your own saved notes or opening your own preview does not erase earlier assistance or prove independent mastery
 
-Storage remains SQLite schema 2 — back up before adopting the feature on normal study data, and keep a pre-update backup if you intend to roll back to code that does not support content version 3
+The connected-report checkpoint used SQLite schema 2 — the current milestone upgrades storage to schema 3, so back up before adopting the feature on normal study data, and keep a pre-update backup if you intend to roll back to code that does not support content version 3
+
+## Schema 3 And Optional AI
+
+Schema 3 adds review schedules, resumable sessions, immutable review results, bounded AI usage/cache records and assistance markers — existing lesson progress and content-migration archives remain intact
+
+The same SQLite backup/restore commands include these tables and accept schemas 1, 2 and 3 — stop the app before restore, keep a pre-update backup for rollback to older code, and never test restoration on live learner data
+
+AI keys are held in server memory and owner capabilities in the launching environment — neither is included in a database backup, and reconnecting after restart is deliberate
+
+AI cached advice and written answers are learner data — protect backups accordingly, even though credentials are excluded
+
+For the current isolated preview use port 3012 and a temporary DATABASE_PATH — the existing 3011 preview and normal Docker study volume must remain untouched
+
+See [owner setup](ai-feedback.md) and [Review Due policy](review-due.md)
+
+## In-Progress Quiz And Model Preview
+
+The course-depth extension uses SQLite schema 4 — the normal backup includes quiz references/history and model runs while retaining the credential-exclusion policy, and restore accepts schemas 1–4
+
+The new disposable preview is on http://localhost:3013 — older previews on 3011 and 3012 are not replaced
+
+Its temporary directory is recorded in /tmp/study-depth-preview-path — owner model access uses the random token in that directory's owner-token file, which has mode 600 and is not an OpenAI API key
+
+Read that token locally only when using the owner controls — never include its value in screenshots, Git, logs or reports
+
+To launch your own disposable host preview from the feature folder:
+
+```bash
+source scripts/dev-env.sh
+pnpm build
+study_depth_data="$(mktemp -d /tmp/study-depth-local.XXXXXX)"
+read -r -s -p 'Temporary owner token, at least 32 random characters: ' STUDY_OWNER_TOKEN
+printf '\n'
+export STUDY_OWNER_TOKEN
+DATABASE_PATH="$study_depth_data/study.sqlite" PORT=3014 pnpm start
+```
+
+The lab is modelled and needs no container image download — start/pause/resume/reset act only on its persisted model, and no arbitrary host terminal exists
+
+See depth-extension-status.md for resource bounds and incomplete integration — the model currently does not grant a catalogue question tick or become a Daily Quiz hard unit
+
+## Completed News And Integrated Model
+
+Owner-only fresh updates and lab controls require a direct localhost connection and STUDY_OWNER_TOKEN of at least 32 random characters — no OpenAI key or paid service is required
+
+Optional Fresh News is available on Daily Quiz — imported, validated USGS snapshots appear in the English evidence-language lesson, while Refresh remains the explicit way to choose a replacement quiz
+
+The endpoint lesson contains the integrated model question — inspect ps, ss, accounts and journalctl after the 45-second event, apply network/identity/endpoint containment and preserve the portal, then choose Verify Lab Question
+
+Help marks assistance; failed checks remain attempts; reset archives the run; historical runs/results are owner-readable — model pause/resume and interruption are persisted, not simulated by changing a browser timer
+
+The model needs no VM image download and cannot execute host commands — its small measured footprint does not establish Docker or physical-device compatibility
+
+Schema 5 backups contain news snapshots and model results, never provider or owner credentials — keep pre-upgrade backups for older-code rollback and restore only with the app stopped
+
+## Docker Smoke Coverage And Owner Lab Limits
+
+The shipped Compose service does not supply STUDY_OWNER_TOKEN — owner lab verification is intentionally unavailable through Docker's published bridge port, which also does not satisfy the direct-loopback socket requirement
+
+Do not add credentials, trust forwarded addresses or broaden the owner guard to make a smoke test complete the model question — legitimate owner model work uses the documented direct-localhost host process
+
+`pnpm docker:smoke` completes ordinary questions through their normal API checks and explicit writing/report self-review — it saves a correct-looking lab draft, requires its ordinary check to return 400 and ownerless verification to return 403, then requires the lab lesson's completion request to fail
+
+The helper explicitly asserts owner controls are disabled, checks rejected lab reads/start/history, and verifies that rejected requests leave progress unchanged — an owner-enabled host is rejected as a different configuration rather than silently treated as a Docker smoke target
+
+Current expected coverage is 19 of 20 lessons completed, all ordinary questions assessed, and defence-lab deliberately incomplete with zero assessed lab attempts — this is an asserted access/completion boundary, not a skipped question or a claim of complete catalogue completion
+
+Recreation and real SQLite backup/restore must preserve both completed ordinary lessons and the unassessed lab draft; runtime health, page content, non-root UID and cleanup of only the disposable smoke project remain required
+
+Host-process lab tests separately cover bridge denial even with a valid fictional owner capability, rejection of supplied success flags, failed/incomplete objectives, successful live model proof and deduplication — they do not establish Docker lab completion support
+
+See [verification](verification.md) for actual smoke results and Docker availability — run only against isolated test data, never a normal learner instance

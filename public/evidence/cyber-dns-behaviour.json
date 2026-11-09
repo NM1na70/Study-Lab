@@ -1,0 +1,48 @@
+{
+  "synthetic": true,
+  "licence": "CC0-1.0: Original Study Lab synthetic evidence",
+  "records": [
+    {
+      "id": "dns-01",
+      "time": "2026-11-02T01:00:00Z",
+      "client": "192.0.2.30",
+      "resolver": "192.0.2.53",
+      "name": "updates.lab.test",
+      "type": "A",
+      "rcode": "NOERROR",
+      "answer": "198.51.100.40",
+      "ttl": 60
+    },
+    {
+      "id": "dns-02",
+      "time": "2026-11-02T01:00:05Z",
+      "client": "192.0.2.30",
+      "resolver": "192.0.2.53",
+      "name": "missing.lab.test",
+      "type": "A",
+      "rcode": "NXDOMAIN",
+      "answer": null
+    },
+    {
+      "id": "dns-03",
+      "time": "2026-11-02T01:00:30Z",
+      "client": "192.0.2.30",
+      "resolver": "192.0.2.53",
+      "name": "missing.lab.test",
+      "type": "A",
+      "rcode": "NXDOMAIN",
+      "answer": null
+    },
+    {
+      "id": "dns-04",
+      "time": "2026-11-02T01:01:00Z",
+      "client": "192.0.2.31",
+      "resolver": "192.0.2.53",
+      "name": "updates.lab.test",
+      "type": "A",
+      "rcode": "NOERROR",
+      "answer": "198.51.100.40",
+      "ttl": 60
+    }
+  ]
+}

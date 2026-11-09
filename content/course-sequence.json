@@ -1,0 +1,570 @@
+[
+  {
+    "course": "English",
+    "id": "english-word-families",
+    "title": "Build words with -tion",
+    "objectives": [
+      "Spell four useful -tion nouns without fuzzy matching.",
+      "Connect act, connect, detect and protect with their noun forms.",
+      "Use the nouns in a short, self-reviewed security note."
+    ],
+    "prerequisites": ["Existing everyday English"],
+    "difficulty": "Low",
+    "minutes": 25,
+    "mainPracticalTask": "Build and use action, connection, detection and protection",
+    "activityTypes": {
+      "exact": "Purposeful exact controls with deterministic facts and explicit self-review for reasoning",
+      "select": "Purposeful select controls with deterministic facts and explicit self-review for reasoning",
+      "written": "Purposeful written controls with deterministic facts and explicit self-review for reasoning"
+    },
+    "materials": ["Original teaching and workplace reading in the lesson"],
+    "researchRequirements": [
+      "Australian Government Style Manual: Spelling — Choose one dictionary for consistency; original Australian English word practice"
+    ],
+    "completionDemonstrates": "Objective keys met and required reasoning explicitly self-reviewed — not verified mastery",
+    "reviewConcepts": [
+      "en-spell-action",
+      "en-spell-connection",
+      "en-spell-detection",
+      "en-spell-protection"
+    ],
+    "recommendedOrder": 1
+  },
+  {
+    "course": "English",
+    "id": "english-spelling-patterns",
+    "title": "Recall useful spelling patterns",
+    "objectives": [
+      "Recall difficult words and notice sound–spelling limits",
+      "Repair a short maintenance note"
+    ],
+    "prerequisites": ["english-word-families"],
+    "difficulty": "Low",
+    "minutes": 25,
+    "mainPracticalTask": "Repair a short maintenance note",
+    "activityTypes": {
+      "choice": "Purposeful choice controls with deterministic facts and explicit self-review for reasoning",
+      "exact": "Purposeful exact controls with deterministic facts and explicit self-review for reasoning",
+      "written": "Purposeful written controls with deterministic facts and explicit self-review for reasoning"
+    },
+    "materials": ["Original teaching and workplace reading in the lesson"],
+    "researchRequirements": [
+      "Australian Government Style Manual: Spelling — Choose one dictionary for consistency; original Australian English word practice"
+    ],
+    "completionDemonstrates": "Objective keys met and required reasoning explicitly self-reviewed — not verified mastery",
+    "reviewConcepts": [
+      "en-spell-necessary",
+      "en-spell-occurred",
+      "en-spell-writing"
+    ],
+    "recommendedOrder": 2
+  },
+  {
+    "course": "English",
+    "id": "english-reading-actions",
+    "title": "Read for actions and constraints",
+    "objectives": [
+      "Extract who, when and conditions from a short notice",
+      "Turn a maintenance notice into an action summary"
+    ],
+    "prerequisites": ["english-spelling-patterns"],
+    "difficulty": "Low",
+    "minutes": 43,
+    "mainPracticalTask": "Turn a maintenance notice into an action summary",
+    "activityTypes": {
+      "choice": "Purposeful choice controls with deterministic facts and explicit self-review for reasoning",
+      "exact": "Purposeful exact controls with deterministic facts and explicit self-review for reasoning",
+      "multiple": "Purposeful multiple controls with deterministic facts and explicit self-review for reasoning",
+      "report": "Purposeful report controls with deterministic facts and explicit self-review for reasoning",
+      "written": "Purposeful written controls with deterministic facts and explicit self-review for reasoning"
+    },
+    "materials": ["Original teaching and workplace reading in the lesson"],
+    "researchRequirements": [
+      "Australian Government Style Manual: Plain language and word choice — Use everyday words and active voice; original workplace examples"
+    ],
+    "completionDemonstrates": "Objective keys met and required reasoning explicitly self-reviewed — not verified mastery",
+    "reviewConcepts": ["en-action-owner"],
+    "recommendedOrder": 3
+  },
+  {
+    "course": "English",
+    "id": "english-verb-time",
+    "title": "Make time and actions clear",
+    "objectives": [
+      "Choose tense and agreement in practical updates",
+      "Write a clear before-and-now update"
+    ],
+    "prerequisites": ["english-reading-actions"],
+    "difficulty": "Low",
+    "minutes": 25,
+    "mainPracticalTask": "Write a clear before-and-now update",
+    "activityTypes": {
+      "choice": "Purposeful choice controls with deterministic facts and explicit self-review for reasoning",
+      "exact": "Purposeful exact controls with deterministic facts and explicit self-review for reasoning",
+      "written": "Purposeful written controls with deterministic facts and explicit self-review for reasoning"
+    },
+    "materials": ["Original teaching and workplace reading in the lesson"],
+    "researchRequirements": [
+      "Australian Government Style Manual: Verbs — Verb choices and active voice; original tense exercises"
+    ],
+    "completionDemonstrates": "Objective keys met and required reasoning explicitly self-reviewed — not verified mastery",
+    "reviewConcepts": ["en-past-inspected", "en-present-checks"],
+    "recommendedOrder": 4
+  },
+  {
+    "course": "English",
+    "id": "english-sentence-boundaries",
+    "title": "Build clear sentences",
+    "objectives": [
+      "Join or separate ideas without comma splices",
+      "Edit a short handover paragraph"
+    ],
+    "prerequisites": ["english-verb-time"],
+    "difficulty": "Medium",
+    "minutes": 25,
+    "mainPracticalTask": "Edit a short handover paragraph",
+    "activityTypes": {
+      "choice": "Purposeful choice controls with deterministic facts and explicit self-review for reasoning",
+      "exact": "Purposeful exact controls with deterministic facts and explicit self-review for reasoning",
+      "select": "Purposeful select controls with deterministic facts and explicit self-review for reasoning",
+      "written": "Purposeful written controls with deterministic facts and explicit self-review for reasoning"
+    },
+    "materials": ["Original teaching and workplace reading in the lesson"],
+    "researchRequirements": [
+      "Australian Government Style Manual: Punctuation — Full stops, commas and apostrophes; original sentence-editing practice"
+    ],
+    "completionDemonstrates": "Objective keys met and required reasoning explicitly self-reviewed — not verified mastery",
+    "reviewConcepts": [
+      "en-plural-analysts",
+      "en-contrast-but",
+      "en-plural-devices"
+    ],
+    "recommendedOrder": 5
+  },
+  {
+    "course": "English",
+    "id": "english-precise-vocabulary",
+    "title": "Choose precise workplace words",
+    "objectives": [
+      "Distinguish similar words and reduce vague wording",
+      "Repair ambiguous status messages"
+    ],
+    "prerequisites": ["english-sentence-boundaries"],
+    "difficulty": "Medium",
+    "minutes": 43,
+    "mainPracticalTask": "Repair ambiguous status messages",
+    "activityTypes": {
+      "choice": "Purposeful choice controls with deterministic facts and explicit self-review for reasoning",
+      "exact": "Purposeful exact controls with deterministic facts and explicit self-review for reasoning",
+      "report": "Purposeful report controls with deterministic facts and explicit self-review for reasoning",
+      "written": "Purposeful written controls with deterministic facts and explicit self-review for reasoning"
+    },
+    "materials": ["Original teaching and workplace reading in the lesson"],
+    "researchRequirements": [
+      "Australian Government Style Manual: Spelling — Choose one dictionary for consistency; original Australian English word practice",
+      "Australian Government Style Manual: Plain language and word choice — Use everyday words and active voice; original workplace examples"
+    ],
+    "completionDemonstrates": "Objective keys met and required reasoning explicitly self-reviewed — not verified mastery",
+    "reviewConcepts": ["en-affect", "en-effect", "en-advice", "en-advise"],
+    "recommendedOrder": 6
+  },
+  {
+    "course": "English",
+    "id": "english-workplace-emails",
+    "title": "Write useful workplace emails",
+    "objectives": [
+      "State purpose, action and a realistic deadline",
+      "Write a short request with useful context"
+    ],
+    "prerequisites": ["english-precise-vocabulary"],
+    "difficulty": "Medium",
+    "minutes": 48,
+    "mainPracticalTask": "Write a short request with useful context",
+    "activityTypes": {
+      "choice": "Purposeful choice controls with deterministic facts and explicit self-review for reasoning",
+      "exact": "Purposeful exact controls with deterministic facts and explicit self-review for reasoning",
+      "multiple": "Purposeful multiple controls with deterministic facts and explicit self-review for reasoning",
+      "report": "Purposeful report controls with deterministic facts and explicit self-review for reasoning",
+      "written": "Purposeful written controls with deterministic facts and explicit self-review for reasoning"
+    },
+    "materials": ["Original teaching and workplace reading in the lesson"],
+    "researchRequirements": [
+      "Australian Government Style Manual: Plain language and word choice — Use everyday words and active voice; original workplace examples"
+    ],
+    "completionDemonstrates": "Objective keys met and required reasoning explicitly self-reviewed — not verified mastery",
+    "reviewConcepts": ["en-spell-please", "en-spell-recipient"],
+    "recommendedOrder": 7
+  },
+  {
+    "course": "English",
+    "id": "english-evidence-language",
+    "title": "Express evidence and uncertainty",
+    "objectives": [
+      "Separate observation, interpretation and missing information",
+      "Rewrite an overconfident finding"
+    ],
+    "prerequisites": ["english-workplace-emails"],
+    "difficulty": "Medium",
+    "minutes": 52,
+    "mainPracticalTask": "Rewrite an overconfident finding",
+    "activityTypes": {
+      "choice": "Purposeful choice controls with deterministic facts and explicit self-review for reasoning",
+      "exact": "Purposeful exact controls with deterministic facts and explicit self-review for reasoning",
+      "multiple": "Purposeful multiple controls with deterministic facts and explicit self-review for reasoning",
+      "report": "Purposeful report controls with deterministic facts and explicit self-review for reasoning",
+      "select": "Purposeful select controls with deterministic facts and explicit self-review for reasoning",
+      "written": "Purposeful written controls with deterministic facts and explicit self-review for reasoning"
+    },
+    "materials": ["Original teaching and workplace reading in the lesson"],
+    "researchRequirements": [
+      "Australian Government Style Manual: Plain language and word choice — Use everyday words and active voice; original workplace examples"
+    ],
+    "completionDemonstrates": "Objective keys met and required reasoning explicitly self-reviewed — not verified mastery",
+    "reviewConcepts": [
+      "en-spell-unknown",
+      "en-inference-may",
+      "en-spell-evidence"
+    ],
+    "recommendedOrder": 8
+  },
+  {
+    "course": "English",
+    "id": "english-instructions",
+    "title": "Write steps and short summaries",
+    "objectives": [
+      "Sequence safe actions and preserve important constraints",
+      "Write a short operational instruction"
+    ],
+    "prerequisites": ["english-evidence-language"],
+    "difficulty": "Medium",
+    "minutes": 52,
+    "mainPracticalTask": "Write a short operational instruction",
+    "activityTypes": {
+      "choice": "Purposeful choice controls with deterministic facts and explicit self-review for reasoning",
+      "exact": "Purposeful exact controls with deterministic facts and explicit self-review for reasoning",
+      "report": "Purposeful report controls with deterministic facts and explicit self-review for reasoning",
+      "select": "Purposeful select controls with deterministic facts and explicit self-review for reasoning",
+      "written": "Purposeful written controls with deterministic facts and explicit self-review for reasoning"
+    },
+    "materials": ["Original teaching and workplace reading in the lesson"],
+    "researchRequirements": [
+      "Australian Government Style Manual: Plain language and word choice — Use everyday words and active voice; original workplace examples",
+      "Australian Government Style Manual: Punctuation — Full stops, commas and apostrophes; original sentence-editing practice"
+    ],
+    "completionDemonstrates": "Objective keys met and required reasoning explicitly self-reviewed — not verified mastery",
+    "reviewConcepts": ["en-spell-then", "en-spell-sequence"],
+    "recommendedOrder": 9
+  },
+  {
+    "course": "English",
+    "id": "english-report-handover",
+    "title": "Write a concise evidence handover",
+    "objectives": [
+      "Assemble findings, uncertainty and a useful recommendation",
+      "Complete a short workplace report"
+    ],
+    "prerequisites": ["english-instructions"],
+    "difficulty": "Medium",
+    "minutes": 57,
+    "mainPracticalTask": "Complete a short workplace report",
+    "activityTypes": {
+      "choice": "Purposeful choice controls with deterministic facts and explicit self-review for reasoning",
+      "exact": "Purposeful exact controls with deterministic facts and explicit self-review for reasoning",
+      "report": "Purposeful report controls with deterministic facts and explicit self-review for reasoning"
+    },
+    "materials": ["Original teaching and workplace reading in the lesson"],
+    "researchRequirements": [
+      "Australian Government Style Manual: Plain language and word choice — Use everyday words and active voice; original workplace examples"
+    ],
+    "completionDemonstrates": "Objective keys met and required reasoning explicitly self-reviewed — not verified mastery",
+    "reviewConcepts": ["en-spell-handover"],
+    "recommendedOrder": 10
+  },
+  {
+    "course": "Cybersecurity",
+    "id": "cyber-network-investigation",
+    "title": "Investigate a suspicious HTTP check-in",
+    "objectives": [
+      "Identify hosts and isolate HTTP requests with display filters.",
+      "Follow a TCP conversation and cite frames and timestamps.",
+      "Complete a short, self-reviewed report that separates observed traffic from unproven claims"
+    ],
+    "prerequisites": ["Existing networking and security-lab experience"],
+    "difficulty": "Medium",
+    "minutes": 82,
+    "mainPracticalTask": "Inspect the existing synthetic PCAP",
+    "activityTypes": {
+      "choice": "Purposeful choice controls with deterministic facts and explicit self-review for reasoning",
+      "exact": "Purposeful exact controls with deterministic facts and explicit self-review for reasoning",
+      "multiple": "Purposeful multiple controls with deterministic facts and explicit self-review for reasoning",
+      "report": "Purposeful report controls with deterministic facts and explicit self-review for reasoning",
+      "select": "Purposeful select controls with deterministic facts and explicit self-review for reasoning",
+      "written": "Purposeful written controls with deterministic facts and explicit self-review for reasoning"
+    },
+    "materials": ["/evidence/check-in.pcap"],
+    "researchRequirements": [
+      "ASD: Best practices for event logging and threat detection — Event correlation and investigation context; original synthetic scenarios"
+    ],
+    "completionDemonstrates": "Objective keys met and required reasoning explicitly self-reviewed — not verified mastery",
+    "reviewConcepts": ["cyber-pcap-proof-limit"],
+    "recommendedOrder": 1
+  },
+  {
+    "course": "Cybersecurity",
+    "id": "cyber-dns-behaviour",
+    "title": "Investigate DNS behaviour",
+    "objectives": [
+      "Distinguish DNS questions, answers and NXDOMAIN",
+      "Correlate repeated queries with resolver responses"
+    ],
+    "prerequisites": ["cyber-network-investigation"],
+    "difficulty": "Medium",
+    "minutes": 62,
+    "mainPracticalTask": "Correlate repeated queries with resolver responses",
+    "activityTypes": {
+      "choice": "Purposeful choice controls with deterministic facts and explicit self-review for reasoning",
+      "exact": "Purposeful exact controls with deterministic facts and explicit self-review for reasoning",
+      "multiple": "Purposeful multiple controls with deterministic facts and explicit self-review for reasoning",
+      "select": "Purposeful select controls with deterministic facts and explicit self-review for reasoning",
+      "written": "Purposeful written controls with deterministic facts and explicit self-review for reasoning"
+    },
+    "materials": ["/evidence/cyber-dns-behaviour.json"],
+    "researchRequirements": [
+      "RFC 1035: Domain names — implementation and specification — Sections 3.2 and 4.1: A records, questions and response codes; synthetic DNS events"
+    ],
+    "completionDemonstrates": "Objective keys met and required reasoning explicitly self-reviewed — not verified mastery",
+    "reviewConcepts": ["cyber-dns-nxdomain", "cyber-dns-a-record"],
+    "recommendedOrder": 2
+  },
+  {
+    "course": "Cybersecurity",
+    "id": "cyber-authentication-logs",
+    "title": "Investigate authentication events",
+    "objectives": [
+      "Correlate failed and successful network logons cautiously",
+      "Build an account-focused authentication finding"
+    ],
+    "prerequisites": ["cyber-dns-behaviour"],
+    "difficulty": "Medium",
+    "minutes": 69,
+    "mainPracticalTask": "Build an account-focused authentication finding",
+    "activityTypes": {
+      "choice": "Purposeful choice controls with deterministic facts and explicit self-review for reasoning",
+      "exact": "Purposeful exact controls with deterministic facts and explicit self-review for reasoning",
+      "select": "Purposeful select controls with deterministic facts and explicit self-review for reasoning",
+      "written": "Purposeful written controls with deterministic facts and explicit self-review for reasoning"
+    },
+    "materials": ["/evidence/cyber-authentication-logs.json"],
+    "researchRequirements": [
+      "Microsoft Learn: Event 4625 — Event description and TargetUserName, IpAddress and LogonType fields; synthetic simplified event projection",
+      "Microsoft Learn: Event 4624 — Successful logon and type 3 network logon; original simplified event records"
+    ],
+    "completionDemonstrates": "Objective keys met and required reasoning explicitly self-reviewed — not verified mastery",
+    "reviewConcepts": [
+      "cyber-auth-failed",
+      "cyber-auth-network",
+      "cyber-auth-success"
+    ],
+    "recommendedOrder": 3
+  },
+  {
+    "course": "Cybersecurity",
+    "id": "cyber-phishing-triage",
+    "title": "Triage a suspicious message",
+    "objectives": [
+      "Inspect sender, destination and requested action safely",
+      "Triage a harmless synthetic message without opening links"
+    ],
+    "prerequisites": ["cyber-authentication-logs"],
+    "difficulty": "Medium",
+    "minutes": 62,
+    "mainPracticalTask": "Triage a harmless synthetic message without opening links",
+    "activityTypes": {
+      "choice": "Purposeful choice controls with deterministic facts and explicit self-review for reasoning",
+      "exact": "Purposeful exact controls with deterministic facts and explicit self-review for reasoning",
+      "multiple": "Purposeful multiple controls with deterministic facts and explicit self-review for reasoning",
+      "select": "Purposeful select controls with deterministic facts and explicit self-review for reasoning",
+      "written": "Purposeful written controls with deterministic facts and explicit self-review for reasoning"
+    },
+    "materials": ["/evidence/cyber-phishing-triage.json"],
+    "researchRequirements": [
+      "ASD: Learn about phishing scams — Warning signs and separate verification; original harmless message and .test URLs"
+    ],
+    "completionDemonstrates": "Objective keys met and required reasoning explicitly self-reviewed — not verified mastery",
+    "reviewConcepts": [
+      "cyber-phish-separate-verification",
+      "cyber-phish-display-name"
+    ],
+    "recommendedOrder": 4
+  },
+  {
+    "course": "Cybersecurity",
+    "id": "cyber-endpoint-correlation",
+    "title": "Correlate endpoint activity",
+    "objectives": [
+      "Link process creation to network activity by stable identifiers",
+      "Compare process and network events"
+    ],
+    "prerequisites": ["cyber-phishing-triage"],
+    "difficulty": "Medium",
+    "minutes": 99,
+    "mainPracticalTask": "Compare process and network events",
+    "activityTypes": {
+      "choice": "Purposeful choice controls with deterministic facts and explicit self-review for reasoning",
+      "exact": "Purposeful exact controls with deterministic facts and explicit self-review for reasoning",
+      "multiple": "Purposeful multiple controls with deterministic facts and explicit self-review for reasoning",
+      "select": "Purposeful select controls with deterministic facts and explicit self-review for reasoning",
+      "written": "Purposeful written controls with deterministic facts and explicit self-review for reasoning"
+    },
+    "materials": ["/evidence/cyber-endpoint-correlation.json"],
+    "researchRequirements": [
+      "Microsoft Sysinternals: Sysmon — Event IDs 1 and 3, ProcessGuid and hashes; original simplified process/network records"
+    ],
+    "completionDemonstrates": "Objective keys met and required reasoning explicitly self-reviewed — not verified mastery",
+    "reviewConcepts": ["cyber-process-guid", "cyber-sysmon-network"],
+    "recommendedOrder": 5
+  },
+  {
+    "course": "Cybersecurity",
+    "id": "cyber-evidence-integrity",
+    "title": "Preserve and compare evidence",
+    "objectives": [
+      "Use hashes, collection records and scope limits correctly",
+      "Verify two original synthetic evidence files"
+    ],
+    "prerequisites": ["cyber-endpoint-correlation"],
+    "difficulty": "Medium",
+    "minutes": 62,
+    "mainPracticalTask": "Verify two original synthetic evidence files",
+    "activityTypes": {
+      "choice": "Purposeful choice controls with deterministic facts and explicit self-review for reasoning",
+      "exact": "Purposeful exact controls with deterministic facts and explicit self-review for reasoning",
+      "multiple": "Purposeful multiple controls with deterministic facts and explicit self-review for reasoning",
+      "select": "Purposeful select controls with deterministic facts and explicit self-review for reasoning",
+      "written": "Purposeful written controls with deterministic facts and explicit self-review for reasoning"
+    },
+    "materials": [
+      "/evidence/cyber-evidence-integrity.json",
+      "/evidence/original-note.txt",
+      "/evidence/changed-note.txt"
+    ],
+    "researchRequirements": [
+      "NIST SP 800-86: Guide to Integrating Forensic Techniques into Incident Response — Collection, examination, analysis and reporting; original evidence-register exercise"
+    ],
+    "completionDemonstrates": "Objective keys met and required reasoning explicitly self-reviewed — not verified mastery",
+    "reviewConcepts": ["cyber-sha256", "cyber-retain-original"],
+    "recommendedOrder": 6
+  },
+  {
+    "course": "Cybersecurity",
+    "id": "cyber-incident-timeline",
+    "title": "Build an incident timeline",
+    "objectives": [
+      "Normalise UTC offsets and distinguish event from ingestion time",
+      "Order a mixed-offset timeline"
+    ],
+    "prerequisites": ["cyber-evidence-integrity"],
+    "difficulty": "High",
+    "minutes": 67,
+    "mainPracticalTask": "Order a mixed-offset timeline",
+    "activityTypes": {
+      "choice": "Purposeful choice controls with deterministic facts and explicit self-review for reasoning",
+      "exact": "Purposeful exact controls with deterministic facts and explicit self-review for reasoning",
+      "select": "Purposeful select controls with deterministic facts and explicit self-review for reasoning",
+      "written": "Purposeful written controls with deterministic facts and explicit self-review for reasoning"
+    },
+    "materials": ["/evidence/cyber-incident-timeline.json"],
+    "researchRequirements": [
+      "RFC 3339: Date and Time on the Internet — Section 5.6: offsets and UTC timestamps; original timeline records",
+      "ASD: Best practices for event logging and threat detection — Event correlation and investigation context; original synthetic scenarios"
+    ],
+    "completionDemonstrates": "Objective keys met and required reasoning explicitly self-reviewed — not verified mastery",
+    "reviewConcepts": ["cyber-event-vs-ingestion", "cyber-rfc3339-z"],
+    "recommendedOrder": 7
+  },
+  {
+    "course": "Cybersecurity",
+    "id": "cyber-cloud-iam",
+    "title": "Investigate cloud permissions locally",
+    "objectives": [
+      "Evaluate explicit deny and correlate policy with audit evidence",
+      "Evaluate a bounded synthetic IAM policy case"
+    ],
+    "prerequisites": ["cyber-incident-timeline"],
+    "difficulty": "High",
+    "minutes": 67,
+    "mainPracticalTask": "Evaluate a bounded synthetic IAM policy case",
+    "activityTypes": {
+      "choice": "Purposeful choice controls with deterministic facts and explicit self-review for reasoning",
+      "exact": "Purposeful exact controls with deterministic facts and explicit self-review for reasoning",
+      "select": "Purposeful select controls with deterministic facts and explicit self-review for reasoning",
+      "written": "Purposeful written controls with deterministic facts and explicit self-review for reasoning"
+    },
+    "materials": ["/evidence/cyber-cloud-iam.json"],
+    "researchRequirements": [
+      "AWS IAM: Policy evaluation logic — Explicit deny overrides allows in the simplified identity-policy exercise; not a complete AWS authorisation simulator"
+    ],
+    "completionDemonstrates": "Objective keys met and required reasoning explicitly self-reviewed — not verified mastery",
+    "reviewConcepts": ["cyber-iam-explicit-deny"],
+    "recommendedOrder": 8
+  },
+  {
+    "course": "Cybersecurity",
+    "id": "cyber-threat-hunt",
+    "title": "Test an account-misuse hypothesis",
+    "objectives": [
+      "Use corroborating and contrary evidence in a local hunt",
+      "Triage a small account activity dataset"
+    ],
+    "prerequisites": ["cyber-cloud-iam"],
+    "difficulty": "High",
+    "minutes": 72,
+    "mainPracticalTask": "Triage a small account activity dataset",
+    "activityTypes": {
+      "choice": "Purposeful choice controls with deterministic facts and explicit self-review for reasoning",
+      "exact": "Purposeful exact controls with deterministic facts and explicit self-review for reasoning",
+      "multiple": "Purposeful multiple controls with deterministic facts and explicit self-review for reasoning",
+      "select": "Purposeful select controls with deterministic facts and explicit self-review for reasoning",
+      "written": "Purposeful written controls with deterministic facts and explicit self-review for reasoning"
+    },
+    "materials": ["/evidence/cyber-threat-hunt.json"],
+    "researchRequirements": [
+      "MITRE ATT&CK: Valid Accounts T1078 — Hypotheses about account misuse require corroboration; original local hunt exercise",
+      "ASD: Best practices for event logging and threat detection — Event correlation and investigation context; original synthetic scenarios"
+    ],
+    "completionDemonstrates": "Objective keys met and required reasoning explicitly self-reviewed — not verified mastery",
+    "reviewConcepts": [
+      "cyber-hunt-contrary-evidence",
+      "cyber-account-not-person"
+    ],
+    "recommendedOrder": 9
+  },
+  {
+    "course": "Cybersecurity",
+    "id": "cyber-investigation-report",
+    "title": "Assemble an investigation handover",
+    "objectives": [
+      "Connect claims to records and recommend proportionate next checks",
+      "Build a connected report from a combined local evidence pack"
+    ],
+    "prerequisites": ["cyber-threat-hunt"],
+    "difficulty": "High",
+    "minutes": 77,
+    "mainPracticalTask": "Build a connected report from a combined local evidence pack",
+    "activityTypes": {
+      "choice": "Purposeful choice controls with deterministic facts and explicit self-review for reasoning",
+      "exact": "Purposeful exact controls with deterministic facts and explicit self-review for reasoning",
+      "report": "Purposeful report controls with deterministic facts and explicit self-review for reasoning",
+      "select": "Purposeful select controls with deterministic facts and explicit self-review for reasoning",
+      "written": "Purposeful written controls with deterministic facts and explicit self-review for reasoning"
+    },
+    "materials": ["/evidence/cyber-investigation-report.json"],
+    "researchRequirements": [
+      "ASD: Best practices for event logging and threat detection — Event correlation and investigation context; original synthetic scenarios",
+      "NIST SP 800-86: Guide to Integrating Forensic Techniques into Incident Response — Collection, examination, analysis and reporting; original evidence-register exercise"
+    ],
+    "completionDemonstrates": "Objective keys met and required reasoning explicitly self-reviewed — not verified mastery",
+    "reviewConcepts": ["cyber-report-scope"],
+    "recommendedOrder": 10
+  }
+]

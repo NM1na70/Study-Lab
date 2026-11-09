@@ -1,0 +1,73 @@
+{
+  "cyber-network-investigation": {
+    "synthetic": true,
+    "version": 1,
+    "records": "Proxy P1 shows GET /status at 01:00:00 and 01:00:30; capture N1 covers only 01:00:00\u201301:00:20; asset register A1 lists a monitoring agent on the host; endpoint E1 is unavailable",
+    "assessmentTasks": ["case-decision", "case-gap", "case-justification"]
+  },
+  "cyber-dns-behaviour": {
+    "synthetic": true,
+    "version": 1,
+    "records": "Resolver D1 logs 40 NXDOMAIN replies from WS4 in 5 minutes; baseline B1 shows 2 per day; deployment C1 changed the search suffix at the same minute; D2 queries for the old suffix stop after rollback; no process telemetry was collected",
+    "assessmentTasks": ["case-decision", "case-gap", "case-justification"]
+  },
+  "cyber-authentication-logs": {
+    "synthetic": true,
+    "version": 1,
+    "records": "A1 shows lab-admin authentication from a new source at 02:00; A2 shows a service ticket from the same source; change record C1 authorises automation but names a different source; MFA records cover interactive sign-ins only; no credential acquisition evidence is supplied\nA3 scenario-controller record: the authorised exercise actor reused the lab-admin test credential outside the approved automation scope; this is known simulated misuse, not a conclusion inferred solely from a successful logon",
+    "assessmentTasks": [
+      "case-decision",
+      "case-gap",
+      "case-justification",
+      "attack-mapping"
+    ]
+  },
+  "cyber-phishing-triage": {
+    "synthetic": true,
+    "version": 1,
+    "records": "M1 has an external Reply-To and password request; gateway G1 records SPF pass for the external sender domain, not the internal display name; G2 records a blocked link click; identity I1 has no sign-in data for the interval",
+    "assessmentTasks": ["case-decision", "case-gap", "case-justification"]
+  },
+  "cyber-endpoint-correlation": {
+    "synthetic": true,
+    "version": 1,
+    "records": "P1 records process GUID g-a, PID 400, updater.exe at 03:00; N1 connects GUID g-a at 03:01; P2 reuses PID 400 with GUID g-b at 04:00; C1 authorises updater.exe but supplies no hash; H1 has a hash only for g-b\nP3 script-block record: a powershell.exe child with GUID g-c executes Start-Process probe; the exercise controller records this as unauthorised scripted execution inside the fictional scenario",
+    "assessmentTasks": [
+      "case-decision",
+      "case-gap",
+      "case-justification",
+      "defence-lab",
+      "attack-mapping"
+    ]
+  },
+  "cyber-evidence-integrity": {
+    "synthetic": true,
+    "version": 1,
+    "records": "Acquisition Q1 records source disk S1, examiner Jo and digest aa11; transfer Q2 repeats digest aa11 but omits receiving person; working copy Q3 has digest bb22 after annotation; no retained pre-annotation copy is supplied\nThe ledger digest strings are abbreviated labels, not complete hashes \u2014 the full acquisition manifest is unavailable for this professional case",
+    "assessmentTasks": ["case-decision", "case-gap", "case-justification"]
+  },
+  "cyber-incident-timeline": {
+    "synthetic": true,
+    "version": 1,
+    "records": "T1 authentication has event time 10:00+10:00 with uncertainty \u00b190 seconds; T2 connection has event time 00:01Z with uncertainty \u00b190 seconds; T3 collector received T2 before T1; clock synchronisation history is unavailable",
+    "assessmentTasks": ["case-decision", "case-gap", "case-justification"]
+  },
+  "cyber-cloud-iam": {
+    "synthetic": true,
+    "version": 1,
+    "records": "Policy I1 permits GetObject on lab/*; I2 explicitly denies lab/private/*; request R1 targets lab/private/a and is AccessDenied; request R2 targets lab/public/a and succeeds; the supplied records omit bucket/resource policies and session constraints",
+    "assessmentTasks": ["case-decision", "case-gap", "case-justification"]
+  },
+  "cyber-threat-hunt": {
+    "synthetic": true,
+    "version": 1,
+    "records": "H1 records service-account access outside the usual hour; C1 authorises an emergency job but does not name the observed source; H2 shows the same source on an unrelated host; coverage V1 excludes the preceding day; the analyst hypothesis is stolen credentials",
+    "assessmentTasks": ["case-decision", "case-gap", "case-justification"]
+  },
+  "cyber-investigation-report": {
+    "synthetic": true,
+    "version": 1,
+    "records": "Witness W1 recalls a transfer at 12:00; sensor S1 shows a connection at 12:02 but no payload; collection C1 occurred at 14:00; asset A1 identifies a shared host; no user-to-process/session join exists",
+    "assessmentTasks": ["case-decision", "case-gap", "case-justification"]
+  }
+}

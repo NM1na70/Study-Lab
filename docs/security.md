@@ -2,7 +2,7 @@
 
 This is an unauthenticated local shared profile. Localhost is the default host bind. LAN exposure is a deliberate owner option; anyone allowed to connect can read and change the same progress. Origin checks reduce cross-site writes; they are not authentication. Do not expose the service to the public internet.
 
-HTTP accepts bounded JSON and Zod-validated mutations; task IDs must resolve against bundled lessons. Database statements are parameterised. Static assets have a restrictive CSP, nosniff, no-referrer and frame denial. No application route executes host commands, opens captures, runs lab targets or invokes AI. No credentials are required. Container runs UID 1000 with a read-only image, dropped capabilities, no-new-privileges, a small /tmp and a writable named data volume; no Docker socket or DB port. Development API logging does not record learner answer bodies.
+HTTP accepts bounded JSON and Zod-validated mutations; task IDs must resolve against bundled lessons. Database statements are parameterised. Static assets have a restrictive CSP, nosniff, no-referrer and frame denial. No application route executes host commands, opens captures, runs lab targets or runs autonomous tools. Core study requires no credentials; optional owner-only AI feedback uses a fixed HTTPS endpoint without tools. Container runs UID 1000 with a read-only image, dropped capabilities, no-new-privileges, a small /tmp and a writable named data volume; no Docker socket or DB port. Development API logging does not record learner answer bodies.
 
 Security checks have concrete failure criteria:
 
