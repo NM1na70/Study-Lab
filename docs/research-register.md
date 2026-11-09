@@ -16,3 +16,13 @@ Consulted official documentation and actual installed package types before use:
 GitHub API and raw upstream action.yml verified checkout v7.0.1, setup-node v7.1.0, upload-artifact v7.0.2 and CodeQL v4.39.1, including annotated-tag resolution. Workflow SHA comments record those versions. Gitleaks v8.30.1 and Trivy v0.76.1 came from upstream release metadata. Actual scanner availability and results are recorded separately in verification.md; release metadata is not proof of a clean scan.
 
 No Context7 tool was available. No third-party source was copied. See content-and-sources.md and lesson metadata for learning-source details.
+
+## Next Milestones — 5 November 2026
+
+Reviewed official OpenAI Responses text, structured output, production credential, error-code and gpt-5.6-terra model documentation before implementing the optional native-fetch boundary — exact links and the mock/live verification boundary are recorded in ai-feedback.md
+
+Read the installed Node/SQLite, Fastify, React and Zod contracts when extending the existing modules — no new runtime dependencies, provider SDK, cloud database or required runtime download was introduced
+
+Content research now covers Australian Government Style Manual, RFC 1035/3339, Microsoft Windows auditing/Sysmon, ASD phishing/logging guidance, NIST forensic collection, AWS IAM and MITRE Valid Accounts — exact pages, relevant sections, support/access/reuse notes are in content-and-sources.md and the lesson metadata
+
+Reference-only research is not a claim of endorsement, real-world incident attribution or independently verified learner mastery

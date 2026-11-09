@@ -10,6 +10,8 @@ export const sourceSchema = z.object({
   supports: z.string().min(20),
   attribution: z.string().min(10),
 });
+
+// Validate stable field and option identities used by typed report controls
 const idSchema = z.string().regex(/^[a-z][a-z0-9-]+$/);
 const optionSchema = z.object({ id: idSchema, label: z.string().min(1) });
 const normaliseSchema = z.enum(['trim', 'case-space']);
@@ -39,8 +41,40 @@ export const answerSchema = z.union([
 export type ReportValue = string | string[];
 export type ReportAnswer = Record<string, ReportValue>;
 export type Answer = z.infer<typeof answerSchema>;
+
+// Describe assessment, reading snapshots, quiz estimates and controlled finding relationships together
 export const taskSchema = z
   .object({
+    tier: z
+      .enum([
+        'University Intermediate',
+        'Junior Professional',
+        'Advanced Challenge',
+      ])
+      .optional(),
+    quiz: z
+      .object({
+        difficulty: z.enum(['Easy', 'Medium', 'Hard']),
+        minutes: z.number().int().min(1).max(120),
+        group: z.string(),
+        desktop: z.boolean().default(false),
+      })
+      .optional(),
+    labScenario: z.literal('defence-v1').optional(),
+    passage: z
+      .object({
+        id: z.string(),
+        version: z.number().int().positive(),
+        title: z.string(),
+        publisher: z.string(),
+        url: z.url(),
+        published: z.string(),
+        retrieved: z.string(),
+        reuse: z.string(),
+        difficulty: z.enum(['Medium', 'Hard']),
+        text: z.string().min(100),
+      })
+      .optional(),
     id: idSchema,
     kind: z.enum([
       'exact',
@@ -73,6 +107,18 @@ export const taskSchema = z
         }),
       )
       .default([]),
+    reportLayout: z
+      .array(
+        z.object({
+          title: z.string().min(3),
+          sentences: z.array(z.string().min(3)).min(1),
+        }),
+      )
+      .default([]),
+    reviewConcept: z
+      .string()
+      .regex(/^[a-z][a-z0-9-]+$/)
+      .optional(),
     findingMappings: z
       .array(z.object({ taskId: idSchema, fieldId: idSchema }))
       .default([]),
@@ -91,7 +137,10 @@ export const taskSchema = z
         message: 'Reports require structured fields',
       });
   });
+
+// Bind versioned activities to course metadata, teaching, sources and bundled evidence
 export const lessonSchema = z.object({
+  previousVersion: z.number().int().positive().optional(),
   id: idSchema,
   version: z.number().int().positive(),
   course: z.enum(['English', 'Cybersecurity']),
@@ -115,6 +164,13 @@ export const lessonSchema = z.object({
   tasks: z.array(taskSchema).min(3),
   sources: z.array(sourceSchema).min(1),
   evidence: z.string().optional(),
+  evidenceKind: z.enum(['pcap', 'json', 'text']).default('pcap'),
+  material: z.string().optional(),
+  resources: z
+    .array(
+      z.object({ label: z.string(), url: z.string().regex(/^\/evidence\//) }),
+    )
+    .default([]),
 });
 export type Lesson = z.infer<typeof lessonSchema>;
 export type Task = z.infer<typeof taskSchema>;
@@ -128,6 +184,7 @@ export interface PreviousWork {
   reviewed: boolean;
   hints: number;
   solution: boolean;
+  aiHelp?: number;
 }
 export interface TaskProgress {
   answer: Answer;
@@ -136,6 +193,7 @@ export interface TaskProgress {
   checked?: boolean;
   hints: number;
   solution: boolean;
+  aiHelp?: number;
   reviewed: boolean;
   mistakes: number;
   attemptLog?: {
@@ -157,6 +215,7 @@ export interface TaskProgress {
   >;
 }
 export interface Progress {
+  reviewDueCount?: number;
   lessonId: string;
   contentVersion: number;
   revision: number;

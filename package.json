@@ -15,8 +15,8 @@
     "format:check": "prettier --check .",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.server.json --noEmit",
-    "content:validate": "tsx scripts/validate-content.ts && python3 scripts/verify-capture.py",
-    "test:backend": "vitest run tests/domain.test.ts tests/server.test.ts tests/commit.test.ts",
+    "content:validate": "tsx scripts/validate-content.ts && python3 scripts/verify-capture.py && python3 scripts/verify-lessons.py && python3 scripts/verify-depth.py",
+    "test:backend": "vitest run tests/domain.test.ts tests/server.test.ts tests/commit.test.ts tests/catalogue.test.ts tests/reviews.test.ts tests/ai.test.ts tests/quiz.test.ts tests/lab.test.ts tests/news.test.ts",
     "test:frontend": "vitest run tests/ui.test.tsx",
     "test:browser": "playwright test",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm content:validate && pnpm test:backend && pnpm test:frontend",
@@ -28,6 +28,7 @@
     "dev:client": "vite --host 127.0.0.1"
   },
   "dependencies": {
+    "@fastify/rate-limit": "11.2.2",
     "@fastify/static": "10.1.8",
     "fastify": "5.12.8",
     "react": "19.3.1",

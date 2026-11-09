@@ -6,16 +6,18 @@ Study Lab helps people practise English and cybersecurity skills. Guided lessons
 
 | Available now                    | What you practise                                                                                |
 | -------------------------------- | ------------------------------------------------------------------------------------------------ |
-| English — about 25 minutes       | Build and spell useful words with `-tion`, then write and review a short note                    |
-| Cybersecurity — about 60 minutes | Investigate a harmless synthetic network capture, check the evidence and write a careful summary |
-| Mistake review                   | Retry precise answers you missed and see feedback                                                |
+| English — 10 lessons | Practise spelling, reading, practical grammar, workplace writing and a connected handover |
+| Cybersecurity — 10 lessons | Investigate local packet, DNS, identity, endpoint, integrity, timeline and IAM evidence, then report carefully |
+| Mistake Review and Review Due | Retry mistakes and selected learned concepts with persistent local schedules and resumable sessions |
 | Saved progress                   | Return to saved answers, your current activity, hints and lesson completion                      |
 
-Both lessons are unlocked, with difficulty and recommended order shown on the dashboard
+All 20 lessons are unlocked, with course/topic/completion filters, difficulty and recommended order shown on the dashboard — see [the complete course sequences](docs/course-sequences.md)
 
 Writing uses a checklist and your own review, rather than an automatic technical grade — using a revealed solution is recorded and does not prove independent mastery
 
-No sign-in, GitHub account, OpenAI API key or AI connection is required to study — AI feedback, placement assessments, spaced repetition and more lessons are [planned work](docs/roadmap.md)
+No sign-in, GitHub account, OpenAI API key or AI connection is required to study — Review Due works locally, and optional owner-only OpenAI feedback is available for writing and report reasoning
+
+AI advice never checks answers or completes lessons — API billing is separate from ChatGPT subscriptions, and the [owner setup and privacy guide](docs/ai-feedback.md) explains consent, limits and localhost access
 
 ## **Setting Up**
 
@@ -421,3 +423,15 @@ Check the save status before leaving an activity — **Unsaved edits**, **Saving
 | Lessons do not load                               | Keep unsaved text safe, check `docker compose ps`, then use **Retry loading** if it is shown — check the local URL and app logs if the error remains                                                |
 
 This section will expand as development continues
+
+## Course Depth, Reading And Defence
+
+The 20 unlocked lessons now include professional incomplete-evidence cases, six versioned Medium/Hard reading groups and an integrated owner-only defence model — see [curriculum details](docs/curriculum-depth.md)
+
+Daily Quiz shares saved lesson answers, selects incomplete catalogue work and retains its session until an explicit confirmed Refresh — scheduled and mistake review remain stacked under Mistake Review
+
+Fresh news is an optional explicit fixed-source update requiring no paid AI — bundled reading stays usable offline and failed updates retain earlier snapshots
+
+The defence lab is clearly modelled, with no host shell or external attack traffic — its question tick requires server-verified investigation, containment and portal availability
+
+See [current delivery status](docs/depth-extension-status.md), [operations](docs/operations.md) and [verification](docs/verification.md) for setup, measured resources and actual limits

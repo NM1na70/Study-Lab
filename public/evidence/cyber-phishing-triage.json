@@ -1,0 +1,22 @@
+{
+  "synthetic": true,
+  "licence": "CC0-1.0: Original Study Lab synthetic evidence",
+  "records": [
+    {
+      "id": "mail-01",
+      "displayFrom": "Service Desk",
+      "fromAddress": "help@outside.lab.test",
+      "replyTo": "collect@outside.lab.test",
+      "linkText": "Internal Portal",
+      "linkTarget": "https://verify.outside.lab.test/login",
+      "request": "Enter your password within 10 minutes",
+      "attachment": "None"
+    },
+    {
+      "id": "directory-01",
+      "officialContact": "help@inside.lab.test",
+      "officialPortal": "https://portal.inside.lab.test",
+      "note": "Contact details from an independently maintained fictional directory"
+    }
+  ]
+}

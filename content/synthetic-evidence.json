@@ -1,0 +1,296 @@
+{
+  "cyber-dns-behaviour": {
+    "synthetic": true,
+    "licence": "CC0-1.0: Original Study Lab synthetic evidence",
+    "records": [
+      {
+        "id": "dns-01",
+        "time": "2026-11-02T01:00:00Z",
+        "client": "192.0.2.30",
+        "resolver": "192.0.2.53",
+        "name": "updates.lab.test",
+        "type": "A",
+        "rcode": "NOERROR",
+        "answer": "198.51.100.40",
+        "ttl": 60
+      },
+      {
+        "id": "dns-02",
+        "time": "2026-11-02T01:00:05Z",
+        "client": "192.0.2.30",
+        "resolver": "192.0.2.53",
+        "name": "missing.lab.test",
+        "type": "A",
+        "rcode": "NXDOMAIN",
+        "answer": null
+      },
+      {
+        "id": "dns-03",
+        "time": "2026-11-02T01:00:30Z",
+        "client": "192.0.2.30",
+        "resolver": "192.0.2.53",
+        "name": "missing.lab.test",
+        "type": "A",
+        "rcode": "NXDOMAIN",
+        "answer": null
+      },
+      {
+        "id": "dns-04",
+        "time": "2026-11-02T01:01:00Z",
+        "client": "192.0.2.31",
+        "resolver": "192.0.2.53",
+        "name": "updates.lab.test",
+        "type": "A",
+        "rcode": "NOERROR",
+        "answer": "198.51.100.40",
+        "ttl": 60
+      }
+    ]
+  },
+  "cyber-authentication-logs": {
+    "synthetic": true,
+    "licence": "CC0-1.0: Original Study Lab synthetic evidence",
+    "records": [
+      {
+        "id": "auth-01",
+        "time": "2026-11-02T02:00:00Z",
+        "computer": "LAB-WS01",
+        "event": 4625,
+        "user": "mira",
+        "source": "192.0.2.44",
+        "logonType": 3
+      },
+      {
+        "id": "auth-02",
+        "time": "2026-11-02T02:00:10Z",
+        "computer": "LAB-WS01",
+        "event": 4625,
+        "user": "mira",
+        "source": "192.0.2.44",
+        "logonType": 3
+      },
+      {
+        "id": "auth-03",
+        "time": "2026-11-02T02:00:25Z",
+        "computer": "LAB-WS01",
+        "event": 4624,
+        "user": "mira",
+        "source": "192.0.2.44",
+        "logonType": 3
+      },
+      {
+        "id": "auth-04",
+        "time": "2026-11-02T02:01:00Z",
+        "computer": "LAB-WS01",
+        "event": 4624,
+        "user": "jo",
+        "source": "192.0.2.45",
+        "logonType": 3
+      }
+    ]
+  },
+  "cyber-phishing-triage": {
+    "synthetic": true,
+    "licence": "CC0-1.0: Original Study Lab synthetic evidence",
+    "records": [
+      {
+        "id": "mail-01",
+        "displayFrom": "Service Desk",
+        "fromAddress": "help@outside.lab.test",
+        "replyTo": "collect@outside.lab.test",
+        "linkText": "Internal Portal",
+        "linkTarget": "https://verify.outside.lab.test/login",
+        "request": "Enter your password within 10 minutes",
+        "attachment": "None"
+      },
+      {
+        "id": "directory-01",
+        "officialContact": "help@inside.lab.test",
+        "officialPortal": "https://portal.inside.lab.test",
+        "note": "Contact details from an independently maintained fictional directory"
+      }
+    ]
+  },
+  "cyber-endpoint-correlation": {
+    "synthetic": true,
+    "licence": "CC0-1.0: Original Study Lab synthetic evidence",
+    "records": [
+      {
+        "id": "proc-01",
+        "time": "2026-11-03T01:00:00Z",
+        "event": 1,
+        "processGuid": "proc-alpha",
+        "pid": 400,
+        "image": "C:/Lab/updater.exe",
+        "parent": "C:/Lab/launcher.exe"
+      },
+      {
+        "id": "net-01",
+        "time": "2026-11-03T01:00:02Z",
+        "event": 3,
+        "processGuid": "proc-alpha",
+        "pid": 400,
+        "destination": "198.51.100.50",
+        "port": 443
+      },
+      {
+        "id": "proc-02",
+        "time": "2026-11-03T02:00:00Z",
+        "event": 1,
+        "processGuid": "proc-beta",
+        "pid": 400,
+        "image": "C:/Lab/editor.exe",
+        "parent": "C:/Lab/shell.exe"
+      }
+    ]
+  },
+  "cyber-evidence-integrity": {
+    "synthetic": true,
+    "licence": "CC0-1.0: Original Study Lab synthetic evidence",
+    "records": [
+      {
+        "id": "file-01",
+        "file": "original-note.txt",
+        "content": "Original synthetic collection note\n",
+        "sha256": "669fb0cfcae650ede5584abc7a469752b88b299e59f8165da22f201c26a895b1"
+      },
+      {
+        "id": "file-02",
+        "file": "changed-note.txt",
+        "content": "Changed synthetic collection note\n",
+        "sha256": "3935df22072e0068813c3d38a3fb104234a73684894990d674c26b2f9463e853"
+      },
+      {
+        "id": "collection-01",
+        "collectedAt": "2026-11-03T03:00:00Z",
+        "collector": "Mina",
+        "source": "LAB-WS01",
+        "handling": "Read-only comparison copies"
+      }
+    ]
+  },
+  "cyber-incident-timeline": {
+    "synthetic": true,
+    "licence": "CC0-1.0: Original Study Lab synthetic evidence",
+    "records": [
+      {
+        "id": "time-01",
+        "eventTime": "2026-11-03T10:00:00+10:00",
+        "ingestedAt": "2026-11-03T00:03:00Z",
+        "event": "Authentication failure"
+      },
+      {
+        "id": "time-02",
+        "eventTime": "2026-11-03T00:01:00Z",
+        "ingestedAt": "2026-11-03T00:01:05Z",
+        "event": "Network connection"
+      },
+      {
+        "id": "time-03",
+        "eventTime": "2026-11-03T00:02:00+00:00",
+        "ingestedAt": "2026-11-03T00:02:10Z",
+        "event": "Process start"
+      }
+    ]
+  },
+  "cyber-cloud-iam": {
+    "synthetic": true,
+    "licence": "CC0-1.0: Original Study Lab synthetic evidence",
+    "records": [
+      {
+        "id": "policy-allow",
+        "effect": "Allow",
+        "action": "s3:GetObject",
+        "resource": "arn:aws:s3:::lab-bucket/*"
+      },
+      {
+        "id": "policy-deny",
+        "effect": "Deny",
+        "action": "s3:GetObject",
+        "resource": "arn:aws:s3:::lab-bucket/private/*"
+      },
+      {
+        "id": "audit-01",
+        "time": "2026-11-03T04:00:00Z",
+        "principal": "lab-reader",
+        "action": "s3:GetObject",
+        "resource": "arn:aws:s3:::lab-bucket/private/note.txt",
+        "outcome": "AccessDenied"
+      },
+      {
+        "id": "scope-01",
+        "scope": "Only identity policies shown; no resource policies, conditions, permission boundaries, sessions or service control policies in this exercise"
+      }
+    ]
+  },
+  "cyber-threat-hunt": {
+    "synthetic": true,
+    "licence": "CC0-1.0: Original Study Lab synthetic evidence",
+    "records": [
+      {
+        "id": "hunt-01",
+        "time": "2026-11-03T05:00:00Z",
+        "user": "mira",
+        "source": "192.0.2.90",
+        "activity": "Network logon",
+        "result": "success"
+      },
+      {
+        "id": "hunt-02",
+        "time": "2026-11-03T05:01:00Z",
+        "user": "mira",
+        "source": "192.0.2.90",
+        "activity": "Read shared inventory",
+        "result": "success"
+      },
+      {
+        "id": "change-01",
+        "time": "2026-11-03T04:55:00Z",
+        "user": "mira",
+        "source": "192.0.2.90",
+        "activity": "Approved inventory job",
+        "result": "Change window approved"
+      },
+      {
+        "id": "hunt-03",
+        "time": "2026-11-03T05:01:30Z",
+        "user": "jo",
+        "source": "192.0.2.91",
+        "activity": "Network logon",
+        "result": "success"
+      }
+    ]
+  },
+  "cyber-investigation-report": {
+    "synthetic": true,
+    "licence": "CC0-1.0: Original Study Lab synthetic evidence",
+    "records": [
+      {
+        "id": "case-01",
+        "time": "2026-11-04T00:00:00Z",
+        "host": "LAB-WS07",
+        "user": "mira",
+        "observation": "Two network logon failures followed by success",
+        "source": "192.0.2.70"
+      },
+      {
+        "id": "case-02",
+        "time": "2026-11-04T00:01:00Z",
+        "host": "LAB-WS07",
+        "process": "C:/Lab/sync.exe",
+        "observation": "Connection to 198.51.100.70:443",
+        "processGuid": "sync-07"
+      },
+      {
+        "id": "case-03",
+        "time": "2026-11-04T00:03:00Z",
+        "host": "LAB-WS07",
+        "observation": "Inventory job was scheduled; account-owner confirmation is not recorded"
+      },
+      {
+        "id": "scope-01",
+        "observation": "No process-to-logon identifier, message contents, file-access record or data-transfer contents are supplied"
+      }
+    ]
+  }
+}

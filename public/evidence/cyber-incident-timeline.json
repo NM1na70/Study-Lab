@@ -1,0 +1,24 @@
+{
+  "synthetic": true,
+  "licence": "CC0-1.0: Original Study Lab synthetic evidence",
+  "records": [
+    {
+      "id": "time-01",
+      "eventTime": "2026-11-03T10:00:00+10:00",
+      "ingestedAt": "2026-11-03T00:03:00Z",
+      "event": "Authentication failure"
+    },
+    {
+      "id": "time-02",
+      "eventTime": "2026-11-03T00:01:00Z",
+      "ingestedAt": "2026-11-03T00:01:05Z",
+      "event": "Network connection"
+    },
+    {
+      "id": "time-03",
+      "eventTime": "2026-11-03T00:02:00+00:00",
+      "ingestedAt": "2026-11-03T00:02:10Z",
+      "event": "Process start"
+    }
+  ]
+}

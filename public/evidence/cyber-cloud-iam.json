@@ -1,0 +1,30 @@
+{
+  "synthetic": true,
+  "licence": "CC0-1.0: Original Study Lab synthetic evidence",
+  "records": [
+    {
+      "id": "policy-allow",
+      "effect": "Allow",
+      "action": "s3:GetObject",
+      "resource": "arn:aws:s3:::lab-bucket/*"
+    },
+    {
+      "id": "policy-deny",
+      "effect": "Deny",
+      "action": "s3:GetObject",
+      "resource": "arn:aws:s3:::lab-bucket/private/*"
+    },
+    {
+      "id": "audit-01",
+      "time": "2026-11-03T04:00:00Z",
+      "principal": "lab-reader",
+      "action": "s3:GetObject",
+      "resource": "arn:aws:s3:::lab-bucket/private/note.txt",
+      "outcome": "AccessDenied"
+    },
+    {
+      "id": "scope-01",
+      "scope": "Only identity policies shown; no resource policies, conditions, permission boundaries, sessions or service control policies in this exercise"
+    }
+  ]
+}

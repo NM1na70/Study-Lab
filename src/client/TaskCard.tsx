@@ -8,6 +8,9 @@ import type {
   Lesson,
   Progress,
 } from '../shared/schema.js';
+import { DefenceLab } from './Lab';
+import { registerNavigation } from './navigation';
+import { AiFeedback } from './Ai';
 import { ReportBuilder, ReportText } from './ReportBuilder';
 import { AnswerControls, EvidenceText } from './AnswerControls';
 import {
@@ -28,6 +31,7 @@ interface Props {
   progress?: Progress;
   confirmed?: () => Progress;
   onRetry?: () => void;
+  onProgress?: (progress: Progress) => void;
   onNext?: () => Promise<void>;
   registerFlush?: (flush: (() => Promise<boolean>) | null) => void;
 }
@@ -52,6 +56,7 @@ export function TaskCard({
   progress,
   confirmed,
   onRetry,
+  onProgress,
   onNext,
   registerFlush,
 }: Props) {
@@ -110,6 +115,7 @@ export function TaskCard({
   // Save draft answers and save before navigating through ordinary in-app links
   const persist = useCallback(
     async (text: Answer) => {
+      if (task.labScenario) return true;
       const ok = await enqueue({
         action: 'draft',
         taskId: task.id,
@@ -121,8 +127,10 @@ export function TaskCard({
         setDirty(false);
       return ok;
     },
-    [enqueue, task.id],
+    [enqueue, task.id, task.labScenario],
   );
+
+  // Wait for a pending finding copy before saving the latest draft for departure
   const flush = useCallback(async () => {
     clearTimeout(timer.current);
     if (copyPending.current && !(await copyPending.current)) return false;
@@ -132,30 +140,7 @@ export function TaskCard({
     registerFlush?.(flush);
     return () => registerFlush?.(null);
   }, [registerFlush, flush]);
-  useEffect(() => {
-    const navigate = (event: MouseEvent) => {
-      const anchor =
-        event.target instanceof Element
-          ? event.target.closest('a[href^="#/"]')
-          : null;
-
-      // Leave modified clicks to the browser so opening a new tab keeps its normal meaning
-      if (
-        !anchor ||
-        event.ctrlKey ||
-        event.metaKey ||
-        event.shiftKey ||
-        event.button !== 0
-      )
-        return;
-      event.preventDefault();
-      void flush().then((ok) => {
-        if (ok) location.hash = anchor.getAttribute('href')!;
-      });
-    };
-    document.addEventListener('click', navigate, true);
-    return () => document.removeEventListener('click', navigate, true);
-  }, [flush]);
+  useEffect(() => registerNavigation(flush), [flush]);
 
   // Update the answer, reset review confirmation, and autosave after 350 ms without another edit
   function edit(text: Answer) {
@@ -188,6 +173,8 @@ export function TaskCard({
       setBusy(false);
     }
   }
+
+  // Keep the current card mounted until its draft saves successfully
   async function next() {
     if (actionPending.current) return;
     actionPending.current = true;
@@ -229,6 +216,7 @@ export function TaskCard({
     }
   }
 
+  // Expose the outstanding copy to navigation and clear only the promise that actually finished
   function copyFinding(sourceTaskId: string) {
     const job = performCopy(sourceTaskId);
     copyPending.current = job;
@@ -263,10 +251,26 @@ export function TaskCard({
           }[task.kind]
         }
       </span>
+      {task.tier && <p>{task.tier}</p>}
       <h2 tabIndex={-1} id={`task-${task.id}`}>
         {task.prompt}
       </h2>
-      {task.kind === 'report' && (
+      {task.passage && (
+        <section aria-label="Reading Passage">
+          <h3>{task.passage.title}</h3>
+          <p>
+            {task.passage.difficulty} — {task.passage.reuse}
+          </p>
+          <p>{task.passage.text}</p>
+          <p>
+            {task.passage.publisher} · Published {task.passage.published} ·
+            Retrieved {task.passage.retrieved} · Snapshot {task.passage.id} v
+            {task.passage.version}
+          </p>
+          <a href={task.passage.url}>Original Source</a>
+        </section>
+      )}
+      {task.kind === 'report' && !task.reportLayout.length && (
         <p>
           Simplified learning template informed by Australian Signals
           Directorate guidance — not an official government reporting form
@@ -275,7 +279,19 @@ export function TaskCard({
           where the evidence cannot support a conclusion
         </p>
       )}
-      {task.kind === 'report' && isRecord(answer) ? (
+      {task.kind === 'report' && task.reportLayout.length > 0 && (
+        <p>
+          {lesson?.course === 'English'
+            ? 'Use the supplied workplace brief for facts and keep awaited actions separate from completed actions'
+            : 'Use the supplied synthetic records for facts and keep unsupported conclusions explicitly uncertain'}
+          {' — '}check factual fields separately from reviewing your reasoning
+        </p>
+      )}
+
+      {/* Use server verification for lab questions and ordinary draft controls for other objectives */}
+      {task.labScenario ? (
+        <DefenceLab progress={progress} onProgress={onProgress} />
+      ) : task.kind === 'report' && isRecord(answer) ? (
         <fieldset className="activity-fieldset" disabled={busy}>
           <ReportBuilder
             task={task}
@@ -316,7 +332,7 @@ export function TaskCard({
             : 'No answer yet'}{' '}
         · {state.attempts} checked attempts
       </p>
-      {task.kind !== 'written' && (
+      {task.kind !== 'written' && !task.labScenario && (
         <button
           ref={checkRef}
           onKeyDown={(event) => {
@@ -396,6 +412,8 @@ export function TaskCard({
               ))}
         </div>
       )}
+
+      {/* Keep explicit reasoning self-review separate from objective answer checks */}
       {(task.kind === 'written' || task.kind === 'report') && (
         <div className="rubric">
           <h3>Self-review · no automatic technical grade</h3>
@@ -445,6 +463,7 @@ export function TaskCard({
           technical grade.
         </p>
       )}
+
       {/* Provide hints, a revealed solution, and navigation to the next activity */}
       <div className="actions">
         <button
@@ -510,6 +529,14 @@ export function TaskCard({
           <p>Earlier checks and assistance remain in your history</p>
         </details>
       ))}
+      {lesson && ['written', 'report'].includes(task.kind) && (
+        <AiFeedback
+          lessonId={lesson.id}
+          taskId={task.id}
+          flush={flush}
+          onChange={onProgress}
+        />
+      )}
       {onNext && (
         <button className="next" disabled={busy} onClick={() => void next()}>
           Save And Next Activity →

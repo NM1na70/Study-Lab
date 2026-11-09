@@ -1,0 +1,25 @@
+{
+  "synthetic": true,
+  "licence": "CC0-1.0: Original Study Lab synthetic evidence",
+  "records": [
+    {
+      "id": "file-01",
+      "file": "original-note.txt",
+      "content": "Original synthetic collection note\n",
+      "sha256": "669fb0cfcae650ede5584abc7a469752b88b299e59f8165da22f201c26a895b1"
+    },
+    {
+      "id": "file-02",
+      "file": "changed-note.txt",
+      "content": "Changed synthetic collection note\n",
+      "sha256": "3935df22072e0068813c3d38a3fb104234a73684894990d674c26b2f9463e853"
+    },
+    {
+      "id": "collection-01",
+      "collectedAt": "2026-11-03T03:00:00Z",
+      "collector": "Mina",
+      "source": "LAB-WS01",
+      "handling": "Read-only comparison copies"
+    }
+  ]
+}

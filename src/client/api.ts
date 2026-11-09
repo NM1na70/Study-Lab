@@ -1,7 +1,9 @@
+// Import the catalogue and revisioned progress contracts shared with the server
 import type { Lesson, Mutation, Progress } from '../shared/schema.js';
 
 // Describe the lesson pack and shared learner progress returned together
 export interface Snapshot {
+  dueCount?: number;
   lessons: Lesson[];
   progress: Progress[];
 }

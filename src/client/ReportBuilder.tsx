@@ -22,6 +22,17 @@ export function reportSections(task: Task, values: ReportAnswer) {
       task.fields.find((field) => field.id === id)!,
       values[id],
     );
+  if (task.reportLayout.length)
+    return task.reportLayout.map((section) => ({
+      title: section.title,
+      text: section.sentences
+        .map((sentence) =>
+          sentence.replace(/\{([a-z0-9-]+)\}/g, (_match, id: string) =>
+            value(id),
+          ),
+        )
+        .join('\n'),
+    }));
   return [
     {
       title: 'Observed Activity',
@@ -62,6 +73,7 @@ export function ReportText({
   );
 }
 
+// Edit content-defined report fields while keeping copied findings and preview separate from assessment
 export function ReportBuilder({
   task,
   values,
@@ -173,6 +185,8 @@ export function ReportBuilder({
       </span>
     );
   }
+
+  // Ask before replacing a different report value and compare selection arrays without order sensitivity
   async function requestCopy(id: string, button: HTMLButtonElement) {
     const finding = findingValue(task, id, progress?.tasks[id]);
     if (!finding) return;
@@ -199,7 +213,11 @@ export function ReportBuilder({
   return (
     <>
       <details className="investigation-notes">
-        <summary>My Investigation Notes</summary>
+        <summary>
+          {lesson?.course === 'English'
+            ? 'My Handover Notes'
+            : 'My Investigation Notes'}
+        </summary>
         <p>
           Your saved findings, including unchecked or incorrect answers — using
           a finding copies your value without checking the report
@@ -240,51 +258,83 @@ export function ReportBuilder({
         )}
       </details>
       <h3 ref={builderHeading} tabIndex={-1}>
-        Investigation Report Builder
+        {lesson?.course === 'English'
+          ? 'Handover Builder'
+          : 'Investigation Report Builder'}
       </h3>
-      <div className="report-builder">
-        <section>
-          <h3>Observed Activity</h3>
-          <p className="report-sentence">
-            HTTP requests were observed from {control('source')} to{' '}
-            {control('destination')}
-          </p>
-          <p className="report-sentence">
-            The first request occurred at {control('observed-at')}{' '}
-            {control('time-zone')}
-          </p>
-        </section>
-        <section>
-          <h3>Supporting Evidence</h3>
-          <div className="report-sentence">
-            The requests appear in frames {control('frames')} using{' '}
-            {control('method')} and requesting {control('uri')}
+      {task.reportLayout.length ? (
+        <div className="report-builder">
+          {task.reportLayout.map((section) => (
+            <section key={section.title}>
+              <h3>{section.title}</h3>
+              {section.sentences.map((sentence, index) => (
+                <div className="report-sentence" key={index}>
+                  {sentence
+                    .split(/(\{[a-z0-9-]+\})/)
+                    .map((part, partIndex) =>
+                      /^\{/.test(part) ? (
+                        <span key={partIndex}>
+                          {control(part.slice(1, -1))}
+                        </span>
+                      ) : (
+                        part
+                      ),
+                    )}
+                </div>
+              ))}
+            </section>
+          ))}
+        </div>
+      ) : (
+        <>
+          <div className="report-builder">
+            <section>
+              <h3>Observed Activity</h3>
+              <p className="report-sentence">
+                HTTP requests were observed from {control('source')} to{' '}
+                {control('destination')}
+              </p>
+              <p className="report-sentence">
+                The first request occurred at {control('observed-at')}{' '}
+                {control('time-zone')}
+              </p>
+            </section>
+            <section>
+              <h3>Supporting Evidence</h3>
+              <div className="report-sentence">
+                The requests appear in frames {control('frames')} using{' '}
+                {control('method')} and requesting {control('uri')}
+              </div>
+              <p className="report-sentence">
+                The requests occur approximately every {control('interval')}{' '}
+                seconds
+              </p>
+            </section>
+            <section>
+              <h3>Assessment And Uncertainty</h3>
+              <p className="report-sentence">
+                My assessment of the observed pattern is {control('assessment')}
+              </p>
+              <p className="report-sentence">
+                Evidence supporting this assessment: {control('evidence')}
+              </p>
+              {control('assessment-reason')}
+              <div className="report-sentence">
+                This capture does not establish {control('limitations')}
+              </div>
+            </section>
+            <section>
+              <h3>Recommended Next Steps</h3>
+              <p className="report-sentence">
+                The next investigation step is {control('next-step')}
+              </p>
+              {control('next-reason')}
+            </section>
           </div>
-          <p className="report-sentence">
-            The requests occur approximately every {control('interval')} seconds
-          </p>
-        </section>
-        <section>
-          <h3>Assessment And Uncertainty</h3>
-          <p className="report-sentence">
-            My assessment of the observed pattern is {control('assessment')}
-          </p>
-          <p className="report-sentence">
-            Evidence supporting this assessment: {control('evidence')}
-          </p>
-          {control('assessment-reason')}
-          <div className="report-sentence">
-            This capture does not establish {control('limitations')}
-          </div>
-        </section>
-        <section>
-          <h3>Recommended Next Steps</h3>
-          <p className="report-sentence">
-            The next investigation step is {control('next-step')}
-          </p>
-          {control('next-reason')}
-        </section>
-      </div>
+        </>
+      )}
+
+      {/* Display copy-time provenance without treating a copied finding as a checked report */}
       {!!state.findingProvenance && (
         <details>
           <summary>Finding Provenance</summary>

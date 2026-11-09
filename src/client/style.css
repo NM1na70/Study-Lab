@@ -595,6 +595,7 @@ pre {
   padding: 0;
   min-width: 0;
 }
+
 /* Make deliberate keyboard activation clear without changing click behaviour */
 .task-card button:focus-visible {
   background: #d8d8d8;
@@ -602,6 +603,8 @@ pre {
   outline: 3px solid #244e7d;
   outline-offset: 3px;
 }
+
+/* Arrange structured report fields and their supporting hints */
 .report-fields {
   display: grid;
   gap: 1rem;
@@ -615,6 +618,8 @@ pre {
   overflow-wrap: anywhere;
   font: inherit;
 }
+
+/* Keep native confirmation dialogs bounded and visually separate from the page */
 dialog {
   max-width: min(42rem, 90vw);
   border: 2px solid #244e7d;
@@ -624,6 +629,8 @@ dialog {
 dialog::backdrop {
   background: #152536aa;
 }
+
+/* Keep desktop review columns stable while allowing long answers to wrap */
 .review-table {
   width: 100%;
   table-layout: fixed;
@@ -635,6 +642,8 @@ dialog::backdrop {
   padding: 0.7rem;
   text-align: left;
 }
+
+/* Stack review rows on phones while preserving accessible column labels */
 @media (max-width: 640px) {
   .review-table,
   .review-table tbody,
@@ -822,4 +831,70 @@ dialog::backdrop {
   .study-layout {
     grid-template-columns: minmax(0, 1fr);
   }
+}
+
+/* Keep original reading passages and synthetic records readable on narrow screens */
+.study-material pre {
+  overflow-wrap: anywhere;
+  word-break: normal;
+  max-height: 32rem;
+  overflow: auto;
+}
+
+/* Keep the expanded navigation and optional owner forms usable without horizontal scrolling */
+header {
+  flex-wrap: wrap;
+}
+header nav {
+  flex-wrap: wrap;
+}
+.ai-feedback {
+  margin: 1.2rem 0;
+  overflow-wrap: anywhere;
+}
+input[type='password'] {
+  display: block;
+  width: min(100%, 32rem);
+  margin: 0.5rem 0;
+}
+@media (max-width: 720px) {
+  header nav {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+/* Keep catalogue filters compact and labelled across desktop and phone layouts */
+.catalogue-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.catalogue-filters label {
+  display: grid;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+/* Associate catalogue labels explicitly without including option text in label lookup */
+.catalogue-filters > div {
+  display: grid;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+/* Wrap mixed quiz choices and keep long unfinished-work confirmations inside the phone viewport */
+nav[aria-label='Quiz Questions'] {
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-block: 1rem;
+}
+.quiz-refresh-dialog {
+  box-sizing: border-box;
+  width: min(42rem, calc(100vw - 2rem));
+  max-height: 85dvh;
+  overflow-y: auto;
+}
+.quiz-refresh-dialog button {
+  margin: 0.4rem;
 }

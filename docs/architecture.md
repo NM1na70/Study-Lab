@@ -12,19 +12,27 @@ flowchart LR
     ui["React study pages"]
   end
 
-  subgraph computer["Computer running Docker"]
-    subgraph container["One Study Lab container"]
+  subgraph computer["Computer running Docker or host Node"]
+    subgraph container["One Study Lab process"]
       server["Fastify server"]
       files["Built UI, lessons and evidence"]
       sqlite["SQLite library in Node"]
     end
-    data[("study-data volume")]
+    data[("SQLite file — Docker volume or host path")]
+    reviews["Deterministic review scheduler"]
+    ai["Optional owner AI boundary"]
+    key["Credential in server memory"]
   end
 
   ui <-->|"HTTP on host port 3000"| server
   server -->|"Read local files"| files
   server -->|"Validate and save work"| sqlite
-  sqlite -->|"Read and write progress"| data
+  sqlite -->|"Progress, review and usage state"| data
+  server --> reviews
+  reviews --> sqlite
+  server --> ai
+  ai --> key
+  ai -.->|"Explicit consent and direct-loopback owner access"| openai["OpenAI HTTPS — optional"]
 ```
 
 The React code runs in the browser — the built JavaScript and CSS files are stored in the image and served by Fastify, with no separate frontend server in normal study use
@@ -45,7 +53,7 @@ For a phone, the owner must explicitly enable [trusted LAN access](operations.md
 
 ## **Lessons and Evidence**
 
-[content/lessons.json](../content/lessons.json) contains the two lessons, stable IDs, content versions, objectives, tasks, answer keys, hints, feedback, writing rubrics and source metadata
+[content/lessons.json](../content/lessons.json) contains the 20 lessons, stable IDs, content versions, objectives, tasks, answer keys, hints, feedback, writing rubrics and source metadata
 
 The build includes this lesson data in the server output — the server parses it with the shared validation schema when it starts
 
@@ -86,7 +94,7 @@ The server validates request sizes and fields, checks the lesson and task, then 
 | Usual Docker volume name         | Project name followed by `_study-data`, such as `study-lab_study-data` |
 | Database during host development | `data/study.sqlite`, unless `DATABASE_PATH` selects another location   |
 
-SQLite schema version 2 uses a `progress` table keyed by lesson ID and a `progress_migrations` archive — progress stores string answers, option-ID arrays or report-field objects with typed selections, content version, revision, checked-attempt history, dismissal watermarks, current activity, assistance, self-review and completion history
+SQLite schema version 5 retains a `progress` table keyed by lesson ID and a `progress_migrations` archive — progress stores string answers, option-ID arrays or report-field objects with typed selections, content version, revision, checked-attempt history, dismissal watermarks, current activity, assistance, self-review and completion history
 
 Older records may have no attempt history — the app keeps a fallback message for those records instead of inventing an incorrect answer
 
@@ -156,17 +164,17 @@ Request-origin and host checks reduce unwanted browser access, but do not provid
 
 Task IDs stay stable — changed task meaning or answer keys need a deliberate content-version decision before release
 
-Explicit content migrations archive original JSON before updating it, inside one SQLite savepoint — Cybersecurity now supports the chain 1 → 2 → 3, while English remains at version 2 — unsupported migrations preserve the original state and reject access rather than guessing an answer conversion
+Explicit content migrations archive original JSON before updating it, inside one SQLite savepoint — the original Cybersecurity report supports the chain 1 → 2 → 3, followed by additive extensions declared through previousVersion — unsupported migrations preserve the original state and reject access rather than guessing an answer conversion
 
-English completion remains valid because its objectives are unchanged — Cybersecurity request-frame selection and the guided report require new work, with earlier completion retained in `completionHistory` and old answers/assistance visible under Saved Work
+Additive extensions retain existing question state but reopen completion for newly required questions — changed report structures archive old answers and assistance under Saved Work, with earlier completion retained in `completionHistory`
 
 Unchanged task counters and checks survive — changed activities retain attempts, mistakes and attempt history, archive hints/solution/self-review, and start their new checks unassessed
 
 Review removal records the current mistake count as a watermark — it leaves assessment and completion intact, survives reload and is undone explicitly or superseded by a new incorrect checked attempt
 
-SQLite schema changes also need backup/restore checks — restore accepts schemas 1 and 2, and the app refuses schema versions newer than 2
+SQLite schema changes also need backup/restore checks — restore accepts schemas 1 through 5, and the app refuses schema versions newer than 5
 
-AI, placement assessments, spaced repetition and more lessons are planned, with no provider or AI credentials required by the current app — see the [roadmap](roadmap.md)
+Review Due, 20 lessons and optional owner AI feedback are implemented — placement assessments and broader learning features remain in the [roadmap](roadmap.md), with no provider or AI credentials required for core study
 
 ## Connected Report And Lesson Navigation
 
@@ -189,3 +197,83 @@ A version 2 → 3 report migration retains equivalent factual fields and safely 
 New objective relationships and reasoning must be assessed afresh — completion history and review-dismissal watermarks survive, while the newly revealed example remains distinct from an earlier example
 
 Hints and explicit examples both count as assistance, including earlier archived use — accessing notes and previewing one's own draft do not
+
+## Review And Optional Feedback Boundaries
+
+Review schedules, sessions and results have separate SQLite tables — review recall never rewrites original lesson answers, attempts, self-review or completion
+
+Selected precise tasks declare stable reviewConcept IDs — one schedule per concept, with content versions checked before reuse and UTC intervals calculated on the server
+
+Remove/Undo shares the original dismissal watermark with Mistake Review — a new incorrect original check reactivates the concept, while a catalogue reload does not
+
+The optional AI service has no tools, SQL access or grading authority — it receives only bounded saved writing/report reasoning, the current rubric/checklist and limited lesson evidence after explicit consent
+
+Owner controls require both a high-entropy owner capability and a direct loopback socket with a localhost Host header — forwarded headers do not grant access, and shared LAN learners cannot use the owner's paid provider connection
+
+Provider credentials remain in server memory only — SQLite stores request IDs, context hashes, timestamps, status and validated feedback for deduplication and usage limits, plus an assistance marker
+
+See [AI feedback](ai-feedback.md) and [Review Due](review-due.md) for exact contracts and limits
+
+## Daily Quiz And Defence Model
+
+Schema 4 adds quiz_session/quiz_history and lab_state/lab_history — quiz selections contain references and versions, while answers remain in the existing progress table
+
+The defence prototype is a server-side state machine with fixed operations and no child processes, arbitrary targets, file mounts or network requests — direct-loopback owner authorisation protects reads, operations and resets
+
+```mermaid
+flowchart LR
+  quiz[Daily Quiz] --> saving[Shared task saving and grading]
+  lesson[Lesson question] --> saving
+  saving --> progress[(Existing lesson progress)]
+  quiz --> refs[(Quiz references and history)]
+  owner[Local owner capability] --> model[Bounded defence state machine]
+  model --> runs[(Model state and run history)]
+```
+
+The defence-v1 model is now a multi-step catalogue question using owner-authorised server verification — see [current status](depth-extension-status.md) for implemented requirements and validation limits
+
+## Completed Schema 5 Boundaries
+
+```mermaid
+flowchart LR
+  owner[Direct localhost owner capability] --> model[Bounded model state machine]
+  model --> proof[Inspect + contain + preserve portal]
+  proof --> results[(Versioned lab results)]
+  proof --> progress[(Shared lesson progress)]
+  owner --> update[Explicit news update]
+  update --> feed[Fixed USGS HTTPS feed]
+  feed --> validation[Bounded parsing + deterministic questions]
+  validation --> snapshots[(Immutable reading snapshots)]
+  snapshots --> catalogue[Same lesson catalogue]
+  catalogue --> quiz[Stable Daily Quiz references]
+  quiz --> progress
+```
+
+Schema 5 retains earlier tables and adds news_snapshots and lab_results — backup includes all learning state, while owner/provider credentials remain excluded
+
+Fresh reading has immutable content-hash question IDs and explicit passage versions — publishing a new optional pack never edits an active passage or replaces the current quiz selection
+
+The model has no OS terminal, child process, external target, file mount or Docker socket — its fixed commands change persisted model state, and the server alone records verified checks
+
+## Authored JSON Contracts
+
+Strict JSON stays comment-free — [shared schemas](../src/shared/schema.ts) validate lessons and API mutations, while [content validation](../scripts/validate-content.ts) checks cross-references
+
+| File or fields                              | Structure and relationship                                                                                                                                                                                                   |
+| ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `content/lessons.json`                      | Array of lessons with stable `id` and explicit `version`; `previousVersion` selects the additive migration path that retains existing question state while introducing new requirements                                      |
+| `tasks[].sourceIds`, `teaching[].sourceIds` | Refer to source IDs within that lesson; sources record support, access and attribution                                                                                                                                       |
+| `tasks[].quiz`                              | Difficulty and estimated minutes guide selection; `group` and `desktop` are stored metadata, not enforced grouping or access restrictions in the current selector                                                            |
+| `tasks[].tier`, `labScenario`               | Tier describes curriculum progression; `labScenario: "defence-v1"` requires server model proof at the storage boundary for an assessed check                                                                                 |
+| `tasks[].passage`                           | Immutable reading text with its own ID/version, publisher, source URL, publication/update description, retrieval and reuse basis; questions use stored values                                                                |
+| `fields`, `reportLayout`                    | Stable field IDs define answer shapes; `{field-id}` placeholders place controls or values into original report sentences, without filling missing answers                                                                    |
+| `reportRules`, `findingMappings`            | Rules bind assessment options to factual evidence/frame IDs; mappings copy a saved source task into a compatible report field, retaining check provenance without granting assessment                                        |
+| `reviewConcept`                             | Stable unique identity for a precise recall concept; scheduled outcomes live separately from original lesson attempts                                                                                                        |
+| `content/course-sequence.json`              | Authored planning array keyed by course/lesson ID, with recommended order, objectives, preparation, control rationale, materials, research, completion limits and review concepts; runtime catalogue comes from lessons.json |
+| `content/synthetic-evidence.json`           | Lesson-ID map of explicitly synthetic record packs; the generator writes public copies and the independent validator recomputes evidence-backed keys                                                                         |
+| `content/professional-cases.json`           | Lesson-ID map of versioned original professional cases and supporting records; the depth validator compares public copies and lesson material                                                                                |
+| `package.json`, `.node-version`, `.npmrc`   | Exact runtime/package-manager baseline and strict engine validation; coordinate changes using the development workflow                                                                                                       |
+| `tsconfig.json`, `tsconfig.server.json`     | Strict browser/test validation with no emit, and separate NodeNext server/shared compilation into dist/server                                                                                                                |
+| `.prettierrc.json`                          | Formatting preferences only; it does not change the strict JSON data format                                                                                                                                                  |
+
+See [content provenance](content-and-sources.md) for source and evidence boundaries and [course sequences](course-sequences.md) for the authored progression

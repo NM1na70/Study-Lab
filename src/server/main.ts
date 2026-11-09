@@ -1,3 +1,4 @@
+// Import the local API factory for the process entry point
 import { createApp } from './app.js';
 
 // Start the server with localhost as the default bind address outside Docker

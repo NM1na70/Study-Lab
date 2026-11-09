@@ -34,6 +34,8 @@ export function emptyProgress(lesson: Lesson): Progress {
     completionHistory: [],
   };
 }
+
+// Choose the empty answer shape without inventing attempts, assessment or assistance
 export function emptyTask(task?: Task): TaskProgress {
   return {
     answer: task?.kind === 'report' ? {} : task?.kind === 'multiple' ? [] : '',
@@ -189,12 +191,17 @@ export function activeReview(task: Task, state?: TaskProgress): boolean {
     state.mistakes > (state.reviewDismissedMistakes ?? 0)
   );
 }
+
+// Retain current and archived assistance independently of completion eligibility
 export function assisted(p: Progress): boolean {
   return Object.values(p.tasks).some(
     (t) =>
+      (t.aiHelp ?? 0) > 0 ||
       t.hints > 0 ||
       t.solution ||
-      t.previousWork?.some((w) => w.hints > 0 || w.solution),
+      t.previousWork?.some(
+        (w) => w.hints > 0 || w.solution || (w.aiHelp ?? 0) > 0,
+      ),
   );
 }
 
@@ -254,6 +261,8 @@ export function findingStatus(
     return 'Not Checked';
   return last.correct ? 'Checked — Correct' : 'Checked — Incorrect';
 }
+
+// Copy only an explicit compatible finding mapping, without treating it as a checked report answer
 export function findingValue(
   task: Task,
   sourceTaskId: string,
@@ -339,6 +348,8 @@ export function mutate(
         drafted.tasks[task.id].findingProvenance = provenance;
         return drafted;
       }
+
+      // Invalidate assessment after an edit while retaining earlier attempts and completion history
       case 'draft':
         if (m.answer === undefined || !validateAnswer(task, m.answer))
           throw new DomainError('Answer shape or option is invalid');
@@ -397,6 +408,8 @@ export function mutate(
       case 'solution':
         state.solution = true;
         break;
+
+      // Require factual report checks and present reasoning, but leave reasoning quality to explicit self-review
       case 'selfReview':
         if (task.kind === 'written') {
           if (

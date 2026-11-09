@@ -110,13 +110,43 @@ for (const lesson of lessons) {
     );
 }
 
-// Enforce the agreed Milestone 1 pack size and minimum English practice coverage
-assert.equal(lessons.length, 2, 'Milestone 1 contains two complete lessons');
+// Enforce the twenty-lesson catalogue and minimum foundational English practice coverage
+assert.equal(
+  lessons.length,
+  20,
+  'Final catalogue contains ten complete lessons per course',
+);
 assert(
   lessons
     .find((l) => l.course === 'English')!
     .tasks.filter((t) => t.stage === 'practice').length >= 6,
 );
 console.log(
-  'Validated 2 lessons, task/source references, answers, hints and required stages.',
+  `Validated ${lessons.length} complete lessons, task/source references, answers, hints and required stages`,
 );
+
+// Require a coherent published order and resolve every reusable report field reference
+for (const course of ['English', 'Cybersecurity']) {
+  const entries = lessons.filter((lesson) => lesson.course === course);
+  assert.equal(entries.length, 10);
+  assert.deepEqual(
+    entries.map((lesson) => lesson.order).sort((a, b) => a - b),
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  );
+}
+const concepts = new Set<string>();
+for (const lesson of lessons)
+  for (const task of lesson.tasks) {
+    if (task.reviewConcept) {
+      assert(!concepts.has(task.reviewConcept), 'Duplicate review concept');
+      concepts.add(task.reviewConcept);
+      assert(!['written', 'report'].includes(task.kind));
+    }
+    for (const section of task.reportLayout)
+      for (const sentence of section.sentences)
+        for (const match of sentence.matchAll(/\{([a-z0-9-]+)\}/g))
+          assert(
+            task.fields.some((field) => field.id === match[1]),
+            'Unknown report layout field',
+          );
+  }

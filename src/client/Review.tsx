@@ -16,6 +16,10 @@ export function Review({
 }) {
   // Keep one course and one active draft selected while retaining independent saved histories
   const [course, setCourse] = useState('English');
+  const [selection, setSelection] = useState<{
+    lessonId: string;
+    taskId: string;
+  }>();
   const flush = useRef<(() => Promise<boolean>) | null>(null);
   const registerFlush = useCallback(
     (callback: (() => Promise<boolean>) | null) => {
@@ -37,7 +41,10 @@ export function Review({
             key={name}
             aria-pressed={name === course}
             onClick={async () => {
-              if (!flush.current || (await flush.current())) setCourse(name);
+              if (!flush.current || (await flush.current())) {
+                setSelection(undefined);
+                setCourse(name);
+              }
             }}
           >
             {name} (
@@ -60,8 +67,23 @@ export function Review({
           </button>
         ))}
       </div>
+      {!data.lessons.some(
+        (lesson) =>
+          lesson.course === course &&
+          Object.values(
+            data.progress.find((progress) => progress.lessonId === lesson.id)
+              ?.tasks ?? {},
+          ).some((state) => state.mistakes > 0),
+      ) && <p className="empty">No active mistakes in {course}</p>}
       {data.lessons
-        .filter((lesson) => lesson.course === course)
+        .filter(
+          (lesson) =>
+            lesson.course === course &&
+            Object.values(
+              data.progress.find((progress) => progress.lessonId === lesson.id)
+                ?.tasks ?? {},
+            ).some((state) => state.mistakes > 0),
+        )
         .map((lesson) => (
           <CourseReview
             key={`${course}-${lesson.id}`}
@@ -71,6 +93,14 @@ export function Review({
             )!}
             onChange={onChange}
             registerFlush={registerFlush}
+            selectedTaskId={
+              selection?.lessonId === lesson.id ? selection.taskId : undefined
+            }
+            open={async (taskId) => {
+              if (!flush.current || (await flush.current()))
+                setSelection({ lessonId: lesson.id, taskId });
+            }}
+            close={() => setSelection(undefined)}
           />
         ))}
     </>
@@ -83,18 +113,24 @@ function CourseReview({
   progress,
   onChange,
   registerFlush,
+  selectedTaskId,
+  open,
+  close,
 }: {
   lesson: Lesson;
   progress: Progress;
   onChange: (progress: Progress) => void;
   registerFlush: (callback: (() => Promise<boolean>) | null) => void;
+  selectedTaskId?: string;
+  open: (taskId: string) => Promise<void>;
+  close: () => void;
 }) {
   // Route practice, removal and Undo through the same confirmed revision queue
   const { enqueue, status, error, retry, confirmed } = useProgress(
     progress,
     onChange,
   );
-  const [selected, setSelected] = useState<string>();
+  const selected = selectedTaskId;
   const [removed, setRemoved] = useState<string>();
   const [busy, setBusy] = useState(false);
   const flush = useRef<(() => Promise<boolean>) | null>(null);
@@ -110,6 +146,8 @@ function CourseReview({
   const rows = lesson.tasks.filter((task) =>
     activeReview(task, progress.tasks[task.id]),
   );
+
+  // Flush an open draft before practice or persistent dismissal so failed saves keep it visible
   async function action(id: string, remove: boolean) {
     if (busy) return;
     setBusy(true);
@@ -118,9 +156,9 @@ function CourseReview({
       if (remove) {
         if (await enqueue({ action: 'dismissReview', taskId: id })) {
           setRemoved(id);
-          if (selected === id) setSelected(undefined);
+          if (selected === id) close();
         }
-      } else setSelected(id);
+      } else await open(id);
     } finally {
       setBusy(false);
     }
