@@ -356,3 +356,42 @@ Separately inspected strict JSON configs (.prettierrc.json, package.json and bot
 All eight original issue screenshots were inspected through their WSL paths; the additional clipboard image duplicates issue 6. None is unavailable. After resuming their availability was checked again. Updated full-page, viewport and readable element captures are in `/tmp/study-ui-screenshots/`: dashboard/card, English/Cybersecurity quiz, question, email and report, with desktop/phone variants. In particular, `dashboard-desktop-viewport.png`, `dashboard-phone-viewport.png`, `email-phone-solution.png`, `report-phone-feedback.png` and `report-phone-solution.png` show the agreed changes clearly. The captures use only disposable learner work and contain no owner token or live profile.
 
 Preview: http://localhost:3020/ — binds 127.0.0.1, database `/tmp/study-ui-preview.Hs6Cy2/study.sqlite`, owner capability unset. No external provider/feed was invoked. Chromium phone viewport coverage is not physical-device testing. Hosted CI, real paid AI and Docker runtime/scan confirmation remain unverified.
+
+## PR #7 Daily Quiz Save And Focus Race — 10 November 2026
+
+Continued in `/home/james/VibeCoding/study-lab` on `codex/ui-ux-clarity-course-quiz`. The starting tree was clean; local HEAD and GitHub PR #7 head both matched `896c376a76b64d3acb5950185b58e5352f06b804`. No branch recreation, commit, push or learner-data operation was performed.
+
+### Retrieved Evidence And Root Cause
+
+Inspected the full browser job log for [run 42623350647](https://github.com/NM1na70/Study-Lab/actions/runs/42623350647), job 129180776621, and its browser-reports artifact, error context and both embedded desktop/mobile traces, including network bodies and screencast frames. This pull_request run used the same PR head and finished with 80 passed / 2 failed. Both errors are the expected English second draft versus an empty answer-connection input after Home returned to English. The trace viewport metadata confirms 1280×900 desktop and 390×844 mobile.
+
+The test expectation and independent question positions were correct. Navigation set busy and awaited a draft save, but disabled only tabs/question navigation, leaving the outgoing activity editable until its response arrived. The generic Your answer locator could therefore edit the old mounted question before the requested destination committed. Its latest edit was outside the already-started flush, and an autosave timer could survive unmount. Returning to the correctly remembered second question then showed its genuinely empty stored draft.
+
+Concrete hosted evidence: both traces save action = English first draft at revision 0, then connection = empty at revision 1. Desktop later attempts an outgoing action = English second draft write at revision 1 and receives 409 because that lesson is already at revision 2. Mobile also flushes source-host empty and subsequently saves Cybersecurity draft to English connection. These are misplaced edits during asynchronous navigation, not a server incorrectly loading a saved answer or a mobile-layout-only defect. The server correctly rejects the stale desktop revision.
+
+The untouched original two cases passed locally, so that run alone did not reproduce the intermittent timing. A new regression holds real server responses after validation/persistence and before delivering them to the browser; it failed on both sizes against the original implementation because the outgoing input remained editable. No sleeps, retries or timeout changes were used to force the scenario.
+
+### Focused Fix And Regression Coverage
+
+DailyQuiz now places the current activity inside the existing neutral activity-fieldset, disabled while save-aware navigation is busy. Drafts cannot change after the departure flush starts and before the destination mounts. Failed saves release the lock while retaining the current course, question and editable draft. The save queue, revision checks, shared progress, stable selection references and independent positions are unchanged.
+
+The initial control-lock fix exposed a separate desktop focus race in the original test: requestAnimationFrame could focus the destination tab before React committed its enabled state. Replaced that frame-timed heuristic with a pending-focus ref consumed in useLayoutEffect only after the chosen course and enabled controls commit. Home/End and arrow-key activation retain their existing semantics; no timed waiting is involved.
+
+The original course-tabs test and its English/Cybersecurity draft assertions remain unchanged. Added one deterministic question/keyboard-course-switch case that holds real responses, verifies outgoing input identity/value and disabled state, then verifies destination identity, editability, keyboard focus and correctly persisted drafts under their separate task IDs. Strengthened the existing failed-save case to wait for its error and assert that the retained draft is editable again. Existing refresh-failure and removed-bottom-link assertions remain intact.
+
+Changed code: src/client/DailyQuiz.tsx and tests/browser/daily.spec.ts. Their purpose-based comments explain the save lock, post-commit focus and controlled-response regression; grouped imports/state and sentence-case/no-terminal-full-stop conventions were reviewed. No other application code, content, grading, access control, timeout/retry configuration or dependency was changed. The recently removed Daily Quiz Open Lesson / Mistake Review / Course Catalogue links remain absent.
+
+### Actual Validation
+
+- Original unmodified focused test: 2 passed locally; this did not establish absence of the hosted race
+- Deterministic held-response regression on the original app: 2 failed as expected, proving the missing control lock
+- Initial lock-only focused run: 13 passed / 1 failed on desktop destination focus; that result was diagnosed and fixed, not counted as a pass
+- Final full Daily Quiz browser file: 14 passed (7 desktop / 7 mobile), including the original keyboard test, save-failure cases, unchanged selection compatibility and the new regression
+- pnpm check passed formatting, lint, both TypeScript checks, all content/evidence validation, 61 backend tests and 11 UI tests
+- Production build passed
+- Full pnpm test:browser completed with 84 passed (42 desktop / 42 mobile) in 3.5 minutes
+- Final changed-file formatting, Git whitespace and documentation relative-link checks passed; task-relative comparison confirms only the two intended code/test files and two verification/handover documents changed
+
+Evidence is retained outside Git in `/tmp/study-pr7-browser/`: hosted-browser.log, report/ and extracted trace directories, local-baseline.log, controlled-baseline.log, first-fix-failure/, focused.log, check.log, build.log and full-browser.log. This temporary evidence may disappear on reboot. All application tests used disposable fixture databases; no normal learner profile or unrelated process was changed.
+
+The owner subsequently authorised committing these four reviewed files as `fix(study): prevent quiz draft and keyboard navigation races` and normally pushing the existing PR branch, without force-pushing or merging. The results above are local validation; inspect the new head’s hosted checks after that push. Existing successful hosted Docker/security checks apply to 896c376 and are not evidence for the fix. No hosted success is claimed in this pre-push record.

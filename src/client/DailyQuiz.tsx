@@ -1,5 +1,11 @@
 // Reuse lesson saving, checking and self-review rather than storing independent quiz answers
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import type { Progress } from '../shared/schema.js';
 import type { QuizSession } from '../server/quiz.js';
 import { taskSatisfied } from '../shared/domain.js';
@@ -23,6 +29,7 @@ export function DailyQuiz({
   const [course, setCourse] = useState<'English' | 'Cybersecurity'>('English');
   const [indices, setIndices] = useState({ English: 0, Cybersecurity: 0 });
   const changing = useRef(false);
+  const tabToFocus = useRef<typeof course | null>(null);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const dialog = useRef<HTMLDialogElement>(null);
@@ -37,6 +44,13 @@ export function DailyQuiz({
       .then(setSession)
       .catch((reason) => setError(String(reason)));
   }, []);
+
+  // Move keyboard focus only after the selected tab and its enabled controls have committed to the DOM
+  useLayoutEffect(() => {
+    if (busy || tabToFocus.current !== course) return;
+    document.getElementById('quiz-tab-' + course)?.focus();
+    tabToFocus.current = null;
+  }, [busy, course]);
 
   // Use shared completion rules for refresh confirmation rather than treating every saved draft as finished
   const incomplete =
@@ -150,13 +164,10 @@ export function DailyQuiz({
         return;
       }
       setError('');
+      if (focusTab) tabToFocus.current = name;
       setCourse(name);
       if (question !== undefined)
         setIndices((previous) => ({ ...previous, [name]: question }));
-      if (focusTab)
-        requestAnimationFrame(() =>
-          document.getElementById('quiz-tab-' + name)?.focus(),
-        );
     } finally {
       changing.current = false;
       setBusy(false);
@@ -347,14 +358,22 @@ export function DailyQuiz({
                   <a href={lesson.evidence}>Download Evidence</a>
                 )}
               </details>
-              <QuizQuestion
-                key={lesson.id + task.id + session?.id}
-                lesson={lesson}
-                task={task}
-                progress={progress}
-                onChange={onChange}
-                attach={attach}
-              />
+
+              {/* Freeze outgoing activity controls until navigation saves their draft and mounts the destination */}
+              <fieldset
+                className="activity-fieldset"
+                disabled={busy}
+                aria-label="Quiz Activity"
+              >
+                <QuizQuestion
+                  key={lesson.id + task.id + session?.id}
+                  lesson={lesson}
+                  task={task}
+                  progress={progress}
+                  onChange={onChange}
+                  attach={attach}
+                />
+              </fieldset>
             </>
           )}
         {item && lesson?.version !== item.version && (

@@ -180,6 +180,10 @@ test('failed course switching keeps its draft and does not refresh either course
   await expect(page.getByLabel('Your answer')).toHaveValue(
     'Keep this tab draft',
   );
+  await expect(
+    page.getByRole('alert').filter({ hasText: 'Save did not succeed' }),
+  ).toBeVisible();
+  await expect(page.getByLabel('Your answer')).toBeEnabled();
   expect(await (await page.request.get('/api/quiz')).json()).toEqual(original);
   await page.unroute('**/api/progress/**');
   await page.getByRole('button', { name: 'Enable Retry' }).click();
@@ -234,4 +238,90 @@ test('legacy mixed selection is grouped without adding questions until explicit 
   await expect(
     page.getByRole('tab', { name: 'Cybersecurity — 7 Questions', exact: true }),
   ).toBeVisible();
+});
+
+// Hold real save responses so outgoing controls cannot accept a draft intended for the next question or course
+test('question and course switches freeze the outgoing draft until its save confirms', async ({
+  page,
+}) => {
+  await page.goto('/#/quiz');
+  await page.getByLabel('Your answer').waitFor();
+  const session = await (await page.request.get('/api/quiz')).json();
+  const snapshot = await (await page.request.get('/api/lessons')).json();
+  const cyberItem = session.items.find(
+    (item: { lessonId: string }) =>
+      snapshot.lessons.find(
+        (lesson: { id: string }) => lesson.id === item.lessonId,
+      )?.course === 'Cybersecurity',
+  );
+  const steps = [
+    {
+      target: page
+        .getByRole('navigation', { name: 'Quiz Questions' })
+        .getByRole('button')
+        .nth(1),
+      item: session.items[1],
+      keyboard: false,
+    },
+    {
+      target: page.getByRole('tab', {
+        name: 'Cybersecurity — 7 Questions',
+        exact: true,
+      }),
+      item: cyberItem,
+      keyboard: true,
+    },
+  ];
+  for (const [index, step] of steps.entries()) {
+    const answer = page.getByLabel('Your answer');
+    const outgoingId = await answer.getAttribute('id');
+    const draft = `Retained draft ${index}`;
+    let release!: () => void;
+    let arrived!: () => void;
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const reached = new Promise<void>((resolve) => {
+      arrived = resolve;
+    });
+    await page.route(
+      '**/api/progress/**',
+      async (route) => {
+        const response = await route.fetch();
+        arrived();
+        await gate;
+        await route.fulfill({ response });
+      },
+      { times: 1 },
+    );
+    await answer.fill(draft);
+    if (step.keyboard)
+      await page
+        .getByRole('tab', { name: 'English — 7 Questions', exact: true })
+        .press('End');
+    else await step.target.click();
+    await reached;
+    try {
+      await expect(answer).toBeDisabled();
+      await expect(answer).toHaveAttribute('id', outgoingId!);
+      await expect(answer).toHaveValue(draft);
+    } finally {
+      release();
+    }
+    await expect(answer).toHaveAttribute('id', `answer-${step.item.taskId}`);
+    await expect(answer).toBeEnabled();
+    if (step.keyboard) await expect(step.target).toBeFocused();
+    await expect(answer).toHaveValue('');
+  }
+  const saved = await (await page.request.get('/api/lessons')).json();
+  const progress = saved.progress.find(
+    (entry: { lessonId: string }) =>
+      entry.lessonId === session.items[0].lessonId,
+  );
+  expect(progress.tasks[session.items[0].taskId].answer).toBe(
+    'Retained draft 0',
+  );
+  expect(progress.tasks[session.items[1].taskId].answer).toBe(
+    'Retained draft 1',
+  );
 });
